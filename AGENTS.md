@@ -311,6 +311,21 @@ You are free to edit `HEARTBEAT.md` with a short checklist or reminders. Keep it
 - Commit and push your own changes
 - **Review and update MEMORY.md** (see below)
 
+### 🔄 Development Protocol (MANDATORY - Updated 2026-02-13)
+
+**PULL-FIRST ALWAYS:** Before ANY development work, ALWAYS pull from origin:
+
+```bash
+git pull origin main  # FIRST STEP - get Alan's latest changes
+# Then do development work...
+git add .
+git commit -m "Description of work"
+git pull origin main  # Check for conflicts before push
+git push origin main
+```
+
+**Why:** Alan also pushes changes to the repo. This prevents conflicts and ensures I'm always working with the latest code. No exceptions - every development session starts with pulling from origin.
+
 ### 🔄 Memory Maintenance (During Heartbeats)
 
 Periodically (every few days), use a heartbeat to:
