@@ -1,0 +1,3801 @@
+[
+  {
+    "timestamp": "2026-02-12T00:23:44.786Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T00:53:45.426Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4f4e2b7fc581d",
+            "from": "Apify <hello@apify.com>",
+            "subject": "Start building your own Actors",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T01:53:45.543Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f81c2d27729e",
+            "from": "Burst Creatine <support@burstcreatine.com>",
+            "subject": "Leave a review, get 10% off your next order",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T02:23:47.204Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T02:53:59.030Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T03:53:46.524Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4ff34552976ab",
+            "from": "Jotform <noreply@jotform.com>",
+            "subject": "Re: Pinnacle Chiropractic Main Survey - Kelly Treadwell",
+            "classification": "Jotform Pinnacle Chiro",
+            "action": "archive"
+          },
+          {
+            "id": "19c4ff2a272c684b",
+            "from": "Make <noreply@us1.make.com>",
+            "subject": "🛑 Encountered error in 3  Add to Custom Response Report with File Download scen",
+            "classification": "Make Error Email",
+            "action": "archive"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T04:23:44.891Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T04:53:47.166Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5024b561ec0bb",
+            "from": "Rocket Money <hello@email.rocketmoney.com>",
+            "subject": "💰 You just received money!",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T05:53:45.295Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T06:23:44.242Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T06:53:49.920Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T07:53:45.316Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c50c5be9efdd8f",
+            "from": "Discord <noreply@discord.com>",
+            "subject": "You missed messages in Builder Methods",
+            "classification": "Discord Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T08:23:44.907Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T08:53:44.120Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T09:53:46.449Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c51162e5459adf",
+            "from": "BIOCLEANSE <support@trybiocleanse.com>",
+            "subject": "Under your tongue. Into your bloodstream.",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T10:53:47.496Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T11:53:48.124Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c51b2168a1c3e7",
+            "from": "TLDR <dan@tldrnewsletter.com>",
+            "subject": "xAI public all hands 🤖, inside Siri revamp 📱, AI changing everything 🌍  ",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T12:23:46.367Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T12:53:46.947Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T13:23:46.284Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c51fe071681007",
+            "from": "Vitruvin Anti-Aging Supplements <support@vitruvin.com>",
+            "subject": "Your Heart Works 24/7 ❤️",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T13:53:47.624Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T14:23:46.366Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c522f8185936c0",
+            "from": "Intuit Developer Group <IntuitPartners@dp.intuit.com>",
+            "subject": "Drive growth with the Intuit Marketing Academy",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c52398708d2a83",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Opus 4.6 - 12 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T14:53:47.271Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5252e497e38a3",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Opus 4.6 - 12 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T15:23:48.143Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c5267142bbb9ba",
+            "from": "Matthew Horace <matthew.horace@sinch.com>",
+            "subject": "Re: See how Sinch AI delivers real results for global brands",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c52705b53aeb51",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Opus 4.6 - 12 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c527044c6db31d",
+            "from": "Intuit <No_Reply@notifications.intuit.com>",
+            "subject": "We received your Intuit subscription payment!",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c526bca9b41aaa",
+            "from": "Vitruvin Anti-Aging Supplements <support@vitruvin.com>",
+            "subject": "Your Heart Works 24/7 ❤️",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c526ac74beb83a",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Saacid on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T15:53:49.602Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c528144489eb74",
+            "from": "Etsy <email@email.etsy.com>",
+            "subject": "And it’s off! USPS has your order 🚚",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5267142bbb9ba",
+            "from": "Matthew Horace <matthew.horace@sinch.com>",
+            "subject": "Re: See how Sinch AI delivers real results for global brands",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c528744e208c79",
+            "from": "Hone <support@honehealth.com>",
+            "subject": "Your prescription has shipped",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5284937c4e268",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/15/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c526ac74beb83a",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Saacid on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5026801792b3d",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Mja Property Man in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd53845a6022",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Bonobos Order Confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T16:53:46.444Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c5294428285a4e",
+            "from": "AlphaSignal <news@alphasignal.ai>",
+            "subject": "Open 744B model from Z.ai scores 77% on SWE-Bench engineering tests",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T17:53:52.243Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c52e3c2ce42216",
+            "from": "Jotform <noreply@jotform.com>",
+            "subject": "Re: Pinnacle Chiropractic Main Survey -",
+            "classification": "Jotform Pinnacle Chiro",
+            "action": "archive"
+          },
+          {
+            "id": "19c52e37c98a18bb",
+            "from": "Make <noreply@us1.make.com>",
+            "subject": "🛑 Encountered error in 3  Add to Custom Response Report with File Download scen",
+            "classification": "Make Error Email",
+            "action": "archive"
+          },
+          {
+            "id": "19c52dbd7aa6f2b9",
+            "from": "Rocket Loans <support@e.rocketloans.com>",
+            "subject": "A perk for Rocket Mortgage clients like you",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c52d89eebbdff9",
+            "from": "True Leaf Market <support@trueleafmarket.com>",
+            "subject": "Learn more about seed libraries📖Join the Farm to Table Revolution 🌿",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c52e02b4ef0101",
+            "from": "Bonobos <Bonobos@bonobos.com>",
+            "subject": "We saw you peeping…👀",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c52d6790fdba1d",
+            "from": "True Leaf Market <support@trueleafmarket.com>",
+            "subject": "Learn more about seed libraries📖Join the Farm to Table Revolution 🌿",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T18:23:52.043Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T18:53:50.838Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c531ccadb0cb70",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Pillar To Post: Carbon Monoxide - 1 hour CORE CE @ Wed Feb 25, 2026 ",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531bced570606",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Real Estate Tax Hacks: Write-Offs for Realtors (2 CORE CE... @ Wed F",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T19:53:47.279Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c535c80ee96bb1",
+            "from": "Your KWRI Technology Team <bounce2@kw.com>",
+            "subject": "Important: Command Maintenance Scheduled for Feb. 14",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531ccadb0cb70",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Pillar To Post: Carbon Monoxide - 1 hour CORE CE @ Wed Feb 25, 2026 ",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531bced570606",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Real Estate Tax Hacks: Write-Offs for Realtors (2 CORE CE... @ Wed F",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5358184d7a405",
+            "from": "Your Marmalade District neighbors <no-reply@is.email.nextdoo",
+            "subject": "Top post: This is so sad . Colton being one of the three adults getting...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5345889914ca7",
+            "from": "Sara Jones <sara@inclusionpro.com>",
+            "subject": "The human edge AI can't replicate (Executive Summary)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T20:23:48.476Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c5375e411ac57b",
+            "from": "Fernando Calderoni <fcalderoni@theglobaljanitorialservices.c",
+            "subject": "Quick intro – local cleaner here",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c535c80ee96bb1",
+            "from": "Your KWRI Technology Team <bounce2@kw.com>",
+            "subject": "Important: Command Maintenance Scheduled for Feb. 14",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531ccadb0cb70",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Pillar To Post: Carbon Monoxide - 1 hour CORE CE @ Wed Feb 25, 2026 ",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531bced570606",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Real Estate Tax Hacks: Write-Offs for Realtors (2 CORE CE... @ Wed F",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c53812109d4eea",
+            "from": "Apple <no_reply@email.apple.com>",
+            "subject": "Your Subscription is Expiring",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5358184d7a405",
+            "from": "Your Marmalade District neighbors <no-reply@is.email.nextdoo",
+            "subject": "Top post: This is so sad . Colton being one of the three adults getting...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5345889914ca7",
+            "from": "Sara Jones <sara@inclusionpro.com>",
+            "subject": "The human edge AI can't replicate (Executive Summary)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T20:53:49.686Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c53888e6dff4e6",
+            "from": "Brave Search API <search-api@brave.com>",
+            "subject": "New ToS & plans for the Brave Search API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5375e411ac57b",
+            "from": "Fernando Calderoni <fcalderoni@theglobaljanitorialservices.c",
+            "subject": "Quick intro – local cleaner here",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c535c80ee96bb1",
+            "from": "Your KWRI Technology Team <bounce2@kw.com>",
+            "subject": "Important: Command Maintenance Scheduled for Feb. 14",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531ccadb0cb70",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Pillar To Post: Carbon Monoxide - 1 hour CORE CE @ Wed Feb 25, 2026 ",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531bced570606",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Real Estate Tax Hacks: Write-Offs for Realtors (2 CORE CE... @ Wed F",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c539534874c664",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Your Bonobos Order is ready to Ship",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53812109d4eea",
+            "from": "Apple <no_reply@email.apple.com>",
+            "subject": "Your Subscription is Expiring",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5358184d7a405",
+            "from": "Your Marmalade District neighbors <no-reply@is.email.nextdoo",
+            "subject": "Top post: This is so sad . Colton being one of the three adults getting...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5345889914ca7",
+            "from": "Sara Jones <sara@inclusionpro.com>",
+            "subject": "The human edge AI can't replicate (Executive Summary)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T21:53:50.224Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c53888e6dff4e6",
+            "from": "Brave Search API <search-api@brave.com>",
+            "subject": "New ToS & plans for the Brave Search API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5375e411ac57b",
+            "from": "Fernando Calderoni <fcalderoni@theglobaljanitorialservices.c",
+            "subject": "Quick intro – local cleaner here",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c535c80ee96bb1",
+            "from": "Your KWRI Technology Team <bounce2@kw.com>",
+            "subject": "Important: Command Maintenance Scheduled for Feb. 14",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531ccadb0cb70",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Pillar To Post: Carbon Monoxide - 1 hour CORE CE @ Wed Feb 25, 2026 ",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531bced570606",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Real Estate Tax Hacks: Write-Offs for Realtors (2 CORE CE... @ Wed F",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c53cb24e2bec5b",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "It's Time To Check In For Your Flight",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53c1934e48528",
+            "from": "Nav <memberinfo@hello.nav.com>",
+            "subject": "We’ve updated our Privacy Policies and Terms of Use",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53ba0e681a2a6",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is on the way",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c539534874c664",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Your Bonobos Order is ready to Ship",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53812109d4eea",
+            "from": "Apple <no_reply@email.apple.com>",
+            "subject": "Your Subscription is Expiring",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5358184d7a405",
+            "from": "Your Marmalade District neighbors <no-reply@is.email.nextdoo",
+            "subject": "Top post: This is so sad . Colton being one of the three adults getting...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5345889914ca7",
+            "from": "Sara Jones <sara@inclusionpro.com>",
+            "subject": "The human edge AI can't replicate (Executive Summary)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T22:53:49.773Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c53e03d5848749",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "$720,000",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53888e6dff4e6",
+            "from": "Brave Search API <search-api@brave.com>",
+            "subject": "New ToS & plans for the Brave Search API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5375e411ac57b",
+            "from": "Fernando Calderoni <fcalderoni@theglobaljanitorialservices.c",
+            "subject": "Quick intro – local cleaner here",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c535c80ee96bb1",
+            "from": "Your KWRI Technology Team <bounce2@kw.com>",
+            "subject": "Important: Command Maintenance Scheduled for Feb. 14",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531ccadb0cb70",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Pillar To Post: Carbon Monoxide - 1 hour CORE CE @ Wed Feb 25, 2026 ",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531bced570606",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Real Estate Tax Hacks: Write-Offs for Realtors (2 CORE CE... @ Wed F",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c53cb24e2bec5b",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "It's Time To Check In For Your Flight",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53c1934e48528",
+            "from": "Nav <memberinfo@hello.nav.com>",
+            "subject": "We’ve updated our Privacy Policies and Terms of Use",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53ba0e681a2a6",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is on the way",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c539534874c664",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Your Bonobos Order is ready to Ship",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53812109d4eea",
+            "from": "Apple <no_reply@email.apple.com>",
+            "subject": "Your Subscription is Expiring",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5358184d7a405",
+            "from": "Your Marmalade District neighbors <no-reply@is.email.nextdoo",
+            "subject": "Top post: This is so sad . Colton being one of the three adults getting...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5345889914ca7",
+            "from": "Sara Jones <sara@inclusionpro.com>",
+            "subject": "The human edge AI can't replicate (Executive Summary)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T23:23:51.401Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c542904256b597",
+            "from": "Rocky Mountain Power <accountservices@info.rockymountainpowe",
+            "subject": "Simple seasonal tips to keep your home cozy",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c53e03d5848749",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "$720,000",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53888e6dff4e6",
+            "from": "Brave Search API <search-api@brave.com>",
+            "subject": "New ToS & plans for the Brave Search API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5375e411ac57b",
+            "from": "Fernando Calderoni <fcalderoni@theglobaljanitorialservices.c",
+            "subject": "Quick intro – local cleaner here",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c535c80ee96bb1",
+            "from": "Your KWRI Technology Team <bounce2@kw.com>",
+            "subject": "Important: Command Maintenance Scheduled for Feb. 14",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531ccadb0cb70",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Pillar To Post: Carbon Monoxide - 1 hour CORE CE @ Wed Feb 25, 2026 ",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c531bced570606",
+            "from": "Front Desk <slcfrontdesk@kw.com>",
+            "subject": "Invitation: Real Estate Tax Hacks: Write-Offs for Realtors (2 CORE CE... @ Wed F",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4fd291290eca2",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Dolt's Agentic Audience: Please Confirm Subscription",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f25d6502a25d",
+            "from": "Global Intelligence Letter <webeditor@mp.globalintelligencel",
+            "subject": "Jeff Opdyke’s Retirement Income Masterclass – 2 days left",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f198729a97c2",
+            "from": "KW Utah Realtors <noreply@accountedgeconnect.com>",
+            "subject": "Your Invoice",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c541869f61216c",
+            "from": "Brandon at MoneyLion <partners@iemail.moneylion.com>",
+            "subject": "Confirmation: Making sure you saw our last message",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c53cb24e2bec5b",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "It's Time To Check In For Your Flight",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53c1934e48528",
+            "from": "Nav <memberinfo@hello.nav.com>",
+            "subject": "We’ve updated our Privacy Policies and Terms of Use",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53ba0e681a2a6",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is on the way",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c539534874c664",
+            "from": "Bonobos <no-reply@bonobos.com>",
+            "subject": "Your Bonobos Order is ready to Ship",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c53812109d4eea",
+            "from": "Apple <no_reply@email.apple.com>",
+            "subject": "Your Subscription is Expiring",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5358184d7a405",
+            "from": "Your Marmalade District neighbors <no-reply@is.email.nextdoo",
+            "subject": "Top post: This is so sad . Colton being one of the three adults getting...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5345889914ca7",
+            "from": "Sara Jones <sara@inclusionpro.com>",
+            "subject": "The human edge AI can't replicate (Executive Summary)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f9595f89dc73",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from A La Mode Pies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f935653fe934",
+            "from": "DoorDash Order <no-reply@doordash.com>",
+            "subject": "Order Confirmation for Alan from Due' Cucina Italiana",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f44070ce1cf7",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with KADAR on February 11",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4f1927b432074",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Hi all!  My son's car was totaled in a middle of the night Sunday...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-12T23:53:44.124Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  }
+]

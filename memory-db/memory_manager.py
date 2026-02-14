@@ -13,11 +13,25 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Tuple, Optional
 import re
 
+# Import OpenAI embeddings
+try:
+    from openai_embeddings import OpenAIEmbeddings
+except ImportError:
+    print("⚠️ OpenAI embeddings not available - using hash fallback")
+    OpenAIEmbeddings = None
+
 class MemoryManager:
     def __init__(self, db_path: str = "memory-db/conversations.db"):
         self.db_path = db_path
         self.ensure_db_directory()
         self.init_database()
+        
+        # Initialize OpenAI embeddings if available
+        self.embedder = OpenAIEmbeddings() if OpenAIEmbeddings else None
+        if self.embedder:
+            print("🧠 Memory Manager initialized with OpenAI embeddings")
+        else:
+            print("🧠 Memory Manager initialized with hash-based embeddings")
         
     def ensure_db_directory(self):
         """Create memory-db directory if it doesn't exist."""
@@ -78,16 +92,23 @@ class MemoryManager:
     def _store_embedding(self, conn: sqlite3.Connection, conversation_id: int, content: str):
         """Generate and store embedding for content."""
         try:
-            # For now, create a simple hash-based embedding simulation
-            # TODO: Replace with actual OpenAI embeddings API call
-            embedding = self._create_simple_embedding(content)
-            embedding_blob = embedding.tobytes()
+            if self.embedder:
+                # Use real OpenAI embeddings
+                embedding = self.embedder.generate_embedding(content)
+                model_name = self.embedder.model
+            else:
+                # Fallback to hash-based
+                embedding = self._create_simple_embedding(content)
+                model_name = "hash-based-fallback"
             
-            conn.execute(
-                """INSERT INTO conversation_embeddings 
-                   (conversation_id, embedding) VALUES (?, ?)""",
-                (conversation_id, embedding_blob)
-            )
+            if embedding is not None:
+                embedding_blob = embedding.tobytes()
+                
+                conn.execute(
+                    """INSERT INTO conversation_embeddings 
+                       (conversation_id, embedding, embedding_model) VALUES (?, ?, ?)""",
+                    (conversation_id, embedding_blob, model_name)
+                )
         except Exception as e:
             print(f"Warning: Could not store embedding: {e}")
     

@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "products": [
+    {
+      "slug": "micro-saas-template",
+      "name": "ConvertFlow",
+      "description": "JSON/CSV converter — the original template",
+      "url": "https://micro-saas-template-omega.vercel.app",
+      "github": "https://github.com/bobdevibecoder/micro-saas-template",
+      "created_at": "2026-02-02",
+      "status": "live",
+      "is_template": true,
+      "directory_submissions": {
+        "product_hunt": false,
+        "indie_hackers": false,
+        "beta_list": false
+      },
+      "blog_posts": 6
+    },
+    {
+      "slug": "markdown-magic",
+      "name": "MarkdownMagic",
+      "description": "Markdown to HTML and HTML to Markdown converter",
+      "url": "https://markdown-magic-chi.vercel.app",
+      "github": "https://github.com/bobdevibecoder/markdown-magic",
+      "created_at": "2026-02-03",
+      "status": "deployed",
+      "is_template": false,
+      "built_by": "openclaw-bot",
+      "directory_submissions": {
+        "product_hunt": false,
+        "indie_hackers": false,
+        "beta_list": false
+      },
+      "blog_posts": 8
+    },
+    {
+      "slug": "qr-forge",
+      "name": "QRForge",
+      "description": "QR Code Generator — create custom QR codes",
+      "url": null,
+      "github": "https://github.com/bobdevibecoder/qr-forge",
+      "created_at": "2026-02-03",
+      "status": "built_pending_deploy",
+      "is_template": false,
+      "built_by": "openclaw-bot",
+      "location": "/home/milad/qr-forge",
+      "blocker": "Vercel CLI auth required - needs manual deploy from GitHub",
+      "directory_submissions": {
+        "product_hunt": false,
+        "indie_hackers": false,
+        "beta_list": false
+      },
+      "blog_posts": 0
+    }
+  ]
+}

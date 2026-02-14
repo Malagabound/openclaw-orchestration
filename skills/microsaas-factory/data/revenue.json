@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "last_updated": "2026-02-11",
+  "products": [
+    {
+      "slug": "micro-saas-template",
+      "name": "ConvertFlow",
+      "stripe_account": "test",
+      "total_revenue": 0,
+      "subscriptions": 0,
+      "one_time_purchases": 0,
+      "mrr": 0
+    },
+    {
+      "slug": "markdown-magic",
+      "name": "MarkdownMagic",
+      "stripe_account": "test",
+      "total_revenue": 0,
+      "subscriptions": 0,
+      "one_time_purchases": 0,
+      "mrr": 0
+    },
+    {
+      "slug": "qr-forge",
+      "name": "QRForge",
+      "stripe_account": "test",
+      "total_revenue": 0,
+      "subscriptions": 0,
+      "one_time_purchases": 0,
+      "mrr": 0,
+      "status": "pending_deploy"
+    }
+  ],
+  "aggregates": {
+    "total_revenue_all_products": 0,
+    "total_mrr": 0,
+    "total_subscriptions": 0,
+    "active_products": 2,
+    "pending_products": 1
+  }
+}

@@ -1,0 +1,2955 @@
+[
+  {
+    "timestamp": "2026-02-10T00:23:45.322Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c44ebbb487d527",
+            "from": "Apify <hello@apify.com>",
+            "subject": "Control your Actors via API",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c44e11e253785f",
+            "from": "Google Alerts <googlealerts-noreply@google.com>",
+            "subject": "Google Alert - humanoid robot",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T00:53:43.180Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T01:23:44.377Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T01:53:44.244Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T02:23:43.944Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T02:53:45.365Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c45753d0a631b9",
+            "from": "Proven SaaS <jack@proven-saas.com>",
+            "subject": "The \"Geo-Arbitrage\" Playbook",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T03:53:55.602Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c458900b7c790d",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Shipped: \"NEURIVA Original...\" and 1 more item",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T04:53:45.616Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T05:53:44.953Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T06:23:44.867Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c462e712a12cba",
+            "from": "Discord <noreply@discord.com>",
+            "subject": "You missed messages in Builder Methods",
+            "classification": "Discord Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T06:53:45.712Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T07:23:44.568Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T07:53:44.658Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T08:23:44.551Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T08:53:44.718Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T09:53:46.915Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c46dbd1e0c3feb",
+            "from": "Chase <no.reply.alerts@chase.com>",
+            "subject": "Your automatic mortgage payment is scheduled",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T10:53:46.345Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c46dbd1e0c3feb",
+            "from": "Chase <no.reply.alerts@chase.com>",
+            "subject": "Your automatic mortgage payment is scheduled",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T11:53:47.480Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c4763651a3e6c1",
+            "from": "TLDR <dan@tldrnewsletter.com>",
+            "subject": "ChatGPT growth leaks 📈, rise of Reddit search 🔍, Opus 4.6 vs Codex 5.3 👨‍💻",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c474f690b0dcc3",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Opus 4.6 Fast Mode small amount of errors - 10 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c46dbd1e0c3feb",
+            "from": "Chase <no.reply.alerts@chase.com>",
+            "subject": "Your automatic mortgage payment is scheduled",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T12:23:44.414Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c47675e782238b",
+            "from": "george@originutah.com",
+            "subject": "Re: Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c46dbd1e0c3feb",
+            "from": "Chase <no.reply.alerts@chase.com>",
+            "subject": "Your automatic mortgage payment is scheduled",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T12:53:45.432Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c47675e782238b",
+            "from": "george@originutah.com",
+            "subject": "Re: Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c46dbd1e0c3feb",
+            "from": "Chase <no.reply.alerts@chase.com>",
+            "subject": "Your automatic mortgage payment is scheduled",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T13:53:46.156Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c47c3be93126e9",
+            "from": "Gusto <automated@gusto.com>",
+            "subject": "Payroll on AutoPilot for 3 Peaks Accounting Services, PLLC will automatically ru",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c47675e782238b",
+            "from": "george@originutah.com",
+            "subject": "Re: Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c454bac41feae5",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Product Update] Automatic enablement of new OpenTelemetry ingestion API",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c43932a305b393",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Tomorrow at 1 PM EST",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c437c4c5e11afc",
+            "from": "Liza Hach <lizahach@kw.com>",
+            "subject": "Open House Matchmaker!!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c436c732fa2e29",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Wine Down @ Wed Feb 11, 2026 4pm - 6pm (MST) (alan@originutah.com)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4369990e8f89f",
+            "from": "KW Utah Realtors MCA - Audrey Slay <klrw374@kw.com>",
+            "subject": "Invitation: Build a Chief Financial Coach with AI w/Josh Stern @ Wed Feb 11, 202",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c47b8833b8f410",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Opus 4.6 Fast Mode small amount of errors - 10 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c46dbd1e0c3feb",
+            "from": "Chase <no.reply.alerts@chase.com>",
+            "subject": "Your automatic mortgage payment is scheduled",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c45381eaad3082",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Stripe in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4511920ec3df5",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $10.01 from Nth Degree CPAs for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4378445bcf81a",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your Billing Statement is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19becd2db8bfe86d",
+            "from": "customercontact@carringtonms.com",
+            "subject": "Your year-end tax Information is now ready to view online",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T14:23:43.337Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T14:53:50.777Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c480681f507242",
+            "from": "Sequence team <no-reply@getsequence.io>",
+            "subject": "Funds have arrived to Investing!",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c480676d2ee884",
+            "from": "Robinhood <noreply@robinhood.com>",
+            "subject": "Your withdrawal from your individual account has completed",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c47fc6f488f30d",
+            "from": "Rocket Money <hello@email.rocketmoney.com>",
+            "subject": "Your premium status",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T15:53:44.705Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c48350c07b9fca",
+            "from": "AlphaSignal <news@alphasignal.ai>",
+            "subject": "Stanford researchers reveal why 5,724-liked LLM reasoning study matter",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c48410e9d48626",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment has been posted.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48212b916e077",
+            "from": "Rotem Weiss <rotem@tavily.com>",
+            "subject": "Welcome to Tavily 👋",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c481e40bb4a079",
+            "from": "Team Tailscale <trial@tailscale.com>",
+            "subject": "Securely connect containers and Kubernetes clusters | Getting started with Tails",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c482007ec63874",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Action Advised] Review Google Cloud credential security best practices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T16:53:46.828Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c48727e4c8c032",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "LIVE in 1 hour (private call)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48547a8ff8989",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "Nth Degree CPAs, PLLC’s weekly task reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48410e9d48626",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment has been posted.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48212b916e077",
+            "from": "Rotem Weiss <rotem@tavily.com>",
+            "subject": "Welcome to Tavily 👋",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4864c49226c9d",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Opus 4.6 Fast Mode small amount of errors - 10 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c4864bd40087a9",
+            "from": "Sans <support@livesans.com>",
+            "subject": "How are you loving Sans?",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c485733db9d6cd",
+            "from": "Vitruvin Anti-Aging Supplements <support@vitruvin.com>",
+            "subject": "Myth or Fact? 🤔",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c482007ec63874",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Action Advised] Review Google Cloud credential security best practices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T17:53:48.580Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c48a80f747e6db",
+            "from": "Twilio Customer Experience <customerexperience@survey.twilio",
+            "subject": "Share some quick feedback?",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c489590cbe40e2",
+            "from": "True Leaf Market <support@trueleafmarket.com>",
+            "subject": "🥔🧅Garden Missing Something? Pre-Order Onion & Potato starts before they sell o",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c487f5cd741a69",
+            "from": "Rocky Mountain Power <accountservices@info.rockymountainpowe",
+            "subject": "Stay informed during outages ⚡ Add your text number now",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c48727e4c8c032",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "LIVE in 1 hour (private call)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48547a8ff8989",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "Nth Degree CPAs, PLLC’s weekly task reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48410e9d48626",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment has been posted.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48212b916e077",
+            "from": "Rotem Weiss <rotem@tavily.com>",
+            "subject": "Welcome to Tavily 👋",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c48869b680f8a6",
+            "from": "noreply@optimizeos.ai",
+            "subject": "New Bug Report: IWP Issue",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c48822a34e7b02",
+            "from": "True Leaf Market <support@trueleafmarket.com>",
+            "subject": "🥔🧅Garden Missing Something? Pre-Order Onion & Potato starts before they sell o",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c482007ec63874",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Action Advised] Review Google Cloud credential security best practices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T18:23:47.417Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c48ba15753d58a",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "LIVE: How The Top 1% Close Deals With AI",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48b5a4c948343",
+            "from": "Composer <info@notices.composer.trade>",
+            "subject": "Monthly Statement Available",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c48727e4c8c032",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "LIVE in 1 hour (private call)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48547a8ff8989",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "Nth Degree CPAs, PLLC’s weekly task reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48410e9d48626",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment has been posted.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48212b916e077",
+            "from": "Rotem Weiss <rotem@tavily.com>",
+            "subject": "Welcome to Tavily 👋",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c48c39a02872e7",
+            "from": "Vitruvin Anti-Aging Supplements <support@vitruvin.com>",
+            "subject": "Myth or Fact? 🤔",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c482007ec63874",
+            "from": "Google Cloud <CloudPlatform-noreply@google.com>",
+            "subject": "[Action Advised] Review Google Cloud credential security best practices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T18:53:44.318Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T19:53:44.920Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c490b9a647c62a",
+            "from": "Gusto <automated@gusto.com>",
+            "subject": "3 Peaks Accounting Services, PLLC: Fri, Feb 13 payroll confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c490b728fb2452",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "Reminder: Register 3 Peaks Accounting Services, PLLC with Oregon tax agencies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c48ec3484e03dc",
+            "from": "HeyGen <no_reply@email.heygen.com>",
+            "subject": "New: Edit Styles for HeyGen Mobile",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T20:23:45.508Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c490b9a647c62a",
+            "from": "Gusto <automated@gusto.com>",
+            "subject": "3 Peaks Accounting Services, PLLC: Fri, Feb 13 payroll confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c490b728fb2452",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "Reminder: Register 3 Peaks Accounting Services, PLLC with Oregon tax agencies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4939537dfac20",
+            "from": "Chase <noreply@hlservicing.chase.com>",
+            "subject": "Your automatic mortgage payment may be delayed due to the upcoming holiday",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c49255673d48b8",
+            "from": "Good Gummies <no-reply@loox.io>",
+            "subject": "Reminder: Order #1822, how did it go?",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T20:53:44.991Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c490b9a647c62a",
+            "from": "Gusto <automated@gusto.com>",
+            "subject": "3 Peaks Accounting Services, PLLC: Fri, Feb 13 payroll confirmation",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c490b728fb2452",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "Reminder: Register 3 Peaks Accounting Services, PLLC with Oregon tax agencies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c4950bec3e4151",
+            "from": "Supabase <noreply@supabase.com>",
+            "subject": "Security vulnerabilities detected in your Supabase projects",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c493b60b1190a3",
+            "from": "Apple <no-reply@email.apple.com>",
+            "subject": "Important iTunes Wish List update.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4939537dfac20",
+            "from": "Chase <noreply@hlservicing.chase.com>",
+            "subject": "Your automatic mortgage payment may be delayed due to the upcoming holiday",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T21:53:44.616Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T22:53:52.607Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c49a58cf81b40a",
+            "from": "\"MJA Real Property Management, LLC (Do Not Reply)\" <donotrep",
+            "subject": "Your Monthly Owner Statement",
+            "classification": "PM Rent Breakdown",
+            "action": "pm-rent"
+          },
+          {
+            "id": "19c49a4158dcc4f7",
+            "from": "\"MJA Real Property Management, LLC\" <donotreply@appfolio.com",
+            "subject": "Your Owner Payments as of February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4999e2d8f083b",
+            "from": "\"MJA Real Property Management, LLC (Do Not Reply)\" <donotrep",
+            "subject": "Your Monthly Owner Statement",
+            "classification": "PM Rent Breakdown",
+            "action": "pm-rent"
+          },
+          {
+            "id": "19c49982a13bdccd",
+            "from": "\"MJA Real Property Management, LLC\" <donotreply@appfolio.com",
+            "subject": "Your Owner Payments as of February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-10T23:53:44.836Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c49c89d0e12d5f",
+            "from": "Airbnb <express@airbnb.com>",
+            "subject": "RE: Reservation for Sustainable Style in the Heart of West Seattle, Feb 10 – 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c49a4158dcc4f7",
+            "from": "\"MJA Real Property Management, LLC\" <donotreply@appfolio.com",
+            "subject": "Your Owner Payments as of February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c49982a13bdccd",
+            "from": "\"MJA Real Property Management, LLC\" <donotreply@appfolio.com",
+            "subject": "Your Owner Payments as of February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c49ea5a70faab3",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivered: \"NEURIVA Original...\" and 1 more item",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c49d0412cdcd10",
+            "from": "\"Amazon.com\" <auto-confirm@amazon.com>",
+            "subject": "Ordered: \"JLab Talk USB Microphone...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          }
+        ]
+      }
+    ]
+  }
+]

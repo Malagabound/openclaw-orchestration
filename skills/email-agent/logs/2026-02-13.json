@@ -1,0 +1,2653 @@
+[
+  {
+    "timestamp": "2026-02-13T00:23:43.267Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c54542003a30ed",
+            "from": "Google Alerts <googlealerts-noreply@google.com>",
+            "subject": "Google Alert - humanoid robot",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T00:53:43.448Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T01:53:44.667Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c547f95947fe46",
+            "from": "Noosh from Formaloo <info@formaloo.com>",
+            "subject": "🎥 Live webinar: automate your PDFs with workflows + e-signature",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c548c916811af1",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T02:23:45.994Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54b97a903cbe3",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c54b8dc49fe1b8",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T02:53:43.908Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T03:23:45.888Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c54fdfcd3fcd8f",
+            "from": "Tim <tim@dolthub.com>",
+            "subject": "Why is Dolt the database for agentic workflows?",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c54fa8e8710306",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Out for delivery: \"JLab Talk USB Microphone,...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T03:53:43.369Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T04:53:46.581Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c55281b97b2eee",
+            "from": "Aires <help@airestech.com>",
+            "subject": "EMF convos are starting with the wrong question 🫥",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5523b31090247",
+            "from": "\"Amazon.com\" <auto-confirm@amazon.com>",
+            "subject": "Ordered: \"Lamicall Cell Phone Stand...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T05:53:45.901Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c556e43b057d35",
+            "from": "\"'Salt Lake CIty Public Utilities Customer Service' via util",
+            "subject": "Bank Withdrawal Limit Exceeded for Salt Lake City Public Utilities Account 30588",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c55735011b8325",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivery attempted with your Amazon package.",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T06:23:44.965Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c55a5f4485f7ae",
+            "from": "\"'Salt Lake CIty Public Utilities Customer Service' via util",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2597168",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T06:53:46.661Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c55aed0a82287a",
+            "from": "\"'Salt Lake CIty Public Utilities Customer Service' via util",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 3058823",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c55ad21f1789ae",
+            "from": "\"'Salt Lake CIty Public Utilities Customer Service' via util",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c55acb8f40337d",
+            "from": "\"'Salt Lake CIty Public Utilities Customer Service' via util",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2982125",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T07:23:44.465Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T07:53:51.171Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T08:23:47.327Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c560336ef185ca",
+            "from": "Discord <noreply@discord.com>",
+            "subject": "You missed messages in Builder Methods",
+            "classification": "Discord Notification",
+            "action": "archive"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5611fdc0feed9",
+            "from": "iTunes Store <do_not_reply@email.apple.com>",
+            "subject": "New episode available for download - Ancient Aliens, Season 22",
+            "classification": "Apple Media Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T08:53:44.604Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T09:53:46.807Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c564ad62a593da",
+            "from": "Sequence team <no-reply@getsequence.io>",
+            "subject": "Your rule just ran",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c564713ec724ef",
+            "from": "Sequence team <no-reply@getsequence.io>",
+            "subject": "Your rule just ran",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c5646dd642b393",
+            "from": "Sequence team <no-reply@getsequence.io>",
+            "subject": "Funds have arrived to Nth Degree W-2!",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T10:53:46.358Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T11:53:46.077Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c56cad4ba26e27",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Shipped: \"Lamicall Cell Phone Stand...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c56b396bc820e1",
+            "from": "\"Spot & Tango\" <info@spotandtango.com>",
+            "subject": "Confirming your next shipment of real food from Spot & Tango!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T12:23:45.072Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c56e0f1ff6bcf7",
+            "from": "TLDR <dan@tldrnewsletter.com>",
+            "subject": "Anthropic's growth 📈, Waymo's new taxi 🚕, OpenAI's ultra-fast Codex 🤖",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c56b396bc820e1",
+            "from": "\"Spot & Tango\" <info@spotandtango.com>",
+            "subject": "Confirming your next shipment of real food from Spot & Tango!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T12:53:45.806Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5709bc4325971",
+            "from": "Nav <memberinfo@hello.nav.com>",
+            "subject": "We’ve updated our Privacy Policies and Terms of Use",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c56b396bc820e1",
+            "from": "\"Spot & Tango\" <info@spotandtango.com>",
+            "subject": "Confirming your next shipment of real food from Spot & Tango!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T13:53:46.069Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5709bc4325971",
+            "from": "Nav <memberinfo@hello.nav.com>",
+            "subject": "We’ve updated our Privacy Policies and Terms of Use",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c56b396bc820e1",
+            "from": "\"Spot & Tango\" <info@spotandtango.com>",
+            "subject": "Confirming your next shipment of real food from Spot & Tango!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c55ad1d8d8eb22",
+            "from": "Salt Lake CIty Public Utilities Customer Service <slc.public",
+            "subject": "Salt Lake City Public Utilities Bill Statement for Account 2993609",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c556a5f4af4628",
+            "from": "Your Marmalade District neighbors <no-reply@rs.email.nextdoo",
+            "subject": "Top post: Major scam going on now.   Sheriffs office calling saying you are...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c54cf30701dede",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Yemane on February 12",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c547921667113b",
+            "from": "SD Bullion <sales@admin.sdbullion.com>",
+            "subject": "Order Confirmation SD Bullion Order #22586794",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T14:23:44.741Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c575c7afc2f5b2",
+            "from": "Girl Scouts of Central Indiana <girlscoutsindiana@email.girl",
+            "subject": "Free shipping for Girl Scout Cookie orders!",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c575aeaf6e8d14",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T14:53:45.848Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c576b5886d5fad",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5763eb254047a",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T15:53:45.459Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c57a1c14c58fb7",
+            "from": "kw Utah <kwrg33@kw.com>",
+            "subject": "The RE Systems Lab: AI Content Engine - Virtual",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c57b013368fbdb",
+            "from": "True Leaf Market <support@trueleafmarket.com>",
+            "subject": "🌿🔪PRICES SLASHED-Friday the 13th Microgreens Sale — 10% Off",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c579376467c80d",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T16:53:49.539Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57c006db2a4e0",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Autonomous Agent Framework - 4-Part Overnight Operati",
+            "classification": "Google Drive Share",
+            "action": "archive"
+          },
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c57d6f43832204",
+            "from": "noreply@optimizeos.ai",
+            "subject": "Tax Return Ready for Review: ## CHANGED DRIVE FOLDER - 1120 2025",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c57cbe34200c47",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "🎉 Hey Alan, you’re getting paid today (02/13/2026)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57c2bccdf21c5",
+            "from": "noreply-apps-scripts-notifications@google.com",
+            "subject": "Summary of failures for Google Apps Script: Watching for a change to trigger web",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c57ebfb82f1f4d",
+            "from": "Bianca Denora <denora8@playesignmedia.com>",
+            "subject": "OREU signature",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57de7e6f62dd0",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Out for delivery: \"JLab Talk USB Microphone,...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c57d7d4c738315",
+            "from": "\"Primary Healthcare, Pllc Murray\" <no-reply@eclinicalmail.co",
+            "subject": "Alert: We Miss You!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57d257e3a89ad",
+            "from": "Maya Rosenfeld <maya-rosenfeld@nassaudenver.info>",
+            "subject": "What’s next for Origin Real Estate Utah",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57c0075fc4bcb",
+            "from": "Mountain America Credit Union <noreply@alert.macu.com>",
+            "subject": "Transaction Alert from Mountain America Credit Union",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57be34494825e",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c57baefe189e82",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c57ba2bbcf94f6",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T17:53:49.212Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c580457ed59454",
+            "from": "AlphaSignal <news@alphasignal.ai>",
+            "subject": "🧠 Google's Deep Think hits 84.6% on ARC-AGI-2, beats Claude by 1,103",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c5810749e39cbb",
+            "from": "Airbnb <express@airbnb.com>",
+            "subject": "RE: Reservation for Sustainable Style in the Heart of West Seattle, Feb 10 – 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5809f2ecd18c8",
+            "from": "noreply@optimizeos.ai",
+            "subject": "Tax Return Ready for Review: Space Ranger - TEST - 1040 2023",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c57cbe34200c47",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "🎉 Hey Alan, you’re getting paid today (02/13/2026)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57c2bccdf21c5",
+            "from": "noreply-apps-scripts-notifications@google.com",
+            "subject": "Summary of failures for Google Apps Script: Watching for a change to trigger web",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c58069ded7f110",
+            "from": "Bonobos <Bonobos@bonobos.com>",
+            "subject": "Don’t leave a good thing behind",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c57ec92f3e1354",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "🚨 Ralph Needs Help: 2026-02-12-financial-account-wizard",
+            "classification": "Optimize OS Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c57ebfb82f1f4d",
+            "from": "Bianca Denora <denora8@playesignmedia.com>",
+            "subject": "OREU signature",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57d7d4c738315",
+            "from": "\"Primary Healthcare, Pllc Murray\" <no-reply@eclinicalmail.co",
+            "subject": "Alert: We Miss You!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57d257e3a89ad",
+            "from": "Maya Rosenfeld <maya-rosenfeld@nassaudenver.info>",
+            "subject": "What’s next for Origin Real Estate Utah",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57c0075fc4bcb",
+            "from": "Mountain America Credit Union <noreply@alert.macu.com>",
+            "subject": "Transaction Alert from Mountain America Credit Union",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T18:23:46.127Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c582a9aeaec753",
+            "from": "\"'Rocky Mountain Power' via utilities@originutah.com\" <utili",
+            "subject": "Simple seasonal tips to keep your home cozy",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c5810749e39cbb",
+            "from": "Airbnb <express@airbnb.com>",
+            "subject": "RE: Reservation for Sustainable Style in the Heart of West Seattle, Feb 10 – 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57cbe34200c47",
+            "from": "Gusto <gustonoreply@gusto.com>",
+            "subject": "🎉 Hey Alan, you’re getting paid today (02/13/2026)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57c2bccdf21c5",
+            "from": "noreply-apps-scripts-notifications@google.com",
+            "subject": "Summary of failures for Google Apps Script: Watching for a change to trigger web",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c57ebfb82f1f4d",
+            "from": "Bianca Denora <denora8@playesignmedia.com>",
+            "subject": "OREU signature",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57d7d4c738315",
+            "from": "\"Primary Healthcare, Pllc Murray\" <no-reply@eclinicalmail.co",
+            "subject": "Alert: We Miss You!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57d257e3a89ad",
+            "from": "Maya Rosenfeld <maya-rosenfeld@nassaudenver.info>",
+            "subject": "What’s next for Origin Real Estate Utah",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c57c0075fc4bcb",
+            "from": "Mountain America Credit Union <noreply@alert.macu.com>",
+            "subject": "Transaction Alert from Mountain America Credit Union",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T18:53:43.888Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T19:23:45.072Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c58746d1fb1d17",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivered: \"Lamicall Cell Phone Stand...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c585ce74e0ef68",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivered: \"JLab Talk USB Microphone,...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T19:53:46.460Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c587cd9d789442",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Do the strategies have the level categorization we use in Roadmap in the strateg",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c587b7557ba74c",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Strategy deduction amount and override",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587952b92edb8",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Add this field to strategies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c588e29e393ec2",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T20:23:44.841Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c58a36a300324e",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Updates to Klarna and WebBank Privacy Notices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587cd9d789442",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Do the strategies have the level categorization we use in Roadmap in the strateg",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c587b7557ba74c",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Strategy deduction amount and override",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587952b92edb8",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Add this field to strategies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c58a93bbe5aeb3",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim jugor on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c588e29e393ec2",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T20:53:47.356Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c58ad13437c93b",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Your orders and payments summary for January",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a36a300324e",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Updates to Klarna and WebBank Privacy Notices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587cd9d789442",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Do the strategies have the level categorization we use in Roadmap in the strateg",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c587b7557ba74c",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Strategy deduction amount and override",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587952b92edb8",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Add this field to strategies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c58bf9b1a1f01d",
+            "from": "Rocket Money <hello@email.rocketmoney.com>",
+            "subject": "Valentine’s Day spending & Olympic dreams",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c58a93bbe5aeb3",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim jugor on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c588e29e393ec2",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T21:53:48.767Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c58ad13437c93b",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Your orders and payments summary for January",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a36a300324e",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Updates to Klarna and WebBank Privacy Notices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587cd9d789442",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Do the strategies have the level categorization we use in Roadmap in the strateg",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c587b7557ba74c",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Strategy deduction amount and override",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587952b92edb8",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Add this field to strategies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c58e9a90c12e82",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Opus 4.6 Fast Mode - 13 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c58c9d5ead2ba3",
+            "from": "Mountain America Credit Union <noreply@alert.macu.com>",
+            "subject": "Transaction Alert from Mountain America Credit Union",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a93bbe5aeb3",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim jugor on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c588e29e393ec2",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T22:23:47.162Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c590f643e91a1e",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Write a review for Malcolm",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58ad13437c93b",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Your orders and payments summary for January",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a36a300324e",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Updates to Klarna and WebBank Privacy Notices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587cd9d789442",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Do the strategies have the level categorization we use in Roadmap in the strateg",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c587b7557ba74c",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Strategy deduction amount and override",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587952b92edb8",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Add this field to strategies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c58c9d5ead2ba3",
+            "from": "Mountain America Credit Union <noreply@alert.macu.com>",
+            "subject": "Transaction Alert from Mountain America Credit Union",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a93bbe5aeb3",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim jugor on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c588e29e393ec2",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T22:53:46.352Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c591a98c365e50",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Open claw uses",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c590f643e91a1e",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Write a review for Malcolm",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58ad13437c93b",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Your orders and payments summary for January",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a36a300324e",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Updates to Klarna and WebBank Privacy Notices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587cd9d789442",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Do the strategies have the level categorization we use in Roadmap in the strateg",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c587b7557ba74c",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Strategy deduction amount and override",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587952b92edb8",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Add this field to strategies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c58c9d5ead2ba3",
+            "from": "Mountain America Credit Union <noreply@alert.macu.com>",
+            "subject": "Transaction Alert from Mountain America Credit Union",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a93bbe5aeb3",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim jugor on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c588e29e393ec2",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-13T23:53:47.114Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c591a98c365e50",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Open claw uses",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c590f643e91a1e",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Write a review for Malcolm",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58ad13437c93b",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Your orders and payments summary for January",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a36a300324e",
+            "from": "Klarna <noreply-us@klarna.com>",
+            "subject": "Updates to Klarna and WebBank Privacy Notices",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587cd9d789442",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Do the strategies have the level categorization we use in Roadmap in the strateg",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c587b7557ba74c",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Strategy deduction amount and override",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c587952b92edb8",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Add this field to strategies",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c595d7e5b3b4a1",
+            "from": "Nav <memberinfo@hello.nav.com>",
+            "subject": "We’ve updated our Privacy Policies and Terms of Use",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59476ac584897",
+            "from": "Your Marmalade District neighbors <no-reply@is.email.nextdoo",
+            "subject": "Top post: This happened 2/3/26  The video from inside my job has no...",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c593b9a8e2bccf",
+            "from": "\"Carrington Mortgage Services, LLC\" <customercontact@carring",
+            "subject": "Presidents Day Holiday Closure",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c58c9d5ead2ba3",
+            "from": "Mountain America Credit Union <noreply@alert.macu.com>",
+            "subject": "Transaction Alert from Mountain America Credit Union",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c58a93bbe5aeb3",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim jugor on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c588e29e393ec2",
+            "from": "Lyft Receipts <no-reply@lyftmail.com>",
+            "subject": "Your ride with Ibrahim on February 13",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  }
+]

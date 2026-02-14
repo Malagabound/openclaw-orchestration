@@ -1,0 +1,4187 @@
+[
+  {
+    "timestamp": "2026-02-08T01:22:10.012Z",
+    "dryRun": true,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c3a3246a910a68",
+            "from": "Intuit Developer <do_not_reply@intuit.com>",
+            "subject": "Someone created a new app for Sample Workspace",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a2ed32721a70",
+            "from": "Intuit <do_not_reply@intuit.com>",
+            "subject": "Your Intuit Account",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a2e97c2533c4",
+            "from": "Intuit <do_not_reply@intuit.com>",
+            "subject": "Your Intuit Account",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c39b1d58f3a586",
+            "from": "Mashvisor <support@mashvisor.com>",
+            "subject": "Request #36748: How would you rate the support you received?",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c3601c73fb591f",
+            "from": "Proven SaaS <jack@proven-saas.com>",
+            "subject": "Stop looking for ideas.",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c35f3b1bb6d0db",
+            "from": "Proven SaaS <notifications@proven-saas.com>",
+            "subject": "201577 is your verification code",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c35acde4c1291e",
+            "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+            "subject": "Delivery Status Notification (Delay)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34fd56f07ba35",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Optimize OS - Claude Code Improvements - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34320fab28089",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Claude Code Learnings - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a90f4e70cc77",
+            "from": "Google Alerts <googlealerts-noreply@google.com>",
+            "subject": "Google Alert - humanoid robot",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c39b2bf61e36c5",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Why AI beats your “Human” sales process (brutal)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c39230e89897d6",
+            "from": "GetYourGuide <hello@mkt.getyourguide.com>",
+            "subject": "👩‍❤️‍👨 Not just flowers: trips worth taking together",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c390f25cea84d5",
+            "from": "MyFitnessPal <hello@e.blog.myfitnesspal.com>",
+            "subject": "Game Day eats ✅",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c378bc15947cf9",
+            "from": "Brian Casel <brian@buildermethods.com>",
+            "subject": "The final 10%",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c369f587398006",
+            "from": "Google Business Profile <businessprofile-noreply@google.com>",
+            "subject": "Origin Real Estate, your performance report for January 2026",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c36976e92adb3c",
+            "from": "Google Business Profile <businessprofile-noreply@google.com>",
+            "subject": "Agent Autopilot AI, your performance report for January 2026",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3aa02246b966f",
+            "from": "HP Instant Ink <donotreply@instantink.hpsmart.com>",
+            "subject": "⏰Action Needed: Printer Connection Lost",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a88f390b6d06",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Shipped: \"SPEEDWOX 20 Pieces Glass...\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a5e6afe67a5c",
+            "from": "Intuit <do_not_reply@intuit.com>",
+            "subject": "A passkey was deleted from your Intuit Account",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a578752e7fa8",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivered: \"Mr. Pen- Carpenter Square,...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c39bc433306ac7",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Shipped: \"Mr. Pen- Carpenter Square,...\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396d123c825e4",
+            "from": "\"Amazon.com\" <auto-confirm@amazon.com>",
+            "subject": "Ordered: \"SPEEDWOX 20 Pieces Glass...\" and 2 more items",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c394493a223748",
+            "from": "\"Amazon.com\" <auto-confirm@amazon.com>",
+            "subject": "Ordered: \"Guardmax Jersey Knitted...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c38f439130a005",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38df20d899a17",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T01:54:06.625Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c3a3246a910a68",
+            "from": "Intuit Developer <do_not_reply@intuit.com>",
+            "subject": "Someone created a new app for Sample Workspace",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a2ed32721a70",
+            "from": "Intuit <do_not_reply@intuit.com>",
+            "subject": "Your Intuit Account",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a2e97c2533c4",
+            "from": "Intuit <do_not_reply@intuit.com>",
+            "subject": "Your Intuit Account",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c39b1d58f3a586",
+            "from": "Mashvisor <support@mashvisor.com>",
+            "subject": "Request #36748: How would you rate the support you received?",
+            "classification": "Survey/Rating Request",
+            "action": "archive"
+          },
+          {
+            "id": "19c3601c73fb591f",
+            "from": "Proven SaaS <jack@proven-saas.com>",
+            "subject": "Stop looking for ideas.",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c35f3b1bb6d0db",
+            "from": "Proven SaaS <notifications@proven-saas.com>",
+            "subject": "201577 is your verification code",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c35acde4c1291e",
+            "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+            "subject": "Delivery Status Notification (Delay)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34fd56f07ba35",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Optimize OS - Claude Code Improvements - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34320fab28089",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Claude Code Learnings - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3429990a1ab88",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c341811282966f",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34180ca436ffc",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c340574051c483",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3404a65467238",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Gumroad RE Investor Products Research - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3404a1b799e77",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Realie.ai API Pricing Analysis - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34049b75847c5",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Deep Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34049475686df",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c340457ddd5f73",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report v2\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34036c94bec63",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c340354f688f4e",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Deep Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c33873f11c0b0d",
+            "from": "Alan Walker <alan@roccoriley.com>",
+            "subject": "Fwd: Ooos your savings has leaked, Alan Walker 😰",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c338714278ac1e",
+            "from": "Alan Walker <alan@roccoriley.com>",
+            "subject": "Fwd: Save time and money with Spend Management",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c303f6f40bf9fb",
+            "from": "\"Josh @ Realie\" <josh@realie.ai>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3031f7699162e",
+            "from": "Mashvisor <support@mashvisor.com>",
+            "subject": "[Request Created] API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c295081f461c07",
+            "from": "noreply@email.theautopilotai.com",
+            "subject": "Login security code",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c294c0eaea473b",
+            "from": "noreply@email.theautopilotai.com",
+            "subject": "Activate Your Account | Autopilot AI",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c252d47e3532a6",
+            "from": "\"Alan Walker (via Google Sheets)\" <drive-shares-dm-noreply@g",
+            "subject": "Spreadsheet shared with you: \"2026 Cash Flow\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c2112617b39be9",
+            "from": "The Google Workspace Team <workspace-noreply@google.com>",
+            "subject": "Welcome to Google Workspace",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c1ca82714e184e",
+            "from": "\"'Google Payments' via Properties\" <properties@roccoriley.co",
+            "subject": "Google Workspace: Your invoice is available for roccoriley.com",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c1be80453df0e3",
+            "from": "Gmail Team <mail-noreply@google.com>",
+            "subject": "Tips for using your new inbox",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c1be8044c97169",
+            "from": "Gmail Team <mail-noreply@google.com>",
+            "subject": "Get the official Gmail app",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a90f4e70cc77",
+            "from": "Google Alerts <googlealerts-noreply@google.com>",
+            "subject": "Google Alert - humanoid robot",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c39b2bf61e36c5",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Why AI beats your “Human” sales process (brutal)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c39230e89897d6",
+            "from": "GetYourGuide <hello@mkt.getyourguide.com>",
+            "subject": "👩‍❤️‍👨 Not just flowers: trips worth taking together",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c390f25cea84d5",
+            "from": "MyFitnessPal <hello@e.blog.myfitnesspal.com>",
+            "subject": "Game Day eats ✅",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c378bc15947cf9",
+            "from": "Brian Casel <brian@buildermethods.com>",
+            "subject": "The final 10%",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c369f587398006",
+            "from": "Google Business Profile <businessprofile-noreply@google.com>",
+            "subject": "Origin Real Estate, your performance report for January 2026",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c36976e92adb3c",
+            "from": "Google Business Profile <businessprofile-noreply@google.com>",
+            "subject": "Agent Autopilot AI, your performance report for January 2026",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c36571a8e5ba8d",
+            "from": "Discord <noreply@discord.com>",
+            "subject": "You missed messages in Builder Methods",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fc5cc3922",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c358117b027e30",
+            "from": "noreply@optimizeos.ai",
+            "subject": "Tax Return Review Closed - ## Changed Alan Testing",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3580c9765b1f3",
+            "from": "noreply@optimizeos.ai",
+            "subject": "Items Require Revision - ## Changed Alan Testing - Tax Return",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356adfdd54452",
+            "from": "Google Alerts <googlealerts-noreply@google.com>",
+            "subject": "Google Alert - humanoid robot",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3567c3a37c117",
+            "from": "Apify <hello@apify.com>",
+            "subject": "Integrate Actors into your workflows",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3aa02246b966f",
+            "from": "HP Instant Ink <donotreply@instantink.hpsmart.com>",
+            "subject": "⏰Action Needed: Printer Connection Lost",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a88f390b6d06",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Shipped: \"SPEEDWOX 20 Pieces Glass...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c3a5e6afe67a5c",
+            "from": "Intuit <do_not_reply@intuit.com>",
+            "subject": "A passkey was deleted from your Intuit Account",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3a578752e7fa8",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivered: \"Mr. Pen- Carpenter Square,...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c39bc433306ac7",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Shipped: \"Mr. Pen- Carpenter Square,...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c396d123c825e4",
+            "from": "\"Amazon.com\" <auto-confirm@amazon.com>",
+            "subject": "Ordered: \"SPEEDWOX 20 Pieces Glass...\" and 2 more items",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c394493a223748",
+            "from": "\"Amazon.com\" <auto-confirm@amazon.com>",
+            "subject": "Ordered: \"Guardmax Jersey Knitted...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c38f439130a005",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38df20d899a17",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38d6d5d095e70",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38af06b1f0e53",
+            "from": "The City Library <newsletter@slcpl.org>",
+            "subject": "Discover Ramadan at the Day-Riverside Lecture Series",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3859702bfacab",
+            "from": "Delta Air Lines <DeltaAirLines@o.delta.com>",
+            "subject": "What You Can Look Forward To On Your Flight",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c372e70645f6ba",
+            "from": "iTunes Store <do_not_reply@email.apple.com>",
+            "subject": "New episode available for download - Rupaul's Drag Race, Season 18",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3681868883a1c",
+            "from": "Amazon Alexa <store-news@amazon.com>",
+            "subject": "Watch Alexa+ and Chris Hemsworth at the Big Game",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c360b067cf2af1",
+            "from": "Uniexpress Admin <noreply@uniuni.com>",
+            "subject": "Your package has been successfully delivered",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3608015b52fb8",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@roccoriley.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36080028a923d",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fd7565c57",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@originutah.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c35a610b02b254",
+            "from": "Robinhood <noreply@robinhood.com>",
+            "subject": "Your crypto monthly statement is available",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c35a39feb308fd",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "✅ Ralph Complete: 2026-02-06-tax-returns-review-note-wrapper",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3562bfdcbff00",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivered: 2 \"USB C to HDMI Adapter for...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c354b1cdc64369",
+            "from": "Ally Bank <email@alert.ally.com>",
+            "subject": "Your latest statement is ready to view.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T02:23:50.750Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c35f3b1bb6d0db",
+            "from": "Proven SaaS <notifications@proven-saas.com>",
+            "subject": "201577 is your verification code",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c35acde4c1291e",
+            "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+            "subject": "Delivery Status Notification (Delay)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34fd56f07ba35",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Optimize OS - Claude Code Improvements - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34320fab28089",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Claude Code Learnings - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3429990a1ab88",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c341811282966f",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34180ca436ffc",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c340574051c483",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3404a65467238",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Gumroad RE Investor Products Research - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3404a1b799e77",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"Realie.ai API Pricing Analysis - 2026-02-06\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34049b75847c5",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Deep Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34049475686df",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c340457ddd5f73",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report v2\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c34036c94bec63",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 1 Discovery Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c340354f688f4e",
+            "from": "\"Alan Walker (via Google Docs)\" <drive-shares-dm-noreply@goo",
+            "subject": "Document shared with you: \"[TEMPLATE] Phase 2 Deep Validation Report\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c33873f11c0b0d",
+            "from": "Alan Walker <alan@roccoriley.com>",
+            "subject": "Fwd: Ooos your savings has leaked, Alan Walker 😰",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c303f6f40bf9fb",
+            "from": "\"Josh @ Realie\" <josh@realie.ai>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3031f7699162e",
+            "from": "Mashvisor <support@mashvisor.com>",
+            "subject": "[Request Created] API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c295081f461c07",
+            "from": "noreply@email.theautopilotai.com",
+            "subject": "Login security code",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c294c0eaea473b",
+            "from": "noreply@email.theautopilotai.com",
+            "subject": "Activate Your Account | Autopilot AI",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c252d47e3532a6",
+            "from": "\"Alan Walker (via Google Sheets)\" <drive-shares-dm-noreply@g",
+            "subject": "Spreadsheet shared with you: \"2026 Cash Flow\"",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c2112617b39be9",
+            "from": "The Google Workspace Team <workspace-noreply@google.com>",
+            "subject": "Welcome to Google Workspace",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c1be80453df0e3",
+            "from": "Gmail Team <mail-noreply@google.com>",
+            "subject": "Tips for using your new inbox",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c1be8044c97169",
+            "from": "Gmail Team <mail-noreply@google.com>",
+            "subject": "Get the official Gmail app",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c39b2bf61e36c5",
+            "from": "Steve Trang <steve@disruptors.com>",
+            "subject": "Why AI beats your “Human” sales process (brutal)",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36571a8e5ba8d",
+            "from": "Discord <noreply@discord.com>",
+            "subject": "You missed messages in Builder Methods",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fc5cc3922",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c358117b027e30",
+            "from": "noreply@optimizeos.ai",
+            "subject": "Tax Return Review Closed - ## Changed Alan Testing",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3580c9765b1f3",
+            "from": "noreply@optimizeos.ai",
+            "subject": "Items Require Revision - ## Changed Alan Testing - Tax Return",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3aa02246b966f",
+            "from": "HP Instant Ink <donotreply@instantink.hpsmart.com>",
+            "subject": "⏰Action Needed: Printer Connection Lost",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38f439130a005",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38df20d899a17",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38d6d5d095e70",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 7 February 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38af06b1f0e53",
+            "from": "The City Library <newsletter@slcpl.org>",
+            "subject": "Discover Ramadan at the Day-Riverside Lecture Series",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3859702bfacab",
+            "from": "Delta Air Lines <DeltaAirLines@o.delta.com>",
+            "subject": "What You Can Look Forward To On Your Flight",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c372e70645f6ba",
+            "from": "iTunes Store <do_not_reply@email.apple.com>",
+            "subject": "New episode available for download - Rupaul's Drag Race, Season 18",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c360b067cf2af1",
+            "from": "Uniexpress Admin <noreply@uniuni.com>",
+            "subject": "Your package has been successfully delivered",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3608015b52fb8",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@roccoriley.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36080028a923d",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fd7565c57",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@originutah.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c35a610b02b254",
+            "from": "Robinhood <noreply@robinhood.com>",
+            "subject": "Your crypto monthly statement is available",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c35a39feb308fd",
+            "from": "Optimizer OS <noreply@optimizeos.ai>",
+            "subject": "✅ Ralph Complete: 2026-02-06-tax-returns-review-note-wrapper",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c354b1cdc64369",
+            "from": "Ally Bank <email@alert.ally.com>",
+            "subject": "Your latest statement is ready to view.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T02:53:45.467Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c3b284527298d2",
+            "from": "Proven SaaS <jack@proven-saas.com>",
+            "subject": "Why $5k/day ad spend = truth",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c303f6f40bf9fb",
+            "from": "\"Josh @ Realie\" <josh@realie.ai>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3031f7699162e",
+            "from": "Mashvisor <support@mashvisor.com>",
+            "subject": "[Request Created] API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c252d47e3532a6",
+            "from": "\"Alan Walker (via Google Sheets)\" <drive-shares-dm-noreply@g",
+            "subject": "Spreadsheet shared with you: \"2026 Cash Flow\"",
+            "classification": "Google Drive Share",
+            "action": "archive"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fc5cc3922",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3608015b52fb8",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@roccoriley.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36080028a923d",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fd7565c57",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@originutah.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T03:23:45.421Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c3b3432427b20f",
+            "from": "Mail Delivery Subsystem <mailer-daemon@googlemail.com>",
+            "subject": "Delivery Status Notification (Delay)",
+            "classification": "Mail Delivery Failure",
+            "action": "archive"
+          },
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c303f6f40bf9fb",
+            "from": "\"Josh @ Realie\" <josh@realie.ai>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3031f7699162e",
+            "from": "Mashvisor <support@mashvisor.com>",
+            "subject": "[Request Created] API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fc5cc3922",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3608015b52fb8",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@roccoriley.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36080028a923d",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fd7565c57",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@originutah.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T03:53:43.718Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c303f6f40bf9fb",
+            "from": "\"Josh @ Realie\" <josh@realie.ai>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3031f7699162e",
+            "from": "Mashvisor <support@mashvisor.com>",
+            "subject": "[Request Created] API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fc5cc3922",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3608015b52fb8",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@roccoriley.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36080028a923d",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3605fd7565c57",
+            "from": "Google <no-reply@accounts.google.com>",
+            "subject": "Security alert for alan@originutah.com",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T04:23:44.605Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3b718d77d056c",
+            "from": "Rocket Money <hello@email.rocketmoney.com>",
+            "subject": "⚠️ Large transaction detected",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3b6cde69f1b19",
+            "from": "Rocket Money <hello@email.rocketmoney.com>",
+            "subject": "🗓️ This week's upcoming bills",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T04:53:42.570Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T05:23:42.659Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T05:53:44.344Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3bcf244e93aea",
+            "from": "Discord <noreply@discord.com>",
+            "subject": "You missed messages in Builder Methods",
+            "classification": "Discord Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T06:23:43.913Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T06:53:42.694Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T07:23:43.849Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T07:53:43.301Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T08:23:43.491Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T08:53:43.724Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T09:23:44.247Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T09:53:43.905Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T10:23:44.532Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T10:53:43.517Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T11:23:44.880Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c34613f6eba72d",
+            "from": "\"Mashvisor Support (Mashvisor)\" <support@mashvisor.com>",
+            "subject": "API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3252c4702a9cb",
+            "from": "ali attar <ali@realtyna.com>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c30415e4d7960a",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T11:53:43.047Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T12:23:44.424Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T12:53:43.607Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T13:23:44.242Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3d5198710eeb4",
+            "from": "\"Amazon.com\" <order-update@amazon.com>",
+            "subject": "Delivered: \"SPEEDWOX 20 Pieces Glass...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T13:53:43.797Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3d8117995dcaa",
+            "from": "\"Amazon.com\" <shipment-tracking@amazon.com>",
+            "subject": "Shipped: \"NEIKO 02889A Dead Blow...\"",
+            "classification": "Amazon Confirmation",
+            "action": "archive"
+          },
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T14:23:44.941Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3d9b4250dceac",
+            "from": "\"Jennifer Stevens, Executive Editor, IL\" <webeditor@mp.inter",
+            "subject": "Storm cloud? Umbrella...",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T14:53:43.653Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T15:23:44.705Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3dc37c3d50110",
+            "from": "Shakti Mats <contact@shaktimat.com>",
+            "subject": "Break up with stress—for less",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T15:53:43.319Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T16:23:44.026Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3e02b53bb8366",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $199.00 from Dan@nthdegreecpas.com for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T16:53:45.280Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3cfa9685141c4",
+            "from": "WordPress <wordpress@liveyoureuropeandream.com>",
+            "subject": "[liveyoureuropeandream.com] Please moderate: \"Your Ultimate Guide to Moving to E",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3c73cea248e7a",
+            "from": "Left Main Academy <noreply@notify.thinkific.com>",
+            "subject": "[Left Main Academy] Weekly Progress Reminder",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c36ef96aca5273",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Transaction declined because spend limit was reached",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c356648923dfa4",
+            "from": "Mercury <hello@mercury.com>",
+            "subject": "Your card has been charged $500.00 by HighLevel",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3e13290ee84c5",
+            "from": "PayPal <service@paypal.com>",
+            "subject": "HP Instant Ink: $1.94 USD",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3e02b53bb8366",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $199.00 from Dan@nthdegreecpas.com for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3bbc3d4dbc499",
+            "from": "Zapier Information <info@mail.zapier.com>",
+            "subject": "Your Weekly Task Summary for Feb 8, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38b974cbfd599",
+            "from": "noreply@optimizeos.ai",
+            "subject": "low Alert: 07 Errors Detected",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T17:23:45.374Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3e345af2f680a",
+            "from": "LinkedIn <invitations@linkedin.com>",
+            "subject": "Danish Khan invited you to follow Danish Jewellers®",
+            "classification": "Social Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3e3a11d0e3f3a",
+            "from": "Good Gummies <ryanwhite.rjw@gmail.com>",
+            "subject": "Confirm Your Subscription",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c3e02b53bb8366",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $199.00 from Dan@nthdegreecpas.com for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T17:53:47.334Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3e5805954ca2f",
+            "from": "Nav <support@nav.com>",
+            "subject": "You have a new high credit amount",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3e58017a64116",
+            "from": "Nav <support@nav.com>",
+            "subject": "You have a new high credit amount",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3e02b53bb8366",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $199.00 from Dan@nthdegreecpas.com for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T18:23:44.475Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3e5805954ca2f",
+            "from": "Nav <support@nav.com>",
+            "subject": "You have a new high credit amount",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3e58017a64116",
+            "from": "Nav <support@nav.com>",
+            "subject": "You have a new high credit amount",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3e02b53bb8366",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $199.00 from Dan@nthdegreecpas.com for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-08T18:53:43.995Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c3a693d47e3330",
+            "from": "Airbnb <automated@airbnb.com>",
+            "subject": "Reservation reminder - February 10, 2026",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c38c56bfed03ad",
+            "from": "Rocket Mortgage Servicing <RocketMortgage@tc.rocketmortgage.",
+            "subject": "Your payment is scheduled to be drafted on 02/10/2026.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c3e5805954ca2f",
+            "from": "Nav <support@nav.com>",
+            "subject": "You have a new high credit amount",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3e58017a64116",
+            "from": "Nav <support@nav.com>",
+            "subject": "You have a new high credit amount",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c3e02b53bb8366",
+            "from": "Stripe <notifications@stripe.com>",
+            "subject": "Payment of $199.00 from Dan@nthdegreecpas.com for Business Bots LLC",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c396ba57b1dbd4",
+            "from": "Delta Air Lines <DeltaAirLines@t.delta.com>",
+            "subject": "Your SLC > SEA Trip Details",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  }
+]

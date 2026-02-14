@@ -1,0 +1,1655 @@
+{
+  "version": 1,
+  "last_scan": "2026-02-12T12:47:00Z",
+  "ideas": [
+    {
+      "id": "reddit_1quu4y6",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "After testing 40 AI mobile app builders, I migrated 100% of my projects to this best pure native code builder",
+      "url": "https://reddit.com/r/SaaS/comments/1quu4y6/after_testing_40_ai_mobile_app_builders_i/",
+      "discovered_at": "2026-02-03T18:35:00Z",
+      "score": 59,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 9,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI-powered mobile app builder that generates actual native code (Swift/Kotlin) instead of responsive web wrappers. Target backend developers who need real mobile apps.",
+      "key_quote": "Building a website with AI is basically solved. Building a real mobile app? still feels like the wild west.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qusjy8",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "Went through 5 projects but I've been doing outbound completely wrong",
+      "url": "https://reddit.com/r/SaaS/comments/1qusjy8/went_through_5_projects_but_ive_been_doing/",
+      "discovered_at": "2026-02-03T18:35:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Reddit intent monitoring tool for indie founders - automated alerts when target keywords appear in relevant subreddits.",
+      "key_quote": "Finding those conversations manually is insanely painful... I started searching for phrases like 'looking for a tool that...'",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qutuyv",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "I spent weeks digging through Reddit threads to find customers",
+      "url": "https://reddit.com/r/SaaS/comments/1qutuyv/i_spent_weeks_digging_through_reddit_threads_to/",
+      "discovered_at": "2026-02-03T18:35:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Reddit customer discovery automation - keyword monitoring across subreddits with buying intent detection.",
+      "key_quote": "A lot of people come to reddit when they're already trying to solve a problem... that's basically raw buying intent.",
+      "reported": false
+    },
+    {
+      "id": "hn_46864047",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: What weird or scrappy things did you do to get your first users?",
+      "url": "https://news.ycombinator.com/item?id=46864047",
+      "discovered_at": "2026-02-03T18:35:00Z",
+      "score": 58,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 8,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI email scheduling delegation platform - automate calendar coordination via natural language.",
+      "key_quote": "I'm building Persona, a platform to delegate email scheduling to AI. Lately, I've been working hard to get those first users on board.",
+      "reported": false
+    },
+    {
+      "id": "hn_46866141",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Why dead code detection in Python is harder than most tools admit",
+      "url": "https://news.ycombinator.com/item?id=46866141",
+      "discovered_at": "2026-02-03T18:35:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Smart Python dead code detector combining static analysis with runtime coverage data for accurate identification.",
+      "key_quote": "Most tools pick one of two bad tradeoffs: be conservative and miss genuinely dead code, or be aggressive and flag false positives.",
+      "reported": false
+    },
+    {
+      "id": "hn_46870937",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: How do you manage long running AI conversations?",
+      "url": "https://news.ycombinator.com/item?id=46870937",
+      "discovered_at": "2026-02-03T18:35:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI conversation management system with branching, tagging, and context persistence across sessions.",
+      "key_quote": "Losing track of where a useful insight came from... good ideas get buried in tangents... having to re-explain context.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1quse9p",
+      "source": "reddit",
+      "subreddit": "webdev",
+      "title": "Best open source slideshow like carousel library",
+      "url": "https://reddit.com/r/webdev/comments/1quse9p/best_open_source_slideshow_like_carousel_library/",
+      "discovered_at": "2026-02-03T18:35:00Z",
+      "score": 55,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 5,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Next.js-optimized carousel library with infinity scroll, customizable transitions, and peek/preview features.",
+      "key_quote": "Looking for open source library for infinity slideshow carousel with customizable transitions and pre/last images peek.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qtoz8m",
+      "source": "reddit",
+      "subreddit": "smallbusiness",
+      "title": "Avoid Bluehost for hosting, web design services, and SEO",
+      "url": "https://reddit.com/r/smallbusiness/comments/1qtoz8m/avoid_bluehost_for_hosting_web_design_services/",
+      "discovered_at": "2026-02-02T19:17:00Z",
+      "score": 79,
+      "score_breakdown": {
+        "buildable": 18,
+        "clear_use_case": 17,
+        "existing_suck": 12,
+        "complaints": 10,
+        "monetizable": 12,
+        "no_moat": 10
+      },
+      "product_concept": "SMB-focused website migration and SEO service that guarantees no SEO loss during platform transitions. One-time fee + monthly maintenance model targeting frustrated WordPress/GoDaddy users.",
+      "key_quote": "I hired Bluehost and they almost screwed up my SEO by not migrating my website properly. Their web site design team is made up of amateurs who speak broken English.",
+      "reported": true
+    },
+    {
+      "id": "hn_46853095",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Would you use a tool that auto-adds telemetry to your code at PR time?",
+      "url": "https://news.ycombinator.com/item?id=46853095",
+      "discovered_at": "2026-02-02T19:17:00Z",
+      "score": 67,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 17,
+        "existing_suck": 8,
+        "complaints": 5,
+        "monetizable": 12,
+        "no_moat": 10
+      },
+      "product_concept": "GitHub bot that analyzes PRs and auto-suggests/injects structured logging, metrics, and tracing. Learns from existing codebase conventions.",
+      "key_quote": "I keep running into the same pattern: incident happens, go to debug, realize there's no logging for that code path. Add it after the fact, wait for it to happen again.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qtz9uw",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "Help me find customers - Custom SaaS replacement service",
+      "url": "https://reddit.com/r/SaaS/comments/1qtz9uw/help_me_find_customers/",
+      "discovered_at": "2026-02-02T19:17:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "SaaS bill audit + custom build service. Analyze company's SaaS spend, identify overpriced tools, build lightweight replacements at fraction of cost.",
+      "key_quote": "I want to target anyone who is paying too much for a SaaS, and building them a custom one for 1/3 of the price.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qtmlmn",
+      "source": "reddit",
+      "subreddit": "Entrepreneur",
+      "title": "Is mvp launch checklist worth it?",
+      "url": "https://reddit.com/r/Entrepreneur/comments/1qtmlmn/is_mvp_launch_checklist_worth_it/",
+      "discovered_at": "2026-02-02T19:24:00Z",
+      "score": 48,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "MVP launch accountability tool for solo developers - structured checklist, launch deadlines, and peer accountability to prevent feature creep.",
+      "key_quote": "I tell myself I'm building a business, but really, I'm just hiding behind features because I'm terrified of launching and seeing zero users.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qs2k3t",
+      "source": "reddit",
+      "subreddit": "webdev",
+      "title": "Getting questions about how comfortable I am with AI in interviews",
+      "url": "https://reddit.com/r/webdev/comments/1qs2k3t/getting_questions_about_how_comfortable_i_am_with/",
+      "discovered_at": "2026-02-02T19:24:00Z",
+      "score": 58,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 13,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI-assisted interview prep platform for developers - practice answering AI-focused technical questions, get feedback on framing AI experience.",
+      "key_quote": "The interviewer or recruiter seems extremely concerned with how I feel about AI as a developer. My nuanced opinion isn't getting me any traction.",
+      "reported": false
+    },
+    {
+      "id": "hn_46853971",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Why do users mute apps instead of deleting them?",
+      "url": "https://news.ycombinator.com/item?id=46853971",
+      "discovered_at": "2026-02-02T19:24:00Z",
+      "score": 52,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 5,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Notification health analytics for mobile apps - identify when users mute/disable notifications, provide early warning signals to prevent churn.",
+      "key_quote": "Users don't delete immediately. They mute notifications first. By the time deletion happens, it's weeks later.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qu8doj",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "Building a SaaS for businesses heavily adopting AI",
+      "url": "https://reddit.com/r/SaaS/comments/1qu8doj/building_a_saas_for_businesses_heavily_adopting_ai/",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 51,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI voice agent builder with natural language interface for SMBs to automate inbound/outbound calling, appointment setting, and receptionist tasks.",
+      "key_quote": "Business owners looking to handle outbound/inbound calling for qualifying leads, setting appointments, updating calendars, and ultimately replacing the salary of a front desk/receptionist employee.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qu5npr",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "Anyone used Rostr app for staff scheduling?",
+      "url": "https://reddit.com/r/SaaS/comments/1qu5npr/anyone_used_rostr_app_for_staff_scheduling/",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 50,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Simple staff scheduling app for small retail/service businesses with transparent pricing and reliable support.",
+      "key_quote": "Just dont wanna waste money on another app that looks cool but sucks later.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qu8yq1",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "I built an honest research assistant for shopping using Claude",
+      "url": "https://reddit.com/r/SideProject/comments/1qu8yq1/i_built_an_honest_research_assistant_for_shopping/",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 48,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Chrome extension that aggregates real opinions from Reddit/TikTok/YouTube for product research, with sentiment filtering and Honestly Score.",
+      "key_quote": "Got frustrated with fake reviews (1 in 3 are fake - that stat broke me) and the whole 'let me open 10 tabs to research this $50 purchase' ritual.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qt4arl",
+      "source": "reddit",
+      "subreddit": "Entrepreneur",
+      "title": "Have a tested product. Looking for guidance/Next steps...",
+      "url": "https://reddit.com/r/Entrepreneur/comments/1qt4arl/have_a_tested_product_looking_for_guidancenext/",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 52,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 5,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "EdTech go-to-market playbook service - helping edtech founders navigate school district sales cycles and pilot programs.",
+      "key_quote": "Have an initial agreement with a UK school (500-2000 users). Looking for guidance on next steps.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qu3mft",
+      "source": "reddit",
+      "subreddit": "smallbusiness",
+      "title": "Partnership",
+      "url": "https://reddit.com/r/smallbusiness/comments/1qu3mft/partnership/",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Small business credit partnership marketplace - matching business opportunities with creditworthy partners for co-signing/funding.",
+      "key_quote": "Looking for a partner who has over a 700+ credit! Looking to close business on a great opportunity.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qt45vk",
+      "source": "reddit",
+      "subreddit": "webdev",
+      "title": "Help to be a better backend engineer",
+      "url": "https://reddit.com/r/webdev/comments/1qt45vk/help_to_be_a_better_backend_engineer/",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 59,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 11,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Backend engineer career progression platform with production-ready project templates, code review simulations, and mentorship matching.",
+      "key_quote": "Looking for guidance on how to progress from building functional APIs to developing production-ready backend systems.",
+      "reported": false
+    },
+    {
+      "id": "hn_46856826",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: What Happened to Prompt Injection?",
+      "url": "https://news.ycombinator.com/item?id=46856826",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Enterprise LLM prompt injection detection and mitigation service - real-time monitoring and firewall for AI agents.",
+      "key_quote": "How are enterprises managing the risk of LLMs exposed and outside of private networks while prompt injection attacks are just waiting to be applied?",
+      "reported": false
+    },
+    {
+      "id": "hn_46854497",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "What, if anything, is AI?",
+      "url": "https://news.ycombinator.com/item?id=46854497",
+      "discovered_at": "2026-02-02T23:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI impact assessment framework for organizations - systematic evaluation of AI's conflicting tradeoffs across business areas.",
+      "key_quote": "AI affects many areas of life at once, often with conflicting tradeoffs.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qvkbli",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "Our changelog went from new features to bug fixes. I used to think that looked bad.",
+      "url": "https://reddit.com/r/SaaS/comments/1qvkbli/our_changelog_went_from_new_features_to_bug_fixes/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 50,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Changelog analytics tool for SaaS teams - track bug/feature ratio, sentiment analysis on user reactions, correlate with churn/retention.",
+      "key_quote": "I kept wondering if this looks bad. Like we're regressing instead of progressing.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qvorm5",
+      "source": "reddit",
+      "subreddit": "Entrepreneur",
+      "title": "How I automated my agency operations (No employees required yet)",
+      "url": "https://reddit.com/r/Entrepreneur/comments/1qvorm5/how_i_automated_my_agency_operations_no_employees/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Agency-in-a-box starter kit - curated tool stack templates with Zapier automation recipes for solo service businesses.",
+      "key_quote": "Any tool that saves me 30 minutes a day is worth paying for.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qv6spz",
+      "source": "reddit",
+      "subreddit": "Entrepreneur",
+      "title": "Looking for a marketing co-founder to help grow my SaaS app",
+      "url": "https://reddit.com/r/Entrepreneur/comments/1qv6spz/looking_for_a_marketing_cofounder_to_help_grow_my/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Receipt scanning + expense tracking SaaS - simplified alternative to Expensify for freelancers and small agencies.",
+      "key_quote": "SaaS app that automates receipt uploads to help users save time on expense tracking.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qvked6",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "Built a link-in-bio tool that does more than links. Giving away 3 x free lifetime plans.",
+      "url": "https://reddit.com/r/SideProject/comments/1qvked6/built_a_linkinbio_tool_that_does_more_than_links/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 60,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 10,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Link-in-bio tool with embeddable widgets (forms, bookings, products) - LinkTree alternative at lower price point.",
+      "key_quote": "Link-bio alternative to LinkTree, for $20.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qvk5hj",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "Looking for SaaS side project ideas? What's trending in AI right now?",
+      "url": "https://reddit.com/r/SideProject/comments/1qvk5hj/looking_for_saas_side_project_ideas_whats/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI trend aggregator for indie hackers - tracks trending AI tools/APIs/models and suggests underserved niches.",
+      "key_quote": "Looking for SaaS side project ideas? What's trending in AI right now?",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qvngkh",
+      "source": "reddit",
+      "subreddit": "smallbusiness",
+      "title": "Builder with 4 live products, 0 marketing skills. Looking for my other half.",
+      "url": "https://reddit.com/r/smallbusiness/comments/1qvngkh/builder_with_4_live_products_0_marketing_skills/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 50,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Indie dev marketing matchmaking platform - connects technical builders with growth/marketing partners for revenue share partnerships.",
+      "key_quote": "I can take an idea from zero to launched pretty quickly. What I can't do well is distribution.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qvd48q",
+      "source": "reddit",
+      "subreddit": "smallbusiness",
+      "title": "Need a software solution!",
+      "url": "https://reddit.com/r/smallbusiness/comments/1qvd48q/need_a_software_solution/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 55,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 5,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Lightweight team collaboration app for small businesses - group chat, file storage, tasks, calendar in one simple interface.",
+      "key_quote": "I need help finding an app that will fix a lot of issues and confusion going on in my business.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qv5lxf",
+      "source": "reddit",
+      "subreddit": "smallbusiness",
+      "title": "Bookkeeping Recommendations",
+      "url": "https://reddit.com/r/smallbusiness/comments/1qv5lxf/bookkeeping_recommendations/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Receipt scanner + auto-categorization for small business bookkeeping - OCR to spreadsheet with tax category detection.",
+      "key_quote": "Looking for an app or software that I can scan receipts and it will automatically put them into a spreadsheet.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qv4vux",
+      "source": "reddit",
+      "subreddit": "smallbusiness",
+      "title": "Need help with pricing",
+      "url": "https://reddit.com/r/smallbusiness/comments/1qv4vux/need_help_with_pricing/",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI receptionist pricing calculator - helps agencies price voice AI services based on call volume, business type, and features.",
+      "key_quote": "What would you pay for this service and anyone who has an agency what is a good price?",
+      "reported": false
+    },
+    {
+      "id": "hn_46880866",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Does a good read it later app exist?",
+      "url": "https://news.ycombinator.com/item?id=46880866",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 54,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Minimalist self-hosted read-it-later app - lightweight, cheap, with daily email digests and snooze functionality.",
+      "key_quote": "I have seen endless bookmark and read-it-later apps come and go. Most are dead and gone, or seem abandoned.",
+      "reported": false
+    },
+    {
+      "id": "hn_46877253",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: What's your preferred Python tool to convert Markdown to print ready PDF",
+      "url": "https://news.ycombinator.com/item?id=46877253",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Markdown to print-ready PDF converter for technical books - optimized for code syntax highlighting and page layouts.",
+      "key_quote": "Python tool to convert Markdown to print ready PDF especially for technical books with code.",
+      "reported": false
+    },
+    {
+      "id": "hn_46883090",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: How to share local models between tools?",
+      "url": "https://news.ycombinator.com/item?id=46883090",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Local LLM model manager - unified storage location with symlink management for llama.cpp, ollama, ComfyUI, etc.",
+      "key_quote": "I cannot figure out how to tell them to share the local models that I am downloading.",
+      "reported": false
+    },
+    {
+      "id": "hn_46886049",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: What would you build with pablo.app?",
+      "url": "https://news.ycombinator.com/item?id=46886049",
+      "discovered_at": "2026-02-04T14:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Domain-based app idea marketplace - let community suggest products for unused premium domains, split revenue with domain owner.",
+      "key_quote": "I have had this domain sitting around and finally want to build something useful with it.",
+      "reported": false
+    },
+    {
+      "id": "hn_46923425",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: How do you figure out where data lives across 100 microservices?",
+      "url": "https://news.ycombinator.com/item?id=46923425",
+      "discovered_at": "2026-02-07T23:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Microservice data catalog with automated discovery - maps data flows across services, identifies stale docs, and suggests owners.",
+      "key_quote": "Every time I need to work with an unfamiliar service, it's the same loop: grep through repos, find stale or nonexistent docs, Slack someone who might remember.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qyv0ro",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "Justcall.io - Business Phone Service Frustration",
+      "url": "https://reddit.com/r/SaaS/comments/1qyv0ro/justcallio/",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 48,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Business phone service with guaranteed human support during business hours - no chatbot-only support during critical outages.",
+      "key_quote": "I sent a chat request to support but it turns out they're on an annual company offsite till Monday. I'm stuck speaking to a chatbot.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qys1es",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "Resume Rewriter Tool for Job Applications",
+      "url": "https://reddit.com/r/SaaS/comments/1qys1es/i_built_a_tool_that_rewrites_your_resume_for_a/",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI resume optimizer that tailors resumes to specific job descriptions with ATS scoring and keyword matching.",
+      "key_quote": "I'm a software engineer who got tired of rewriting my resume for every single job application.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qz64fv",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "Chronos - Simple Online Timer",
+      "url": "https://reddit.com/r/SideProject/comments/1qz64fv/got_tired_of_crappy_online_timersso_i_made_my_own/",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Distraction-free web timer that runs in background without pausing on sleep - targeting students and focus workers.",
+      "key_quote": "Kept getting frustrated with online timers that were either packed with ads, super plain, or paused whenever my laptop went to sleep.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qz0l9o",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "Keepcatcher - Simple DAM Tool",
+      "url": "https://reddit.com/r/SideProject/comments/1qz0l9o/i_built_keepcatcher_because_dam_tools_are_overly/",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Lightweight digital asset management for small teams - upload, organize, find assets without enterprise complexity or pricing.",
+      "key_quote": "Frustrated with how overly complicated and expensive most DAM tools are, especially for small teams and solo builders.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qyqvqf",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "Concilium - Multi-LLM Coding Assistant",
+      "url": "https://reddit.com/r/SideProject/comments/1qyqvqf/i_built_an_opensource_desktop_app_that_runs/",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 56,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 6,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Desktop app that runs Claude Code, Codex, and OpenCode in parallel with peer-review consensus for better code generation.",
+      "key_quote": "The problem is the workflow sucks — copy-paste the same prompt into 3 different tools, wait, read 3 walls of text.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qyi3wz",
+      "source": "reddit",
+      "subreddit": "webdev",
+      "title": "DevTools Studio - Postman Alternative",
+      "url": "https://reddit.com/r/webdev/comments/1qyi3wz/rip_postman_free_tier_heres_an_opensource/",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 65,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 15,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Open-source local-first Postman alternative with visual workflow builder like n8n - request builder, collections, environments.",
+      "key_quote": "RIP Postman free tier. Here's an open-source local-first alternative we've been building for over a year.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qz2aqe",
+      "source": "reddit",
+      "subreddit": "smallbusiness",
+      "title": "eCommerce CPA + Tax Strategist Search",
+      "url": "https://reddit.com/r/smallbusiness/comments/1qz2aqe/looking_for_an_ecommerce_cpa_tax_strategist_any/",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "eCommerce-specialized CPA marketplace - match 7-figure ecom businesses with tax strategists who understand Shopify, COGS, and ad spend.",
+      "key_quote": "Looking for a tax strategist + CPA that actually specializes in e-commerce. My business has grown to 7 figures and my local CPA doesn't have ecom experience.",
+      "reported": false
+    },
+    {
+      "id": "hn_46930917",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Codex 5.3 broke toolcalls? Opus 4.6 ignores instructions?",
+      "url": "https://news.ycombinator.com/item?id=46930917",
+      "discovered_at": "2026-02-08T11:00:00Z",
+      "score": 50,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "LLM output validator and sanitizer - detects garbled/invalid model outputs and automatically retries with fallback models.",
+      "key_quote": "Codex 5.3 produces garbled output with random characters. This issue does not occur in codex 5.2.",
+      "reported": false
+    },
+    {
+      "id": "hn_46933806",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Would you use an ESLint-like tool for SEO that fails your CI/CD build?",
+      "url": "https://news.ycombinator.com/item?id=46933806",
+      "discovered_at": "2026-02-08T17:02:00Z",
+      "score": 48,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "SEO linting tool for CI/CD - validates meta tags, Open Graph, structured data, canonical URLs at build time. Prevents silent SEO breakage.",
+      "key_quote": "SEO breaks silently. You delete a page, rename a route, forget an og:image — nothing tells you. Your traffic drops weeks later and you have no idea why.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1qzqgsj",
+      "source": "reddit",
+      "subreddit": "Entrepreneur",
+      "title": "Need feedback please alternative to Vanta/Conveyor because I hate subscriptions.",
+      "url": "https://reddit.com/r/Entrepreneur/comments/1qzqgsj/need_feedback_please_alternative_to_vantaconveyor/",
+      "discovered_at": "2026-02-09T14:59:00Z",
+      "score": 48,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI-powered security questionnaire filler - upload Excel questionnaire + security policy PDF, get auto-filled answers. $99 pay-per-use, no subscription.",
+      "key_quote": "I looked at Vanta, Drata, and Conveyor. They are great, but they want 2k+, most on an annually contract.",
+      "reported": false
+    },
+    {
+      "id": "hn_46940547",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Need feedback please alternative to Vanta/Conveyor because I hate subscriptions",
+      "url": "https://news.ycombinator.com/item?id=46940547",
+      "discovered_at": "2026-02-09T14:59:00Z",
+      "score": 48,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Dead-simple security questionnaire utility - drag Excel + security docs, AI fills it out, pay once (~$99), data deleted after 24hrs.",
+      "key_quote": "I looked at competitors ($5k+/year, overkill for us). Just wanted something simple: drag file, pay once, done.",
+      "reported": false
+    },
+    {
+      "id": "hn_46942116",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "ASK HN: Postman removes free team collaboration (small teams capped at 1 user)",
+      "url": "https://news.ycombinator.com/item?id=46942116",
+      "discovered_at": "2026-02-09T14:59:00Z",
+      "score": 56,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 8,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Team-friendly Postman alternative with free collaboration - API design, testing, and docs with multi-user support for small teams.",
+      "key_quote": "Postman has quietly removed free multi-user collaboration and limited the free plan to a single user.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1r043hj",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "I stopped engaging on Reddit for 4 hours a day. Instead, I built a Rust bot to snipe leads while I sleep.",
+      "url": "https://reddit.com/r/SaaS/comments/1r043hj/i_stopped_engaging_on_reddit_for_4_hours_a_day/",
+      "discovered_at": "2026-02-09T14:59:00Z",
+      "score": 52,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Reddit Signal Catcher - Rust-based bot that monitors 50+ subreddits for buying intent signals and alerts via Telegram Mini App.",
+      "key_quote": "I noticed that for every 100 posts, there were maybe 2 people actually asking for a solution I could build.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1r03nqo",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "I audited the organic traffic of 50 startups from the W24/S25 batches. 82% are basically invisible.",
+      "url": "https://reddit.com/r/SaaS/comments/1r03nqo/i_audited_the_organic_traffic_of_50_startups_from/",
+      "discovered_at": "2026-02-09T14:59:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 5,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Startup SEO audit service - specialized audits for YC/startup companies to fix programmatic SEO and content strategy issues.",
+      "key_quote": "82% have fewer than 500 organic visits/mo. 60% are ranking for their brand name and literally nothing else.",
+      "reported": false
+    },
+    {
+      "id": "reddit_1r030d2",
+      "source": "reddit",
+      "subreddit": "Entrepreneur",
+      "title": "Early-stage builder with hands on startup experience looking for new projects",
+      "url": "https://reddit.com/r/Entrepreneur/comments/1r030d2/earlystage_builder_with_hands_on_startup/",
+      "discovered_at": "2026-02-09T14:59:00Z",
+      "score": 45,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 8,
+        "existing_suck": 5,
+        "complaints": 2,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Early-stage technical co-founder marketplace - matching builders with validated ideas needing execution.",
+      "key_quote": "One thing I've consistently",
+      "reported": false
+    },
+    {
+      "id": "reddit_1r09h4e",
+      "source": "reddit",
+      "subreddit": "SaaS",
+      "title": "I built a free alternative to Typeform because I was tired of paying $50/month",
+      "url": "https://reddit.com/r/SaaS/comments/1r09h4e/",
+      "discovered_at": "2026-02-09T17:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Free lead qualification quiz tool as alternative to Typeform/ScoreApp for bootstrappers",
+      "key_quote": "paying $79 per month for quiz tools hurt when all I needed was simple lead qualification",
+      "reported": false
+    },
+    {
+      "id": "reddit_1r07n5k",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "Chrome extension that finds pain points in Reddit comments",
+      "url": "https://reddit.com/r/SideProject/comments/1r07n5k/",
+      "discovered_at": "2026-02-09T17:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Chrome extension to auto-scan Reddit threads for pain phrases and business ideas",
+      "key_quote": "I got tired of reading 500+ Reddit comments to find business ideas",
+      "reported": false
+    },
+    {
+      "id": "reddit_1r07qxc",
+      "source": "reddit",
+      "subreddit": "SideProject",
+      "title": "Mileage tracking app with no accounts or subscriptions",
+      "url": "https://reddit.com/r/SideProject/comments/1r07qxc/",
+      "discovered_at": "2026-02-09T17:00:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Privacy-first mileage tracker - no accounts, no backend, iCloud sync only",
+      "key_quote": "Could not find a mileage app that matched how I actually use one",
+      "reported": false
+    },
+    {
+      "id": "hn_46959801",
+      "source": "hackernews",
+      "title": "Ask HN: Local community first approach to building an age verification system",
+      "url": "https://news.ycombinator.com/item?id=46959801",
+      "score": 51,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Decentralized age verification using local authorities (notary, DMV, teachers) with cryptographic hashes for privacy-preserving verification.",
+      "key_quote": "A number of local authorities like teachers, lawyers, DMV, notary can be authorized to verify ages of people in the community.",
+      "discovered_at": "2026-02-10T17:00:00Z",
+      "reported": false
+    },
+    {
+      "id": "hn_46951857",
+      "source": "hackernews",
+      "title": "Ask HN: It has been 2 months, is anyone using GPT Apps?",
+      "url": "https://news.ycombinator.com/item?id=46951857",
+      "score": 55,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 5,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "GPT App analytics and discovery platform - track usage, ratings, and find useful GPT Apps.",
+      "key_quote": "ChatGPT had announced apps a few months ago and I am wondering if anyone here really uses them and loves them.",
+      "discovered_at": "2026-02-10T17:00:00Z",
+      "reported": false
+    },
+    {
+      "id": "hn_46949048",
+      "source": "hackernews",
+      "title": "OrthoRay – A native, lightweight DICOM viewer written in Rust/wgpu by a surgeon",
+      "url": "https://news.ycombinator.com/item?id=46949048",
+      "score": 52,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Lightweight native DICOM medical imaging viewer - instant loading of large MRI files, local-first, privacy-focused.",
+      "key_quote": "I was frustrated with the lag in standard medical imaging software. Most existing solutions were either bloated Electron apps or expensive cloud subscriptions.",
+      "discovered_at": "2026-02-10T17:00:00Z",
+      "reported": false
+    },
+    {
+      "id": "hn_46967391",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Hacker News Alternative Where People Are Positive About AI",
+      "url": "https://news.ycombinator.com/item?id=46967391",
+      "discovered_at": "2026-02-11T17:53:00Z",
+      "score": 60,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 10,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI-focused HN alternative with curated, constructive AI discussions - filter out negativity.",
+      "key_quote": "Is there an alternative to HN where people actually discuss developments in AI in a positive, mature way?",
+      "reported": false
+    },
+    {
+      "id": "hn_46984452",
+      "source": "hackernews",
+      "title": "Ask HN: Has anyone achieved recursive self-improvement with agentic tools?",
+      "url": "https://news.ycombinator.com/item?id=46984452",
+      "discovered_at": "2026-02-12T11:02:00Z",
+      "score": 57,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-improving agent framework that monitors git repos and autonomously generates new agents/skills based on completed work patterns.",
+      "key_quote": "Task tools like Claude Code or OpenClaw to monitor a git repo, analyze abstractions, and autonomously generate new agents.",
+      "reported": false
+    },
+    {
+      "id": "hn_46986742",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: How do you prevent sensitive data leaks in screen-recorded demos?",
+      "url": "https://news.ycombinator.com/item?id=46986742",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 71,
+      "score_breakdown": {
+        "buildable": 18,
+        "clear_use_case": 17,
+        "existing_suck": 10,
+        "complaints": 8,
+        "monetizable": 8,
+        "no_moat": 10
+      },
+      "product_concept": "Screen recording privacy guard - auto-detects sensitive UI elements (emails, IDs, API keys) and applies real-time blur/masking during recording. Browser extension + desktop app for SaaS demos.",
+      "key_quote": "I nearly exposed user data in a product demo... use demo-safe seed data, identify sensitive fields before recording, apply blur/mask before hitting record",
+      "reported": true
+    },
+    {
+      "id": "hn_46976974",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Do freelancers manually scan social media for leads?",
+      "url": "https://news.ycombinator.com/item?id=46976974",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 68,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 17,
+        "existing_suck": 8,
+        "complaints": 6,
+        "monetizable": 10,
+        "no_moat": 10
+      },
+      "product_concept": "Social lead sniper for freelancers - monitors X/LinkedIn/Reddit for hiring intent posts, extracts contact info, drafts personalized outreach. $29/mo for solo freelancers.",
+      "key_quote": "I noticed many freelancers manually search X, LinkedIn, Reddit to find people publicly posting that they need a developer... It feels inefficient and noisy",
+      "reported": false
+    },
+    {
+      "id": "hn_46969644",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Early signals that EU AI Act compliance is becoming a sales blocker for AI SaaS",
+      "url": "https://news.ycombinator.com/item?id=46969644",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 66,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 15,
+        "existing_suck": 8,
+        "complaints": 8,
+        "monetizable": 10,
+        "no_moat": 10
+      },
+      "product_concept": "EU AI Act compliance doc generator - scans AI systems, auto-generates required technical documentation, risk assessments, and conformity declarations. $99/mo for AI startups.",
+      "key_quote": "Teams don't think about EU AI Act until a customer asks for documentation... compliance requires technical documentation they don't have ready",
+      "reported": false
+    },
+    {
+      "id": "hn_46963340",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Runtime validation is still fucked in AI coding agents",
+      "url": "https://news.ycombinator.com/item?id=46963340",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 62,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 10,
+        "complaints": 7,
+        "monetizable": 7,
+        "no_moat": 10
+      },
+      "product_concept": "AI-generated code runtime validator - catches hallucinated logic, API errors, and sync issues in AI-written code without vision-based overhead. DevTools extension.",
+      "key_quote": "Hallucinated logic only reveals itself under real data... API calls quietly return 401s... Vision-based agents crawl like molasses and torch tokens",
+      "reported": false
+    },
+    {
+      "id": "hn_46967724",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: How do you manage flaky E2E tests at scale?",
+      "url": "https://news.ycombinator.com/item?id=46967724",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 64,
+      "score_breakdown": {
+        "buildable": 16,
+        "clear_use_case": 15,
+        "existing_suck": 8,
+        "complaints": 8,
+        "monetizable": 7,
+        "no_moat": 10
+      },
+      "product_concept": "Flaky test intelligence platform - identifies root causes of E2E flakiness, auto-quarantines unreliable tests, suggests fixes. CI integration for teams with 1000+ tests.",
+      "key_quote": "Retries everywhere, quarantining tests, rewriting flows, adding more waits... slowly losing trust in CI signal",
+      "reported": false
+    },
+    {
+      "id": "hn_46966879",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Cursor switches pay-per-token when your plan limit end. Calls 'On-Demand usage'",
+      "url": "https://news.ycombinator.com/item?id=46966879",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 61,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 8,
+        "complaints": 8,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI coding tool billing monitor - tracks token usage across Cursor/Claude/Copilot, alerts before overages, estimates costs per feature. Browser extension.",
+      "key_quote": "No warning. No 'you've used up your quota'... just kept going. Silently switched to On-Demand billing... $60/month to $500+ in a few days",
+      "reported": false
+    },
+    {
+      "id": "hn_46954054",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: What CI do you use instead of GitHub Actions?",
+      "url": "https://news.ycombinator.com/item?id=46954054",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 55,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "GitHub Actions alternative with better UX - simpler config, faster runners, better debugging. Targets teams frustrated with GHA instability.",
+      "key_quote": "With GitHub's recent instability, I'm seriously looking into alternatives... GHA, for all its flaws, was just so much better than TeamCity or Jenkins",
+      "reported": false
+    },
+    {
+      "id": "hn_46870336",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Anyone have a 'sovereign' solution for phone calls?",
+      "url": "https://news.ycombinator.com/item?id=46870336",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 56,
+      "score_breakdown": {
+        "buildable": 14,
+        "clear_use_case": 13,
+        "existing_suck": 7,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-hosted SIP/PSTN bridge - sovereign phone solution for privacy-conscious users. Self-hosted alternative to Twilio with SIP URI support.",
+      "key_quote": "SIP URIs would let me communicate with the broader ecosystem, but many phones dropped support... tougher nut to crack than email",
+      "reported": false
+    },
+    {
+      "id": "hn_46967989",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Is there real demand for a open source Railway-style PaaS that deploys?",
+      "url": "https://news.ycombinator.com/item?id=46967989",
+      "discovered_at": "2026-02-12T11:18:00Z",
+      "score": 54,
+      "score_breakdown": {
+        "buildable": 13,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 8,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Open-source Railway alternative - BYOC platform with railway-grade UX. $29-99/mo control plane + your own infra bill.",
+      "key_quote": "Have you ever seriously considered leaving Railway/Render/Vercel/Heroku because of cost, lockin, or compliance?",
+      "reported": false
+    },
+    {
+      "id": "hn_46987446",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: How to truly sandbox AI tools on a Mac?",
+      "url": "https://news.ycombinator.com/item?id=46987446",
+      "discovered_at": "2026-02-12T11:30:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI tool sandbox for macOS - hard sandbox environment preventing unauthorized file/network access for AI coding tools. Alternative to buying a second computer.",
+      "key_quote": "I am looking for ways to secure this proactively without depending upon the LLM tool providers promise or declared guidelines ethics, but other than buying a second dedicated computer.",
+      "reported": false
+    },
+    {
+      "id": "hn_46983068",
+      "source": "hackernews",
+      "title": "Ask HN: Does OpenClaw need a re-architecture to be usable?",
+      "url": "https://news.ycombinator.com/item?id=46983068",
+      "discovered_at": "2026-02-12T11:49:00Z",
+      "score": 52,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 10,
+        "existing_suck": 8,
+        "complaints": 4,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "OpenClaw reliability monitoring and auto-recovery service - detects stalled agents, auto-restarts failed tasks, provides execution analytics.",
+      "key_quote": "It frequently stops responding mid-task... Execution fails without clear recovery... Task success rate feels inconsistent",
+      "reported": false
+    },
+    {
+      "id": "hn_46987446",
+      "source": "hackernews",
+      "title": "Ask HN: How to truly sandbox AI tools on a Mac?",
+      "url": "https://news.ycombinator.com/item?id=46987446",
+      "discovered_at": "2026-02-12T12:11:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI tool sandbox for macOS - hard sandbox environment preventing unauthorized file/network access for AI coding tools. Alternative to buying a second computer.",
+      "key_quote": "I am looking for ways to secure this proactively without depending upon the LLM tool providers promise or declared guidelines ethics, but other than buying a second dedicated computer.",
+      "reported": false
+    },
+    {
+      "id": "hn_46984452_new",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Has anyone achieved recursive self-improvement with agentic tools?",
+      "url": "https://news.ycombinator.com/item?id=46984452",
+      "discovered_at": "2026-02-12T12:16:00Z",
+      "score": 57,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-improving agent framework that monitors git repos and autonomously generates new agents/skills based on completed work patterns.",
+      "key_quote": "Task tools like Claude Code or OpenClaw to monitor a git repo, analyze abstractions, and autonomously generate new agents.",
+      "reported": false
+    },
+    {
+      "id": "hn_46984452_scan",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: Has anyone achieved recursive self-improvement with agentic tools?",
+      "url": "https://news.ycombinator.com/item?id=46984452",
+      "discovered_at": "2026-02-12T12:18:00Z",
+      "score": 57,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-improving agent framework that monitors git repos and autonomously generates new agents/skills based on completed work patterns.",
+      "key_quote": "Task tools like Claude Code or OpenClaw to monitor a git repo, analyze abstractions, and autonomously generate new agents.",
+      "reported": false
+    },
+    {
+      "id": "hn_46987446_feb12",
+      "source": "hackernews",
+      "title": "Ask HN: How to truly sandbox AI tools on a Mac?",
+      "url": "https://news.ycombinator.com/item?id=46987446",
+      "discovered_at": "2026-02-12T12:21:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI tool sandbox for macOS - hard sandbox environment preventing unauthorized file/network access for AI coding tools. Alternative to buying a second computer.",
+      "key_quote": "I am looking for ways to secure this proactively without depending upon the LLM tool providers promise or declared guidelines ethics, but other than buying a second dedicated computer.",
+      "reported": false
+    },
+    {
+      "id": "hn_46984452_feb12",
+      "source": "hackernews",
+      "title": "Ask HN: Has anyone achieved recursive self-improvement with agentic tools?",
+      "url": "https://news.ycombinator.com/item?id=46984452",
+      "discovered_at": "2026-02-12T12:21:00Z",
+      "score": 55,
+      "score_breakdown": {
+        "buildable": 15,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-improving agent framework that monitors git repos and autonomously generates new agents/skills based on completed work patterns.",
+      "key_quote": "Task tools like Claude Code or OpenClaw to monitor a git repo, analyze abstractions, and autonomously generate new agents.",
+      "reported": false
+    },
+    {
+      "id": "hn_46987446_feb12_1226",
+      "source": "hackernews",
+      "title": "Ask HN: How to truly sandbox AI tools on a Mac?",
+      "url": "https://news.ycombinator.com/item?id=46987446",
+      "discovered_at": "2026-02-12T12:26:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI tool sandbox for macOS - hard sandbox environment preventing unauthorized file/network access for AI coding tools. Alternative to buying a second computer.",
+      "key_quote": "I am looking for ways to secure this proactively without depending upon the LLM/tool providers promise or declared guidelines/ethics, but other than buying a second dedicated computer.",
+      "reported": false
+    },
+    {
+      "id": "hn_46984452_feb12_1226",
+      "source": "hackernews",
+      "title": "Ask HN: Has anyone achieved recursive self-improvement with agentic tools?",
+      "url": "https://news.ycombinator.com/item?id=46984452",
+      "discovered_at": "2026-02-12T12:26:00Z",
+      "score": 57,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-improving agent framework that monitors git repos and autonomously generates new agents/skills based on completed work patterns.",
+      "key_quote": "Task tools like Claude Code or OpenClaw to monitor a git repo, analyze the abstractions in completed work, and then autonomously generate new agents or skills capable of handling similar tasks in the future.",
+      "reported": false
+    },
+    {
+      "id": "hn_46967391_feb12_1226",
+      "source": "hackernews",
+      "title": "Hacker News Alternative Where People Are Positive About AI",
+      "url": "https://news.ycombinator.com/item?id=46967391",
+      "discovered_at": "2026-02-12T12:26:00Z",
+      "score": 60,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 10,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI-focused HN alternative with curated, constructive AI discussions - filter out negativity.",
+      "key_quote": "Is there an alternative to HN where people actually discuss developments in AI in a positive, mature way?",
+      "reported": false
+    },
+    {
+      "id": "hn_46959801_feb12_1226",
+      "source": "hackernews",
+      "title": "Ask HN: Local community first approach to building an age verification system",
+      "url": "https://news.ycombinator.com/item?id=46959801",
+      "discovered_at": "2026-02-12T12:26:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Decentralized age verification using local authorities (notary, DMV, teachers) with cryptographic hashes for privacy-preserving verification.",
+      "key_quote": "A number of local authorities like teachers, lawyers, DMV, notary can be authorized to verify ages of people in the community.",
+      "reported": false
+    },
+    {
+      "id": "hn_46987446_feb12_1234",
+      "source": "hackernews",
+      "title": "Ask HN: How to truly sandbox AI tools on a Mac?",
+      "url": "https://news.ycombinator.com/item?id=46987446",
+      "discovered_at": "2026-02-12T12:34:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "AI tool sandbox for macOS - hard sandbox environment preventing unauthorized file/network access for AI coding tools. Alternative to buying a second computer.",
+      "key_quote": "I am looking for ways to secure this proactively without depending upon the LLM tool providers promise or declared guidelines ethics, but other than buying a second dedicated computer.",
+      "reported": false
+    },
+    {
+      "id": "hn_46984452_feb12_1234",
+      "source": "hackernews",
+      "title": "Ask HN: Has anyone achieved recursive self-improvement with agentic tools?",
+      "url": "https://news.ycombinator.com/item?id=46984452",
+      "discovered_at": "2026-02-12T12:34:00Z",
+      "score": 57,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-improving agent framework that monitors git repos and autonomously generates new agents/skills based on completed work patterns.",
+      "key_quote": "Task tools like Claude Code or OpenClaw to monitor a git repo, analyze the abstractions in completed work, and then autonomously generate new agents or skills capable of handling similar tasks in the future.",
+      "reported": false
+    },
+    {
+      "id": "hn_46987446",
+      "source": "hackernews",
+      "subreddit": null,
+      "title": "Ask HN: How to truly sandbox AI tools on a Mac?",
+      "url": "https://news.ycombinator.com/item?id=46987446",
+      "discovered_at": "2026-02-12T12:36:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Mac AI sandboxing tool - hard-sandbox AI applications to prevent unauthorized file/network access without needing a second computer.",
+      "key_quote": "What's the best way to hard-sandbox AI tools to prevent unauthorized/unintended file or network access?",
+      "reported": false
+    },
+    {
+      "id": "hn_46987446_cron_feb12",
+      "source": "hackernews",
+      "title": "Ask HN: How to truly sandbox AI tools on a Mac?",
+      "url": "https://news.ycombinator.com/item?id=46987446",
+      "discovered_at": "2026-02-12T12:40:00Z",
+      "score": 53,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 3,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Mac AI sandboxing tool - hard-sandbox AI applications to prevent unauthorized file/network access without needing a second computer.",
+      "key_quote": "What is the best way to hard-sandbox AI tools to prevent unauthorized/unintended file or network access?",
+      "reported": false
+    },
+    {
+      "id": "hn_46984452_cron_feb12",
+      "source": "hackernews",
+      "title": "Ask HN: Has anyone achieved recursive self-improvement with agentic tools?",
+      "url": "https://news.ycombinator.com/item?id=46984452",
+      "discovered_at": "2026-02-12T12:40:00Z",
+      "score": 57,
+      "score_breakdown": {
+        "buildable": 17,
+        "clear_use_case": 13,
+        "existing_suck": 5,
+        "complaints": 7,
+        "monetizable": 5,
+        "no_moat": 10
+      },
+      "product_concept": "Self-improving agent framework that monitors git repos and autonomously generates new agents/skills based on completed work patterns.",
+      "key_quote": "Task tools like Claude Code or OpenClaw to monitor a git repo, analyze abstractions, and autonomously generate new agents.",
+      "reported": false
+    }
+  ],
+  "last_scan": "2026-02-12T12:43:00Z",
+  "last_build_check": "2026-02-11T14:36:00Z",
+  "metadata": {
+    "total_scans": 35,
+    "total_ideas_discovered": 83
+  }
+}
