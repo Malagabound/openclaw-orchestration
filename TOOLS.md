@@ -310,7 +310,13 @@ curl -s 'https://api.getsequence.io/accounts' \
 **Personal/Passive Income (default):**
 - Account: Malagabound
 - Auth: PAT stored in `~/.openclaw/credentials/github-personal`
-- Projects: product-prospector, second-brain, george-hq, etc.
+- Projects: product-prospector, george-hq, **openclaw-orchestration**, etc.
+
+**OpenClaw Orchestration System:**
+- **Repository:** https://github.com/Malagabound/openclaw-orchestration
+- **Branches:** `main` (stable), `dev` (development work)
+- **Daily Commits:** Automated via cron job (scripts/daily-git-commit.sh)
+- **Contains:** Multi-agent system, memory database, research workflows, agent configs
 
 **Nth Degree CPAs (work):**
 - Account: nthdegreecpas

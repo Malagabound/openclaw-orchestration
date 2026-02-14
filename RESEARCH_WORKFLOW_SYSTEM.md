@@ -264,21 +264,40 @@ research_connections (
 - Auto-linked related research visualization
 - Telegram integration for research input
 
-### 🔍 RESEARCH PHASES INTEGRATION QUESTION
+### ✅ RESEARCH PHASES INTEGRATION (FOUND & DOCUMENTED)
 
-**You mentioned:** "we started putting together the phases of research we want to do"
+**Our existing research phases system:**
 
-**Need clarification:** What are our current research phases?
-- Phase I: Initial discovery/opportunity identification?
-- Phase II: Detailed validation/market analysis?  
-- Phase III: Product nomination/build decision?
+**Phase 1: Discovery (Score /30)**
+- Initial opportunity identification by specialist agents
+- Apply micro-niche filter gates (regulated industry auto-reject)
+- Complete Phase 1 Discovery Report template
+- **Decision:** Score ≥20/30 → AUTO-PROCEED to Phase 2 (no Alan permission needed)
+- **Decision:** Score <20/30 → REJECT and log in Product Prospector
 
-**How should Second Brain integrate with phases:**
-- Track research progress through phases automatically?
-- Different views/permissions for each phase?
-- Agent assignments based on phase requirements?
+**Phase 2: Deep Validation (Scout Agent)**
+- Triggered automatically when Phase 1 scores ≥20/30  
+- Competitor deep-dive, gap analysis, differentiation thesis
+- Market sizing (TAM/SAM/SOM), build cost estimates
+- Complete Phase 2 Validation Report template
+- **Decision:** Score ≥24/30 + GO → PRESENT TO ALAN for Phase 3 approval
+- **Decision:** Score <20/30 → REJECT and log
 
-**Where are phase definitions documented:** In existing skills or need to create framework?
+**Phase 3: Transactional Validation (Requires Alan Approval)**
+- Only begins after Alan explicitly approves Phase 2 results
+- Landing page, ads ($50-100 budget), pre-orders/waitlist
+- Go/no-go based on conversion data
+
+**Second Brain Integration Plan:**
+- **Show only Phase 2+ results** to Alan (hide Phase 1 as specified)
+- **Track phase progression** automatically through agent workflow
+- **Connect to Product Prospector database** for rejection logging
+- **Agent assignments:** Rex/Pixel/Haven/Vault do Phase 1, Scout handles Phase 2 validation
+- **Status tracking:** discovered → researching → validated → building → launched (or rejected)
+
+**Templates already exist:**
+- Phase 1: https://docs.google.com/document/d/17Gk2zWrRmKoonJ-RtSyhgxwwJwC1yW6TbYjSuQRLqG8/edit
+- Phase 2: https://docs.google.com/document/d/1jXUeUi4i718oKTzB9gHolBDP0IrFCIt8paDnQgMoqes/edit
 
 ---
 

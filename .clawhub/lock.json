@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "skills": {
+    "reflect-learn": {
+      "version": "2.0.0",
+      "installedAt": 1770512848378
+    },
+    "self-improving-agent-1-0-2": {
+      "version": "1.0.0",
+      "installedAt": 1770512848514
+    },
+    "soulcraft": {
+      "version": "1.0.0",
+      "installedAt": 1770512848553
+    },
+    "self-evolving-skill": {
+      "version": "1.0.2",
+      "installedAt": 1770512848769
+    },
+    "competitive-intelligence-market-research": {
+      "version": "1.0.0",
+      "installedAt": 1770844988558
+    },
+    "deep-research-pro": {
+      "version": "1.0.2",
+      "installedAt": 1770664969476
+    },
+    "saas": {
+      "version": "1.0.0",
+      "installedAt": 1770844981690
+    },
+    "clawver-digital-products": {
+      "version": "1.0.0",
+      "installedAt": 1770697373861
+    },
+    "pricing": {
+      "version": "1.0.0",
+      "installedAt": 1770737007277
+    },
+    "subscriptions": {
+      "version": "1.0.0",
+      "installedAt": 1770844975520
+    },
+    "digital-product-creator": {
+      "version": "1.0.1",
+      "installedAt": 1770848570925
+    },
+    "argos-product-research": {
+      "version": "1.0.0",
+      "installedAt": 1770848577143
+    },
+    "saas-idea-discovery": {
+      "version": "1.0.0",
+      "installedAt": 1770916970847
+    },
+    "microsaas-factory": {
+      "version": "1.0.0",
+      "installedAt": 1770924180329
+    },
+    "supermemory": {
+      "version": "1.0.0",
+      "installedAt": 1771023666537
+    },
+    "humanizer": {
+      "version": "1.0.0",
+      "installedAt": 1771026001636
+    },
+    "qmd": {
+      "version": "1.0.0",
+      "installedAt": 1771026005972
+    },
+    "himalaya": {
+      "version": "1.0.0",
+      "installedAt": 1771026010247
+    }
+  }
+}

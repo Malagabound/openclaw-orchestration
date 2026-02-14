@@ -1,0 +1,40 @@
+{
+  "groups": {
+    "nth-degree": {
+      "name": "Nth Degree",
+      "chatId": "-1003801012047",
+      "agent": "nora",
+      "purpose": "Day-job SaaS - Optimize OS development, GHL support"
+    },
+    "software-subscriptions": {
+      "name": "Software Subscription Ideas",
+      "chatId": "-1003843870702",
+      "agent": "rex",
+      "purpose": "SaaS, MCP servers, APIs, recurring revenue products"
+    },
+    "digital-products": {
+      "name": "Digital Product Ideas",
+      "chatId": "-1003545571405",
+      "agent": "pixel",
+      "purpose": "Digital product opportunities, templates, tools, one-time purchases"
+    },
+    "rental-realtor": {
+      "name": "Rental/Realtor Biz",
+      "chatId": "-1003701179659",
+      "agent": "haven",
+      "purpose": "Property financials, QB categorization, utility tracking, tenant matters"
+    },
+    "investment": {
+      "name": "Investment Opportunity Research",
+      "chatId": "-1003571590522",
+      "agent": "vault",
+      "purpose": "Business acquisitions, crypto, alternative investments"
+    }
+  },
+  "backgroundAgents": {
+    "scout": "Deep research - product/market scans, Apify, validation docs",
+    "keeper": "Operations - email processing, QB, utility bills, spreadsheets",
+    "sentinel": "Security guardian - system health, credential audits, cron verification"
+  },
+  "notes": "Use these chat IDs when posting scan results to relevant groups. Prefix with 'telegram:' for message tool."
+}
