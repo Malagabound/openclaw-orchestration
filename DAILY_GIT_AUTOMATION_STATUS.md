@@ -7,14 +7,16 @@
 
 ## ✅ WORKING COMPONENTS
 
-### Git Commit Script ✅ TESTED AND WORKING
+### Git Commit Script ✅ TESTED AND WORKING (TWO-WAY SYNC)
 - **Location:** `/Users/macmini/.openclaw/workspace/scripts/daily-git-commit.sh`
-- **Test Result:** ✅ SUCCESS - Just committed and pushed changes to GitHub
+- **Test Result:** ✅ SUCCESS - Two-way sync working properly
 - **Functionality:** 
-  - Detects changes automatically
-  - Creates descriptive commit messages
-  - Pushes to GitHub repository
-  - Logs all activity with timestamps
+  - **PULLS remote changes first** (handles your pushes from GitHub)
+  - **Detects merge conflicts** and logs them for manual resolution
+  - **Commits local changes** with descriptive messages
+  - **Pushes to GitHub** repository
+  - **Logs all activity** with timestamps
+  - **Two-way sync** - handles changes from both directions
 
 ### Repository Integration ✅ COMPLETE
 - **Repository:** https://github.com/Malagabound/openclaw-orchestration
