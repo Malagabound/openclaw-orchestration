@@ -20,12 +20,15 @@ exec python3 orchestrator-dashboard/heartbeat_integration.py status
 - Ensures no tasks fall through cracks
 
 **Specialist agent check-ins** (happens automatically via their heartbeats):
-- Rex (Research) - checks for new research/analysis tasks
+- Rex (Research) - checks for software subscription research tasks
 - Pixel (Digital Products) - checks for product validation work
-- Haven (Real Estate) - checks for property/investment tasks  
-- Vault (Business Acquisition) - checks for deal analysis work
 - Scout (Validation) - checks for quality control needs
 - Keeper (Operations) - checks for maintenance/email tasks
+
+**DEACTIVATED AGENTS:**
+- Haven (Real Estate) - [PAUSED] No property/investment research
+- Vault (Business Acquisition) - [PAUSED] No deal analysis work
+- Nora (Operations) - [PAUSED] No day job/QB research
 
 **Agent coordination flow:**
 1. Each specialist checks coordination dashboard every 15 minutes
@@ -58,9 +61,10 @@ exec python3 orchestrator-dashboard/heartbeat_integration.py status
 - Alan monitors via taskr.one dashboard — no manual check needed
 
 ### 4. Trend/Opportunity Scan (every 4-6 hours)
-- Scan for micro-SaaS opportunities, competitor moves, trending pain points
+- Scan for micro-SaaS opportunities and digital product trends only
 - Sources: web search for Indie Hackers launches, Reddit pain points, X/Twitter trends
-- Post findings to relevant Telegram group (Software Subscriptions or Digital Products)
+- Post findings to Software Subscriptions or Digital Products groups only
+- NO rental/realtor, Nth Degree, or business acquisition research
 - Only surface genuinely interesting opportunities (not noise)
 
 ### 5. Moltbook Check (every 4-6 hours, once claimed)

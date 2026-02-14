@@ -7,7 +7,7 @@
 
 ## The Mission
 
-**Two parallel tracks:**
+**FOCUSED RESEARCH AREAS (Updated 2026-02-14):**
 
 ### Track 1: Digital Products (Debt Elimination)
 - **$300k debt** to pay off
@@ -25,6 +25,11 @@
 - Hunt: r/sweatystartup, r/smallbusiness, "[weird job] software"
 - Currently at ~$1k/month (rentals)
 - Gap: ~$19k/month from online businesses
+
+### RESEARCH PAUSED (Alan's Decision 2026-02-14):
+- ❌ **Rental/Realtor opportunities** - No longer researching property-related business ideas
+- ❌ **Nth Degree/Day job opportunities** - No longer researching CPA firm or day job related ideas
+- ❌ **Business acquisition/investment research** - No longer researching businesses to buy
 
 **These are DIFFERENT searches.** Digital products target developers. SaaS targets end-user business owners.
 

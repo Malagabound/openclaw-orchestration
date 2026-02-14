@@ -58,11 +58,12 @@ class AgentCoordinator:
         
         # Agent expertise mapping
         agent_expertise = {
-            'rex': ['research', 'market_analysis', 'competitive_analysis', 'customer_research'],
+            'rex': ['research', 'market_analysis', 'competitive_analysis', 'customer_research', 'software_subscriptions', 'saas_opportunities'],
             'pixel': ['digital_products', 'product_validation', 'marketplace_strategy', 'product_creation'],
-            'haven': ['real_estate', 'property_analysis', 'investment_analysis', 'market_research'],
-            'vault': ['business_acquisition', 'deal_analysis', 'roi_assessment', 'due_diligence'],
-            'nora': ['operations', 'day_job', 'financial_management', 'task_management'],
+            # DEACTIVATED AGENTS - Groups remain but no task routing
+            # 'haven': ['real_estate', 'property_analysis', 'investment_analysis', 'market_research'],
+            # 'vault': ['business_acquisition', 'deal_analysis', 'roi_assessment', 'due_diligence'],
+            # 'nora': ['operations', 'day_job', 'financial_management', 'task_management'],
             'scout': ['validation', 'quality_control', 'fact_checking', 'cross_domain_review'],
             'keeper': ['maintenance', 'email_management', 'automation', 'system_health']
         }
@@ -127,14 +128,15 @@ class AgentCoordinator:
         if any(word in content_lower for word in ['product', 'digital', 'template', 'course', 'gumroad']):
             relevant_agents.append('pixel')
             
-        if any(word in content_lower for word in ['real estate', 'property', 'rental', 'investment']):
-            relevant_agents.append('haven')
-            
-        if any(word in content_lower for word in ['business', 'acquisition', 'buy', 'deal']):
-            relevant_agents.append('vault')
-            
-        if any(word in content_lower for word in ['quickbooks', 'email', 'operation', 'management']):
-            relevant_agents.append('nora')
+        # DEACTIVATED ROUTING - No longer routing to haven, vault, nora per Alan's request
+        # if any(word in content_lower for word in ['real estate', 'property', 'rental', 'investment']):
+        #     relevant_agents.append('haven')
+        #     
+        # if any(word in content_lower for word in ['business', 'acquisition', 'buy', 'deal']):
+        #     relevant_agents.append('vault')
+        #     
+        # if any(word in content_lower for word in ['quickbooks', 'email', 'operation', 'management']):
+        #     relevant_agents.append('nora')
         
         # Always include Scout for validation of important tasks
         if 'validation' in content_lower or 'validate' in content_lower:

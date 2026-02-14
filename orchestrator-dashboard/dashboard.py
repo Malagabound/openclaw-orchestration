@@ -37,8 +37,8 @@ class OrchestratorDashboard:
                     description TEXT NOT NULL,
                     status TEXT DEFAULT 'open' CHECK(status IN ('open', 'in_progress', 'review', 'completed', 'blocked')),
                     priority INTEGER DEFAULT 3 CHECK(priority BETWEEN 1 AND 5),
-                    domain TEXT NOT NULL, -- 'research', 'digital_products', 'real_estate', 'business_acquisition', 'operations'
-                    assigned_agent TEXT, -- 'rex', 'pixel', 'haven', 'vault', 'nora', 'scout', 'keeper'
+                    domain TEXT NOT NULL, -- 'research', 'digital_products' [DEACTIVATED: 'real_estate', 'business_acquisition', 'operations']
+                    assigned_agent TEXT, -- 'rex', 'pixel', 'scout', 'keeper' [DEACTIVATED: 'haven', 'vault', 'nora']
                     created_by TEXT DEFAULT 'george',
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -147,11 +147,12 @@ class OrchestratorDashboard:
         
         # Domain mapping for agents
         agent_domains = {
-            'rex': ['research', 'market_analysis'],
+            'rex': ['research', 'market_analysis', 'software_subscriptions'],
             'pixel': ['digital_products', 'product_validation'], 
-            'haven': ['real_estate', 'property_analysis'],
-            'vault': ['business_acquisition', 'investment_analysis'],
-            'nora': ['operations', 'day_job', 'management'],
+            # DEACTIVATED AGENTS - Groups remain but no task routing
+            # 'haven': ['real_estate', 'property_analysis'],
+            # 'vault': ['business_acquisition', 'investment_analysis'],
+            # 'nora': ['operations', 'day_job', 'management'],
             'scout': ['validation', 'quality_control'],
             'keeper': ['maintenance', 'email', 'automation']
         }
