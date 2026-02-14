@@ -734,5 +734,1418 @@
         ]
       }
     ]
+  },
+  {
+    "timestamp": "2026-02-14T06:53:45.395Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T07:53:47.069Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5b11c9665cf1a",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 14 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5b0f096d53d9b",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude Haiku 4.5 - 14 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T08:23:45.366Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5b3b940d82aef",
+            "from": "iTunes Store <do_not_reply@email.apple.com>",
+            "subject": "New episode available for download - RuPaul's Drag Race, Season 18",
+            "classification": "Apple Media Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T08:53:46.858Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5b5484af0f7c4",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 14 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5b4f75492e15f",
+            "from": "noreply@statuspage.io",
+            "subject": "Claude Incident - Elevated errors on Claude models - 14 February 2026",
+            "classification": "Status Page Notification",
+            "action": "archive"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T09:23:46.337Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": [
+          {
+            "id": "19c5b6f5b57d551d",
+            "from": "Discord <noreply@discord.com>",
+            "subject": "You missed messages in Builder Methods",
+            "classification": "Discord Notification",
+            "action": "archive"
+          }
+        ]
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T09:53:44.305Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T10:53:45.202Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T11:53:44.586Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T12:23:45.008Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T12:53:49.809Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T13:53:46.864Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5c4bafd66ec75",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is out for delivery",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5c4aae6bd633e",
+            "from": "Vitruvin Anti-Aging Supplements <support@vitruvin.com>",
+            "subject": "Your Heart Doesn’t Take Days Off",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T14:23:44.545Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5c4bafd66ec75",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is out for delivery",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T14:53:46.222Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5c942b6f9c9d4",
+            "from": "MoneyLion Offers <partners@iemail.moneylion.com>",
+            "subject": "Alan, need $ for emergency bills?",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c5c4bafd66ec75",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is out for delivery",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T15:53:53.431Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5cb8b3a880a72",
+            "from": "Vitruvin Anti-Aging Supplements <support@vitruvin.com>",
+            "subject": "Your Heart Doesn’t Take Days Off",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          },
+          {
+            "id": "19c5cad821452521",
+            "from": "The City Library <newsletter@slcpl.org>",
+            "subject": "Share Your Library Love and Win!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5c4bafd66ec75",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is out for delivery",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T16:53:46.408Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5ce569dc893f4",
+            "from": "GoDaddy <donotreply@godaddy.com>",
+            "subject": "A product's been removed from your GoDaddy account.",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5cad821452521",
+            "from": "The City Library <newsletter@slcpl.org>",
+            "subject": "Share Your Library Love and Win!",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5c4bafd66ec75",
+            "from": "Asset <hello@thatasset.com>",
+            "subject": "A shipment from order #96859 is out for delivery",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88adfdc6e73",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Alan Sequence Co Name Walker in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a88ac1bc02e6",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "🗓 New recurring merchant found",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a7587872434c",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New expense from From Sd Bullion Inc Address in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c5a2aab7d823aa",
+            "from": "Monarch <email@email.monarch.com>",
+            "subject": "💲 New deposit from Paydown Payment in Monarch",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3fcc9d329b",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c59d3f350af18e",
+            "from": "Alerts in Marmalade District <no-reply@rs.email.nextdoor.com",
+            "subject": "Earthquake reported near you",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-02-14T17:23:44.377Z",
+    "dryRun": false,
+    "results": [
+      {
+        "email": "george@originutah.com",
+        "results": [
+          {
+            "id": "19c57b885d778d60",
+            "from": "Cindy Bellford <support@rentcast.io>",
+            "subject": "Re: API Inquiry - Real Estate Investment Analysis Application",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          },
+          {
+            "id": "19c4448589302882",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Reply",
+            "action": "needs-reply"
+          },
+          {
+            "id": "19c429da88b07a3d",
+            "from": "Alan Walker <alan@originutah.com>",
+            "subject": "Fwd: 🎯 OpenClaw has a security problem",
+            "classification": "Needs Attention",
+            "action": "unknown"
+          }
+        ]
+      },
+      {
+        "email": "alan@originutah.com",
+        "results": []
+      },
+      {
+        "email": "alan@roccoriley.com",
+        "results": [
+          {
+            "id": "19c5d2d1c3e4d971",
+            "from": "Bonobos <Bonobos@email.bonobos.com>",
+            "subject": "Don’t let Critter French Terry Crew pass you by!",
+            "classification": "Newsletter",
+            "action": "newsletter"
+          }
+        ]
+      }
+    ]
   }
 ]

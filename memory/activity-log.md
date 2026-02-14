@@ -2,17 +2,11 @@
 
 ## 2026-02-14
 
-### 06:23 UTC - Email Agent Check (Cron: keeper-email-check)
-**Status:** ✅ Complete
-**Processed:** 9 emails across 3 accounts
-**Flagged for attention:** 8 emails
-- RentCast API inquiry response (george@)
-- OpenClaw security issue forwarded from Alan (george@) - needs response
-- 4 Monarch financial notifications (alan@roccoriley) - deposits/expenses/recurring merchant
-- 2 earthquake alerts from Nextdoor (alan@roccoriley)
-
-**Log location:** `/workspace/skills/email-agent/logs/2026-02-14.json`
-**Note:** Processed silently due to late hour (11:23 PM MST)
-
----
-*Previous entries would be above this line*
+### 10:23 AM - Email Check (Cron)
+- **george@originutah.com**: 3 unread messages
+  - RentCast API inquiry (FLAGGED - needs attention)
+  - OpenClaw security issue forwarded by Alan (2 messages - FLAGGED)
+- **alan@originutah.com**: 0 unread messages
+- **alan@roccoriley.com**: 1 newsletter (archived)
+- **Total**: 4 emails processed, 2 need Alan's attention
+- **Log**: `/skills/email-agent/logs/2026-02-14.json`
