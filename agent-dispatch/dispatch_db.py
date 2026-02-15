@@ -923,12 +923,15 @@ def recover_interrupted_tasks(
     conn: Optional[sqlite3.Connection] = None,
     db_path: Optional[str] = None,
 ) -> List[int]:
-    """US-056: Recover tasks marked 'interrupted' on supervisor restart.
+    """US-056/US-038: Recover tasks marked 'interrupted' or 'recovering' on supervisor restart.
 
-    Queries all tasks with dispatch_status='interrupted', re-queues them
-    by setting dispatch_status='queued' and lease_until=NULL, and increments
-    the retry attempt counter by inserting a new dispatch_run record for
-    each recovered task.
+    Queries all tasks with dispatch_status='interrupted' and re-queues them
+    by setting dispatch_status='queued' and lease_until=NULL, incrementing
+    the retry attempt counter.
+
+    Also queries tasks with dispatch_status='recovering' (crashed recovery
+    pipeline) and resets them to dispatch_status='failed' so they re-enter
+    the recovery pipeline on the next poll cycle.
 
     Args:
         conn: Optional writer connection. If None, creates a new one.
@@ -941,18 +944,13 @@ def recover_interrupted_tasks(
     if conn is None:
         conn = get_writer_connection(db_path)
 
+    # --- Phase 1: Recover 'interrupted' tasks (US-056) ---
     try:
         rows = conn.execute(
             "SELECT id, assigned_agent FROM tasks WHERE dispatch_status = 'interrupted'"
         ).fetchall()
     except sqlite3.Error as e:
         logger.error("Failed to query interrupted tasks: %s", e)
-        if close_conn:
-            conn.close()
-        return []
-
-    if not rows:
-        logger.debug("No interrupted tasks to recover")
         if close_conn:
             conn.close()
         return []
@@ -1002,6 +1000,42 @@ def recover_interrupted_tasks(
         except sqlite3.Error as e:
             logger.error("Failed to recover interrupted task %s: %s", task_id, e)
 
+    # --- Phase 2: Reset 'recovering' tasks to 'failed' (US-038) ---
+    recovering_count = 0
+    try:
+        recovering_rows = conn.execute(
+            "SELECT id FROM tasks WHERE dispatch_status = 'recovering'"
+        ).fetchall()
+
+        for row in recovering_rows:
+            task_id = row["id"] if isinstance(row, sqlite3.Row) else row[0]
+            try:
+                conn.execute(
+                    "UPDATE tasks SET dispatch_status = 'failed', lease_until = NULL "
+                    "WHERE id = ? AND dispatch_status = 'recovering'",
+                    (task_id,),
+                )
+                recovered.append(task_id)
+                recovering_count += 1
+            except sqlite3.Error as e:
+                logger.error(
+                    "Failed to reset recovering task %s to failed: %s", task_id, e
+                )
+
+        if recovering_count > 0:
+            logger.info(
+                "Reset %d recovering task(s) to 'failed' for re-entry into recovery pipeline",
+                recovering_count,
+            )
+    except sqlite3.Error as e:
+        logger.error("Failed to query recovering tasks: %s", e)
+
+    if not recovered:
+        logger.debug("No interrupted or recovering tasks to recover")
+        if close_conn:
+            conn.close()
+        return []
+
     # Commit all recovery changes in one transaction
     try:
         conn.commit()
@@ -1020,7 +1054,7 @@ def recover_interrupted_tasks(
 
     if recovered:
         logger.info(
-            "Recovered %d interrupted task(s) on startup: %s",
+            "Recovered %d task(s) on startup (interrupted + recovering): %s",
             len(recovered), recovered,
         )
 
@@ -1067,6 +1101,18 @@ def run_migrations(db_path=None):
     migrations.migrate_dispatch_runs_trace_id_not_null(path)
     migrations.migrate_audit_log_not_null_fixes(path)
     migrations.migrate_working_memory_value_not_null(path)
+
+    # Recovery pipeline columns (self-healing system)
+    migrations.migrate_add_recovery_columns_to_dispatch_runs(path)
+
+    # Add 'recovering' to dispatch_status CHECK constraint (self-healing system)
+    migrations.migrate_add_recovering_dispatch_status(path)
+
+    # Create failure_memory table (self-healing system)
+    migrations.migrate_create_failure_memory(path)
+
+    # Create recovery_events table (self-healing system)
+    migrations.migrate_create_recovery_events(path)
 
     logger.info("All dispatch schema migrations completed successfully.")
 

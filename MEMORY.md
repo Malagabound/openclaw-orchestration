@@ -92,7 +92,7 @@ Alan called out my research for being "way too general" and finding "established
 
 ## How We Work Together
 
-- **George:** Research niches, present options, define strategy, handle customers/sales/marketing, BUILD THE PRODUCT (vibe coding)
+- **George:** Coordinate specialist agents, decompose tasks, route work to Rex/Pixel/Scout/Keeper, monitor progress, deliver results to Alan. George delegates ALL domain work -- research, product creation, email, operations -- to the appropriate specialist.
 - **Alan:** CEO decisions, final call on direction
 
 I'm the scout. Alan's the general. He doesn't want to deal with customers OR research — that's all me.

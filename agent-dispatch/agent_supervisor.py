@@ -398,6 +398,12 @@ class AgentSupervisor:
         # US-059: Write heartbeat timestamp on each poll cycle
         self._write_heartbeat_file()
 
+        # US-040: Detect stuck tasks before recovery sweep
+        try:
+            self._detect_stuck_tasks()
+        except Exception:
+            logger.exception("Stuck task detection failed")
+
         # Step 1: Recovery sweep
         try:
             recovered = recover_partial_completions(
@@ -561,23 +567,334 @@ class AgentSupervisor:
 
         except Exception as e:
             logger.error("Task %s failed (trace=%s): %s", task_id, trace_id, e)
-            try:
-                handle_dispatch_failure(
-                    task_id=task_id,
-                    attempt=attempt,
-                    error=str(e),
-                    trace_id=trace_id,
-                    adapter=self.adapter,
-                )
-            except Exception:
-                logger.exception(
-                    "Failed to record dispatch failure for task %s", task_id
-                )
+            self._handle_agent_failure(
+                task_id=task_id,
+                task_dict=task_dict,
+                agent_name=agent_name,
+                trace_id=trace_id,
+                attempt=attempt,
+                error=e,
+            )
 
         finally:
             # Remove from active tasks
             with self._lock:
                 self._active_tasks.pop(task_id, None)
+
+    # ── Recovery Pipeline Integration (US-028) ────────────────────
+
+    def _handle_agent_failure(
+        self,
+        task_id: int,
+        task_dict: Dict[str, Any],
+        agent_name: str,
+        trace_id: str,
+        attempt: int,
+        error: Exception,
+    ) -> None:
+        """Handle agent failure with recovery pipeline, falling back to simple retry.
+
+        If recovery is enabled (config has 'recovery' section or defaults),
+        calls recovery_pipeline.handle_failure() and processes RecoveryOutcome:
+          - final_status='completed': calls handle_task_completion()
+          - final_status='failed': updates next_retry_at for next poll cycle
+          - final_status='dispatch_failed': creates urgent notification
+
+        Falls back to dispatch_db.handle_dispatch_failure() if recovery pipeline
+        is disabled or raises an unexpected error.
+        """
+        # Check if recovery is enabled (disabled via config.recovery.enabled=False)
+        recovery_config = (
+            self.config.get("recovery", {})
+            if isinstance(self.config, dict)
+            else getattr(self.config, "recovery", {}) or {}
+        )
+        recovery_enabled = (
+            recovery_config.get("enabled", True)
+            if isinstance(recovery_config, dict)
+            else getattr(recovery_config, "enabled", True)
+        )
+
+        if not recovery_enabled:
+            logger.debug(
+                "Recovery disabled, falling back to simple retry for task %s", task_id
+            )
+            self._fallback_handle_failure(task_id, attempt, error, trace_id)
+            return
+
+        try:
+            from . import dispatch_db as dispatch_db_module
+            from .recovery.recovery_pipeline import handle_failure as recovery_handle_failure
+
+            # Get dispatch_run_row for the current trace
+            dispatch_run_row = self._get_dispatch_run_row(trace_id)
+
+            logger.info(
+                "Invoking recovery pipeline for task %s (trace=%s)", task_id, trace_id
+            )
+
+            outcome = recovery_handle_failure(
+                task_id=task_id,
+                runner_error=error,
+                task_row=task_dict,
+                dispatch_run_row=dispatch_run_row,
+                config=self.config,
+                dispatch_db=dispatch_db_module,
+            )
+
+            logger.info(
+                "Recovery pipeline result for task %s: success=%s, final_status=%s, "
+                "attempts_used=%d, strategy=%s",
+                task_id, outcome.success, outcome.final_status,
+                outcome.attempts_used, outcome.winning_strategy,
+            )
+
+            # Handle RecoveryOutcome
+            if outcome.final_status == "completed":
+                # Recovery succeeded — flow result to completion handler
+                logger.info(
+                    "Task %s recovered successfully via strategy '%s' (trace=%s)",
+                    task_id, outcome.winning_strategy, trace_id,
+                )
+                # Note: handle_task_completion is already called inside
+                # recovery_executor.execute() when agent succeeds, so the
+                # task status is already updated. No additional action needed.
+
+            elif outcome.final_status == "failed":
+                # Recovery deferred or exhausted but retryable — set next_retry_at
+                logger.info(
+                    "Task %s recovery deferred/failed, will retry next poll cycle "
+                    "(reason=%s, trace=%s)",
+                    task_id, outcome.escalation_reason, trace_id,
+                )
+                # next_retry_at is already set by the recovery pipeline
+                # (concurrency guard or exhaustion handling)
+
+            elif outcome.final_status == "dispatch_failed":
+                # Terminal failure — create urgent notification
+                logger.warning(
+                    "Task %s recovery exhausted, dispatch_failed (reason=%s, trace=%s)",
+                    task_id, outcome.escalation_reason, trace_id,
+                )
+                if self.adapter is not None:
+                    try:
+                        self.adapter.create_notification(
+                            task_id=task_id,
+                            message=(
+                                f"Task {task_id} recovery exhausted after "
+                                f"{outcome.attempts_used} attempt(s). "
+                                f"Error: {outcome.error_code}. "
+                                f"Escalation: {outcome.escalation_reason}. "
+                                f"Manual intervention required."
+                            ),
+                            urgency="urgent",
+                        )
+                    except Exception:
+                        logger.exception(
+                            "Failed to create escalation notification for task %s",
+                            task_id,
+                        )
+
+        except Exception:
+            logger.exception(
+                "Recovery pipeline failed for task %s, falling back to simple retry",
+                task_id,
+            )
+            self._fallback_handle_failure(task_id, attempt, error, trace_id)
+
+    def _fallback_handle_failure(
+        self, task_id: int, attempt: int, error: Exception, trace_id: str
+    ) -> None:
+        """Fall back to the original simple retry logic."""
+        try:
+            handle_dispatch_failure(
+                task_id=task_id,
+                attempt=attempt,
+                error=str(error),
+                trace_id=trace_id,
+                adapter=self.adapter,
+            )
+        except Exception:
+            logger.exception(
+                "Failed to record dispatch failure for task %s", task_id
+            )
+
+    def _get_dispatch_run_row(self, trace_id: str) -> dict:
+        """Fetch the dispatch_run row for a given trace_id as a dict."""
+        try:
+            conn = get_reader_connection(self.db_path)
+            conn.row_factory = sqlite3.Row
+            row = conn.execute(
+                "SELECT * FROM dispatch_runs WHERE trace_id = ? "
+                "ORDER BY id DESC LIMIT 1",
+                (trace_id,),
+            ).fetchone()
+            if row:
+                return dict(row)
+        except sqlite3.Error:
+            logger.exception(
+                "Failed to fetch dispatch_run for trace %s", trace_id
+            )
+        return {}
+
+    # ── Stuck Task Detection (US-040) ──────────────────────────────
+
+    def _detect_stuck_tasks(self) -> None:
+        """US-040: Detect tasks stuck in 'dispatched' status and trigger recovery.
+
+        Queries for tasks where:
+          - dispatch_status = 'dispatched'
+          - lease_until < now (lease expired)
+          - duration since dispatch_runs.started_at > agent_timeout_seconds
+
+        Also checks alternative detection: lease extended 3+ times with no
+        tool_calls_count increment (stalled agent making no progress).
+
+        For each stuck task found, transitions to 'failed' and triggers
+        the recovery pipeline with a STUCK_TASK error code.
+        """
+        from .agent_runner import AgentRunnerError
+        from .structured_logging import log_dispatch_event
+
+        try:
+            conn = get_reader_connection(self.db_path)
+        except sqlite3.Error:
+            logger.exception("Failed to get reader connection for stuck task detection")
+            return
+
+        timeout_seconds = self._timeout_seconds
+
+        # Query 1: Tasks with expired lease and long duration
+        try:
+            stuck_rows = conn.execute(
+                """
+                SELECT t.id, t.assigned_agent, t.title,
+                       dr.trace_id, dr.started_at, dr.lease_extensions,
+                       dr.tool_calls_count, dr.tool_calls_count_at_last_extension
+                FROM tasks t
+                LEFT JOIN dispatch_runs dr ON dr.id = (
+                    SELECT MAX(dr2.id) FROM dispatch_runs dr2
+                    WHERE dr2.task_id = t.id
+                )
+                WHERE t.dispatch_status = 'dispatched'
+                  AND t.lease_until IS NOT NULL
+                  AND t.lease_until < datetime('now')
+                  AND dr.started_at IS NOT NULL
+                  AND (
+                      -- Primary: duration exceeds timeout
+                      (julianday('now') - julianday(dr.started_at)) * 86400 > ?
+                      -- Alternative: 3+ lease extensions with no tool_calls progress
+                      OR (
+                          COALESCE(dr.lease_extensions, 0) >= 3
+                          AND COALESCE(dr.tool_calls_count, 0) <= COALESCE(dr.tool_calls_count_at_last_extension, 0)
+                      )
+                  )
+                """,
+                (timeout_seconds,),
+            ).fetchall()
+        except sqlite3.Error:
+            logger.exception("Failed to query stuck tasks")
+            return
+
+        if not stuck_rows:
+            return
+
+        logger.info("Detected %d stuck task(s)", len(stuck_rows))
+
+        for row in stuck_rows:
+            task_id = row["id"] if isinstance(row, sqlite3.Row) else row[0]
+            agent_name = row["assigned_agent"] if isinstance(row, sqlite3.Row) else row[1]
+            task_title = row["title"] if isinstance(row, sqlite3.Row) else row[2]
+            trace_id = row["trace_id"] if isinstance(row, sqlite3.Row) else row[3]
+            started_at = row["started_at"] if isinstance(row, sqlite3.Row) else row[4]
+            lease_extensions = row["lease_extensions"] if isinstance(row, sqlite3.Row) else row[5]
+            tool_calls_count = row["tool_calls_count"] if isinstance(row, sqlite3.Row) else row[6]
+
+            # Skip if already being handled by this supervisor's active tasks
+            with self._lock:
+                if task_id in self._active_tasks:
+                    continue
+
+            # Transition to 'failed' so recovery pipeline can pick it up
+            try:
+                w_conn = get_writer_connection(self.db_path)
+                cursor = w_conn.execute(
+                    "UPDATE tasks SET dispatch_status = 'failed' "
+                    "WHERE id = ? AND dispatch_status = 'dispatched'",
+                    (task_id,),
+                )
+                if cursor.rowcount == 0:
+                    w_conn.close()
+                    continue  # Already transitioned by another process
+
+                # Update dispatch_run with failure info
+                w_conn.execute(
+                    "UPDATE dispatch_runs SET status = 'failed', "
+                    "error_summary = 'STUCK_TASK: task stuck in dispatched status with expired lease', "
+                    "completed_at = datetime('now') "
+                    "WHERE trace_id = ? AND status IN ('pending', 'running')",
+                    (trace_id or "",),
+                )
+                w_conn.commit()
+                w_conn.close()
+            except sqlite3.Error:
+                logger.exception("Failed to transition stuck task %s to failed", task_id)
+                continue
+
+            # Log detection event
+            log_dispatch_event(
+                logger=logger,
+                level=logging.WARNING,
+                message=f"Stuck task detected: task {task_id} ({task_title}) "
+                        f"agent={agent_name} started_at={started_at} "
+                        f"lease_extensions={lease_extensions} "
+                        f"tool_calls_count={tool_calls_count}",
+                trace_id=trace_id,
+                agent_name=agent_name,
+                task_id=str(task_id),
+                extra={
+                    "event_type": "recovery.stuck_task_detected",
+                    "started_at": started_at,
+                    "lease_extensions": lease_extensions,
+                    "tool_calls_count": tool_calls_count,
+                    "timeout_seconds": timeout_seconds,
+                },
+            )
+
+            # Build task_dict and dispatch_run_row for recovery pipeline
+            task_dict = {
+                "id": task_id,
+                "assigned_agent": agent_name,
+                "title": task_title or "",
+                "description": "",
+                "domain": "",
+            }
+            # Create AgentRunnerError with STUCK_TASK context
+            stuck_error = AgentRunnerError(
+                f"STUCK_TASK: Task {task_id} stuck in dispatched status. "
+                f"Lease expired, started_at={started_at}, "
+                f"lease_extensions={lease_extensions}, "
+                f"tool_calls_count={tool_calls_count}",
+                stop_reason="stuck_task",
+            )
+
+            # Get attempt count for recovery
+            attempt = self._get_attempt_count(task_id)
+
+            # Trigger recovery pipeline
+            self._handle_agent_failure(
+                task_id=task_id,
+                task_dict=task_dict,
+                agent_name=agent_name or "unknown",
+                trace_id=trace_id or str(uuid.uuid4()),
+                attempt=attempt,
+                error=stuck_error,
+            )
+
+            logger.warning(
+                "Stuck task %s transitioned to 'failed' and sent to recovery pipeline",
+                task_id,
+            )
 
     # ── Heartbeat Loop ───────────────────────────────────────────
 

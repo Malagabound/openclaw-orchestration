@@ -15,6 +15,7 @@ import os
 import re
 import sqlite3
 import time
+import traceback
 import uuid
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set
@@ -61,8 +62,17 @@ class AgentResult:
 
 
 class AgentRunnerError(Exception):
-    """Raised when agent execution fails."""
-    pass
+    """Raised when agent execution fails.
+
+    US-029: Includes structured error context for recovery pipeline.
+    """
+    def __init__(self, message: str, raw_output: Optional[str] = None,
+                 tool_call_log: Optional[List[Dict[str, Any]]] = None,
+                 stop_reason: Optional[str] = None):
+        super().__init__(message)
+        self.raw_output = raw_output
+        self.tool_call_log = tool_call_log or []
+        self.stop_reason = stop_reason
 
 
 def _get_db_path() -> str:
@@ -296,6 +306,59 @@ def write_output_file(
     )
 
     return relative_path
+
+
+def _write_error_context_to_dispatch_runs(
+    trace_id: str,
+    raw_output: Optional[str],
+    tool_call_log: List[Dict[str, Any]],
+    stop_reason: Optional[str],
+    error_context: Dict[str, Any],
+    config: Dict[str, Any],
+    db_path: Optional[str] = None,
+) -> None:
+    """Write structured error context to dispatch_runs on failure.
+
+    US-029: Populates the recovery columns added by US-001 migration so the
+    recovery pipeline has complete failure information.
+
+    Args:
+        trace_id: Dispatch trace ID to identify the dispatch_runs row.
+        raw_output: Raw LLM response text (truncated before writing).
+        tool_call_log: List of tool call dicts accumulated during tool loop.
+        stop_reason: Why the agent stopped (e.g., 'provider_error', 'loop_detected').
+        error_context: Dict with exception type, message, traceback.
+        config: Config dict for reading truncation limits.
+        db_path: Optional database path override.
+    """
+    path = db_path or _get_db_path()
+
+    # Truncate raw_output per config
+    recovery_config = config.get("recovery", {}) if isinstance(config, dict) else {}
+    max_chars = recovery_config.get("raw_output_max_chars", 10000) if isinstance(recovery_config, dict) else 10000
+    truncated_output = raw_output
+    if truncated_output and len(truncated_output) > max_chars:
+        truncated_output = truncated_output[:max_chars]
+
+    try:
+        conn = sqlite3.connect(path)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA foreign_keys=ON")
+        conn.execute(
+            "UPDATE dispatch_runs SET raw_output = ?, tool_call_log = ?, "
+            "stop_reason = ?, error_context = ? WHERE trace_id = ?",
+            (
+                truncated_output,
+                json.dumps(tool_call_log, default=str) if tool_call_log else None,
+                stop_reason,
+                json.dumps(error_context, default=str),
+                trace_id,
+            ),
+        )
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        logger.warning("Failed to write error context to dispatch_runs: %s", e)
 
 
 def _compute_tool_call_hash(tool_name: str, tool_args: Dict[str, Any]) -> str:
@@ -583,6 +646,10 @@ def run_agent(
     # REQ-036: Track milestone updates
     milestone_updates_posted = 0
 
+    # US-029: Accumulate tool call log and raw output for recovery pipeline
+    tool_call_log: List[Dict[str, Any]] = []
+    raw_output_parts: List[str] = []
+
     # Extra dict for structured log entries with trace context
     _log_extra = {"trace_id": trace_id, "agent_name": agent_name, "task_id": task_id}
 
@@ -607,9 +674,28 @@ def run_agent(
                 iteration, trace_id, e,
                 extra=_log_extra,
             )
+            # US-029: Capture error context on provider failure
+            stop_reason = "provider_error"
+            combined_raw = "\n".join(raw_output_parts) if raw_output_parts else None
+            error_ctx = {
+                "exception_type": type(e).__name__,
+                "exception_module": type(e).__module__,
+                "message": str(e),
+                "traceback": traceback.format_exc(),
+            }
+            _write_error_context_to_dispatch_runs(
+                trace_id, combined_raw, tool_call_log, stop_reason, error_ctx, config, db_path
+            )
             raise AgentRunnerError(
-                f"Provider call failed on iteration {iteration}: {e}"
+                f"Provider call failed on iteration {iteration}: {e}",
+                raw_output=combined_raw,
+                tool_call_log=tool_call_log,
+                stop_reason=stop_reason,
             ) from e
+
+        # US-029: Capture raw LLM output from each iteration
+        if response.content:
+            raw_output_parts.append(response.content)
 
         # Check for tool calls
         if not response.tool_calls:
@@ -683,6 +769,14 @@ def run_agent(
                 if not is_idempotent:
                     non_idempotent_hashes.add(call_hash)
 
+            # US-029: Append to tool_call_log for recovery context
+            tool_call_log.append({
+                "name": tc_name,
+                "arguments": tc_args,
+                "result_excerpt": result_str[:500] if result_str else "",
+                "iteration": iteration,
+            })
+
             tool_results.append({
                 "tool_call_id": tc_id,
                 "name": tc_name,
@@ -733,9 +827,12 @@ def run_agent(
 
     # 5. Parse <agent-result> from final response content
     final_content = response.content or ""
+    # US-029: Combine all raw output captured during tool loop iterations
+    combined_raw_output = "\n".join(raw_output_parts) if raw_output_parts else final_content or None
+
     try:
         result_dict = _parse_agent_result(final_content)
-    except AgentRunnerError:
+    except AgentRunnerError as parse_err:
         # If no structured result, create a minimal one from raw content
         logger.warning(
             "No <agent-result> block found for agent %s (trace=%s), using raw response",
@@ -749,7 +846,26 @@ def run_agent(
         }
 
     # 6. Validate result
-    agent_result = _validate_agent_result(result_dict)
+    try:
+        agent_result = _validate_agent_result(result_dict)
+    except AgentRunnerError as val_err:
+        # US-029: Write error context to dispatch_runs on validation failure
+        stop_reason = "validation_error"
+        error_ctx = {
+            "exception_type": type(val_err).__name__,
+            "message": str(val_err),
+            "traceback": traceback.format_exc(),
+        }
+        _write_error_context_to_dispatch_runs(
+            trace_id, combined_raw_output, tool_call_log, stop_reason, error_ctx, config, db_path
+        )
+        raise AgentRunnerError(
+            str(val_err),
+            raw_output=combined_raw_output,
+            tool_call_log=tool_call_log,
+            stop_reason=stop_reason,
+        ) from val_err
+
     agent_result.raw_response = final_content
 
     # 7. Upsert working memory entries (with 5000 char limit enforcement)

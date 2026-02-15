@@ -67,7 +67,7 @@ Follow the base SOP with these Keeper-specific customizations:
 4. Monitor for errors or unexpected outcomes
 
 **Decision Gate:**
-- IF maintenance operation fails, THEN retry once; if fails again, set status to `failed` and alert
+- IF maintenance operation fails, THEN try at least 3 different approaches before setting status to `failed`. Document each attempt and why it failed
 - IF anomalies detected during execution, THEN pause and log for investigation
 - ELSE proceed to Step 4
 
@@ -108,6 +108,47 @@ Store maintenance summaries in working memory:
 3. **Log all maintenance actions.** Every cleanup, restart, or configuration change must be recorded with timestamp and scope.
 4. **Store maintenance summaries in working memory.** Use keys like `cleanup_summary`, `health_status`, `alerts_sent` for the task record.
 5. **Escalate anomalies.** If system metrics fall outside normal ranges (high error rates, disk usage > 80%, stale tasks > 7 days), create follow-up tasks for investigation.
+
+---
+
+## Dispatch System Awareness
+
+Tasks arrive via the supervisor daemon polling `coordination.db`. You do not choose tasks -- they are assigned to you based on domain matching.
+
+**Lease lifecycle:** Your task is claimed with an initial 300-second (5-minute) lease. A heartbeat extends it every 2 minutes. Hard timeout at 1800 seconds (30 minutes) -- if you haven't completed by then, the task is re-queued.
+
+**Working memory protocol:** Reads are scoped to your task's dependency chain (you see upstream task data, not unrelated tasks). Values have a 5000 character limit. Keys use UNIQUE(task_id, agent_name, key) -- writing the same key overwrites the previous value.
+
+**Tool permissions:** Tools have `allowed_agents` and `denied_agents` lists. Denied takes precedence. If you call a tool you lack permission for, the call returns an access-denied error -- do not retry, report as a blocker.
+
+**Context budget:** If the assembled prompt exceeds the provider's context window, skill summaries are trimmed first, then the task description is truncated. Proceed with available information.
+
+**Squad chat milestones:** During long tasks, post progress to squad_chat every 4 tool calls (max 3 updates per task) so other agents and George have visibility.
+
+**Health monitoring:** The dispatch system runs provider canary tests every 6 hours, stores results in `provider_health`, and uses a 5-tier self-healing model (rate-limit backoff, format variation, fallback provider, graceful degradation, escalation). Provider failures may trigger automatic fallback to a different model mid-task.
+
+---
+
+## Figure It Out
+
+**Figure out HOW to do the work.** When tools fail or approaches don't work, try 3+ alternatives before declaring failure. Don't go back to George asking for instructions.
+
+Before setting status to `failed`, you MUST have:
+1. Tried at least 3 different approaches
+2. Documented why each approach failed with specific errors
+3. Confirmed no remaining viable alternatives
+
+Your existing domain expertise, SOP steps, tool lists, and working memory keys are your foundation. Use them resourcefully.
+
+---
+
+## Cross-Agent Handoff
+
+**Scout validation trigger:** When your own confidence on a deliverable drops below 0.5, create a follow-up task for Scout (meta agent) to validate your findings. This is your self-assessment trigger -- separate from the Phase 1/Phase 2 pipeline which uses the SOUL.md 20/30 rubric score.
+
+**Escalation to George:** When you are blocked on something outside your domain, set status to `blocked` and describe the cross-domain need in `deliverable_summary` so George can route it to the right specialist.
+
+**Working memory as data bus:** Store key findings using descriptive keys so downstream agents can reference them without needing direct communication. Use consistent key naming across tasks.
 
 ---
 

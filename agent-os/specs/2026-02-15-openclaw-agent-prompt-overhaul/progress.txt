@@ -1,0 +1,180 @@
+# Ralph Progress Log
+
+**Feature:** Overhaul all OpenClaw agent prompts to integrate dispatch system awareness, establish George as a pure coordinator, add 'Figure It Out' directives, and resolve identity contradictions.
+**Branch:** feature-agent-prompt-overhaul
+**Started:** 2026-02-15
+
+---
+
+## Revised Approach (2026-02-15)
+
+Original spec renamed AGENT_SKILLS keys from functional to persona names. This conflicted with the self-healing system. **Revised approach: rename prompt FILES to match existing functional config keys.** No DB migration, no config key renames, no breaking changes.
+
+### File Renames Completed
+- `prompts/rex.md` -> `prompts/research.md`
+- `prompts/pixel.md` -> `prompts/product.md`
+- `prompts/nora.md` -> `prompts/comms.md`
+- `prompts/keeper.md` -> `prompts/ops.md`
+- `prompts/scout.md` -> `prompts/meta.md`
+
+### Stories Eliminated (US-016 to US-019 from original spec)
+- No AGENT_SKILLS key renames
+- No supervisor/CLI default name updates
+- No docstring updates
+- No YAML config key renames
+
+### Replaced With
+- US-016: File renames + new config entries (haven, vault, george)
+
+---
+
+## Codebase Patterns
+
+### Prompt File Structure
+All agent prompt files follow this structure:
+1. Identity (agent name, purpose)
+2. Expertise (bullet list)
+3. Domains (keyword list)
+4. Allowed Tools (bullet list with descriptions)
+5. SOP Workflow (Steps with Decision Gates)
+6. Quality Standards (numbered list)
+7. **Dispatch System Awareness** (new)
+8. **Figure It Out** (new)
+9. **Cross-Agent Handoff** (new)
+10. Routing Keywords (final section)
+
+### AGENT_SKILLS Key Naming
+- Keys are functional role names: `research`, `product`, `comms`, `ops`, `meta`
+- Prompt filenames match keys: `prompts/research.md`, `prompts/product.md`, etc.
+- New entries: `haven`, `vault`, `george` (all with empty skill lists)
+- Keys without persona files remain unchanged (`content`, `taskr`, `security`, `memory`)
+
+### George's Adapter Methods
+These are NOT universal tool-loop tools:
+- Available in direct chat sessions via Python import
+- No YAML definitions in tools/definitions/
+- Cannot be called via standard tool_call mechanism without YAML definitions
+- List: create_task, complete_task, add_task_contribution, log_agent_activity, create_notification, squad_chat_post, get_dashboard_summary, agent_checkin, determine_agents, get_coordination_summary
+
+---
+
+## Implementation Complete
+
+All changes implemented directly (no Ralph loop needed):
+- [x] Prompt file renames (5 files)
+- [x] New AGENT_SKILLS entries (haven, vault, george)
+- [x] New YAML config entries (haven, vault, george in all 4 sections)
+- [x] george.md created with full orchestrator prompt
+- [x] base_sop.md updated (Dispatch System Context, Figure It Out, Step 3 Decision Gate, agent-result parsing note, working memory protocol, tool permission awareness, context budget awareness)
+- [x] All 7 specialist prompts updated (Dispatch System Awareness, Figure It Out, Cross-Agent Handoff)
+- [x] ops.md Decision Gate updated to 3+ approach policy
+- [x] comms.md Decision Gate updated to 3+ approach policy
+- [x] AGENTS.md: orchestrator sections replaced with george.md cross-reference
+- [x] MEMORY.md: George role description updated to delegation-oriented language
+- [x] SOUL.md: Operating Model section replaced with george.md cross-reference
+- [x] spec.md updated for revised approach
+- [x] prd.json updated (US-016-019 replaced, file references updated)
+
+---
+
+## 2026-02-15 - US-001 (Ralph Loop)
+- **Story:** Create george.md orchestrator prompt with cardinal rules and delegation SOP
+- **What was done:** Verified existing george.md against all 13 acceptance criteria. All content was already present from prior manual implementation. Marked `passes: true` in prd.json.
+- **Files verified:** prompts/george.md (already complete)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-001 passes: true)
+- **Learnings for future iterations:**
+  - No package.json exists in this repo - `npm run typecheck` is not applicable. "Typecheck passes" is vacuously true for prompt-only stories.
+  - george.md was already fully implemented in a prior session (listed in "Implementation Complete" above). Ralph just needed to verify and mark passes.
+---
+
+## 2026-02-15 - US-002 (Ralph Loop)
+- **Story:** Add George's `<agent-result>` format conventions to george.md
+- **What was done:** Verified existing george.md lines 117-125 against all 6 acceptance criteria. The `<agent-result>` format section was already present from prior manual implementation, covering deliverable_content (delegation plan), confidence_score (0.0-1.0 routing confidence), working_memory (delegation_plan key), and follow_up_tasks (empty). Marked `passes: true` in prd.json.
+- **Files verified:** prompts/george.md (already complete, lines 117-125)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-002 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001: all stories in this spec were pre-implemented in a prior manual session. Ralph iterations just verify and mark passes.
+  - The "Implementation Complete" section in progress.txt is the ground truth for what was already done.
+---
+
+## 2026-02-15 - US-003 (Ralph Loop)
+- **Story:** Add Dispatch System Awareness section to research.md
+- **What was done:** Verified existing research.md lines 98-113 against all 11 acceptance criteria. The Dispatch System Awareness section was already present from prior manual implementation, covering: task arrival (supervisor daemon polling coordination.db), lease lifecycle (300s/2min/1800s), working memory protocol (5000 char, UNIQUE key, dependency-scoped reads), tool permissions (allowed/denied, denied precedence, access-denied), context budget (skill summaries trimmed first), squad chat milestones (every 4 tool calls, max 3), and health monitoring (5-tier self-healing, canary every 6h, automatic fallback). Section is correctly positioned after Quality Standards and before Routing Keywords.
+- **Files verified:** prompts/research.md (already complete, lines 98-113)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-003 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001/US-002: pre-implemented, just verify and mark passes.
+  - The Dispatch System Awareness section content is identical across all 7 specialist prompts (per US-004 and US-005 stories). Future iterations for those stories can verify against the same criteria.
+---
+
+## 2026-02-15 - US-004 (Ralph Loop)
+- **Story:** Add Dispatch System Awareness section to product.md, meta.md, ops.md
+- **What was done:** Verified existing Dispatch System Awareness sections in all 3 files against all 7 acceptance criteria. All sections were already present from prior manual implementation, matching research.md content exactly. Positioned correctly (after Quality Standards, before Routing Keywords). No duplicates.
+- **Files verified:** prompts/product.md (lines 100-114), prompts/meta.md (lines 114-128), prompts/ops.md (lines 114-128)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-004 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001/002/003: all stories pre-implemented, Ralph just verifies and marks passes.
+  - All 7 specialist prompts have identical Dispatch System Awareness content (confirmed for research, product, meta, ops so far).
+---
+
+## 2026-02-15 - US-005 (Ralph Loop)
+- **Story:** Add Dispatch System Awareness section to haven.md, vault.md, comms.md
+- **What was done:** Verified existing Dispatch System Awareness sections in all 3 files against all 7 acceptance criteria. All sections were already present from prior manual implementation, matching research.md content exactly. Positioned correctly (after Quality Standards, before Routing Keywords). No duplicates.
+- **Files verified:** prompts/haven.md (lines 98-113), prompts/vault.md (lines 110-125), prompts/comms.md (lines 102-117)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-005 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001/002/003/004: all stories pre-implemented, Ralph just verifies and marks passes.
+  - All 7 specialist prompts now confirmed to have identical Dispatch System Awareness content (research, product, meta, ops, haven, vault, comms).
+---
+
+## 2026-02-15 - US-006 (Ralph Loop)
+- **Story:** Add Figure It Out directive to research.md
+- **What was done:** Verified existing research.md lines 116-126 against all 7 acceptance criteria. The Figure It Out section was already present from prior manual implementation, with core message (try 3+ alternatives), mandate (3+ approaches with documented failures before status=failed), and preservation note for existing expertise/SOP/tools/working memory. Section is correctly positioned after Dispatch System Awareness and before Routing Keywords. Idempotent (no duplicates).
+- **Files verified:** prompts/research.md (already complete, lines 116-126)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-006 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001-005: all stories pre-implemented, Ralph just verifies and marks passes.
+  - Figure It Out content is identical across all 7 specialist prompts (will be verified in US-007 and US-009).
+---
+
+## 2026-02-15 - US-007 (Ralph Loop)
+- **Story:** Add Figure It Out directive to product.md, meta.md
+- **What was done:** Verified existing Figure It Out sections in both files against all 6 acceptance criteria. Both sections were already present from prior manual implementation, matching research.md content exactly. Positioned correctly (after Dispatch System Awareness, before Routing Keywords). No duplicates.
+- **Files verified:** prompts/product.md (lines 118-127), prompts/meta.md (lines 132-141)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-007 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001-006: all stories pre-implemented, Ralph just verifies and marks passes.
+  - Figure It Out content confirmed identical in product.md and meta.md (also confirmed in research.md from US-006). US-009 will verify the remaining 4 specialist prompts.
+---
+
+## 2026-02-15 - US-008 (Ralph Loop)
+- **Story:** Update ops.md Step 3 Decision Gate to align with 3+ approach policy
+- **What was done:** Verified ops.md Step 3 Decision Gate (line 70) against all 4 acceptance criteria. The Decision Gate was already updated from prior manual implementation. Old text "retry once; if fails again" replaced with "try at least 3 different approaches before setting status to failed. Document each attempt and why it failed." Marked `passes: true` in prd.json.
+- **Files verified:** prompts/ops.md (line 70, already updated)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-008 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001-007: all stories pre-implemented, Ralph just verifies and marks passes.
+  - The Decision Gate update pattern (3+ approaches) is consistent across ops.md, comms.md, and base_sop.md (US-009 will verify comms.md, US-014 will verify base_sop.md).
+---
+
+## 2026-02-15 - US-009 (Ralph Loop)
+- **Story:** Add Figure It Out directive to ops.md, haven.md, vault.md, comms.md
+- **What was done:** Verified existing Figure It Out sections in all 4 files against all 9 acceptance criteria. All sections were already present from prior manual implementation, matching research.md content exactly. Positioned correctly (after Dispatch System Awareness, before Routing Keywords). comms.md Step 3 Decision Gate (line 71) already updated to 3+ approach policy ("try at least 3 different approaches before setting status to `failed`. Document each attempt and why it failed"). No duplicates.
+- **Files verified:** prompts/ops.md (lines 132-141), prompts/haven.md (lines 116-125), prompts/vault.md (lines 128-137), prompts/comms.md (lines 120-129)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-009 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001-008: all stories pre-implemented, Ralph just verifies and marks passes.
+  - All 7 specialist prompts now confirmed to have identical Figure It Out content (research, product, meta, ops, haven, vault, comms).
+  - Both comms.md and ops.md Decision Gates have been updated to 3+ approach policy (comms.md line 71, ops.md line 70).
+---
+
+## 2026-02-15 - US-010 (Ralph Loop)
+- **Story:** Add Cross-Agent Handoff Protocol to research.md with Scout validation threshold
+- **What was done:** Verified existing research.md lines 129-141 against all 8 acceptance criteria. The Cross-Agent Handoff section was already present from prior manual implementation, with: Scout validation trigger (confidence < 0.5), three threshold systems clarification (base_sop.md 0.0-1.0 continuous float, specialist < 0.5 internal threshold, SOUL.md 20/30 rubric), escalation to George (status=blocked with cross-domain need), and working memory as data bus (descriptive keys for downstream agents). Section is correctly positioned after Figure It Out (lines 116-127) and before Routing Keywords (line 144). Idempotent (no duplicates).
+- **Files verified:** prompts/research.md (already complete, lines 129-141)
+- **Files changed:** agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/prd.json (US-010 passes: true)
+- **Learnings for future iterations:**
+  - Same pattern as US-001-009: all stories pre-implemented, Ralph just verifies and marks passes.
+  - Cross-Agent Handoff content is identical across all 7 specialist prompts (will be verified in US-011).
+  - Three separate threshold systems: base_sop.md confidence_score (result quality), specialist < 0.5 (triggers Scout review), SOUL.md 20/30 (Phase 1→Phase 2 pipeline). Important to keep these distinct.
+---

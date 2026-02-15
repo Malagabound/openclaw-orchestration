@@ -228,12 +228,77 @@ def enforce_context_budget(
     )
 
 
+def _format_recovery_context(recovery_context: Any) -> str:
+    """Format a RecoveryContext into XML block for injection into USER message.
+
+    Follows spec Appendix G format. Truncates previous_raw_output to 500 chars.
+
+    Args:
+        recovery_context: RecoveryContext dataclass instance.
+
+    Returns:
+        Formatted <recovery-context> XML string.
+    """
+    rc = recovery_context
+    parts: List[str] = []
+
+    parts.append(f"This is recovery attempt {rc.attempt_number} of {rc.total_max_attempts} for this task. Previous attempts failed.")
+
+    # Attempt N-1 Result
+    parts.append("")
+    parts.append("## Attempt Result")
+    parts.append(f"- Error: {rc.error_code} -- {rc.error_message}")
+    if rc.previous_raw_output:
+        excerpt = rc.previous_raw_output[:500]
+        parts.append(f"- Agent Output (excerpt): {excerpt}")
+    if rc.tool_call_summary:
+        parts.append(f"- Tool Calls Made: {rc.tool_call_summary}")
+    if rc.diagnostic_analysis:
+        parts.append(f"- Diagnosis: {rc.diagnostic_analysis}")
+
+    # Recovery Strategy
+    parts.append("")
+    parts.append("## Recovery Strategy")
+    parts.append(rc.strategy_description)
+
+    # Specific fix if available
+    if rc.specific_fix:
+        parts.append(f"\n**Specific Fix:** {rc.specific_fix}")
+
+    # Constraints
+    if rc.constraints:
+        parts.append("")
+        parts.append("## Constraints")
+        for constraint in rc.constraints:
+            parts.append(f"- {constraint}")
+
+    # Previous Attempts Summary
+    if rc.previous_attempts:
+        parts.append("")
+        parts.append("## Previous Attempts Summary")
+        for pa in rc.previous_attempts:
+            line = f"- Attempt {pa.attempt_number} - strategy: {pa.strategy_used}, error: {pa.error_code}"
+            if pa.diagnostic_summary:
+                line += f", diagnostic: {pa.diagnostic_summary}"
+            parts.append(line)
+
+    # Similar Past Fixes
+    if rc.similar_past_fixes:
+        parts.append("")
+        parts.append("## Similar Past Fixes")
+        for fix in rc.similar_past_fixes:
+            parts.append(f"- Previously, {fix}")
+
+    return "\n".join(parts)
+
+
 def build_prompt(
     agent_name: str,
     task_dict: Dict[str, Any],
     working_memory_entries: List[Dict[str, Any]],
     config: Optional[Dict[str, Any]] = None,
     provider: Optional[LLMProvider] = None,
+    recovery_context: Optional[Any] = None,
 ) -> List[Message]:
     """Assemble structured messages for an agent LLM call.
 
@@ -247,6 +312,9 @@ def build_prompt(
             If None or empty, will auto-load working memory scoped to task dependencies.
         config: Optional config dict (reserved for future use).
         provider: Optional LLMProvider for context budget enforcement.
+        recovery_context: Optional RecoveryContext dataclass for recovery retries.
+            If provided, injects <recovery-context> XML block into USER message
+            after task description and before skills (spec Appendix G).
 
     Returns:
         List of Message objects: [system_message, user_message].
@@ -301,6 +369,11 @@ def build_prompt(
         user_parts.append(f"**Priority:** {task_priority}")
     if task_description:
         user_parts.append(f"\n{task_description}")
+
+    # Recovery context injection (spec Appendix G: after task, before skills/working memory)
+    if recovery_context is not None:
+        recovery_block = _format_recovery_context(recovery_context)
+        user_parts.append(f"\n<recovery-context>\n{recovery_block}\n</recovery-context>")
 
     # Working memory with XML delimiters
     if working_memory_entries:

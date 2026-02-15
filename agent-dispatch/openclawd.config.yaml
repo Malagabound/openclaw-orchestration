@@ -32,6 +32,9 @@ agent_models:
   taskr: "claude-haiku-4-5"            # Task management agents use Haiku
   security: "claude-sonnet-4-5"        # Security agents use Sonnet
   memory: "claude-haiku-4-5"           # Memory agents use Haiku
+  haven: "claude-sonnet-4-5"           # Real estate agents use Sonnet
+  vault: "claude-sonnet-4-5"           # Business acquisition agents use Sonnet
+  george: "claude-sonnet-4-5"          # Orchestrator uses Sonnet
 
 # ── Global Fallback Provider ────────────────────────────────────
 # Used when the primary provider fails health checks or returns errors.
@@ -53,6 +56,9 @@ agent_fallbacks:
   taskr: "gpt-4o-mini"                 # Taskr fallback
   security: "gpt-4o"                   # Security fallback
   memory: "gpt-4o-mini"               # Memory fallback
+  haven: "gpt-4o"                      # Haven fallback
+  vault: "gpt-4o"                      # Vault fallback
+  george: "gpt-4o"                     # George fallback
 
 # ── Agent Budget Limits ─────────────────────────────────────────
 # Per-agent daily spending caps in USD. Dispatch halts for the agent
@@ -67,6 +73,9 @@ agent_budgets:
   taskr: 1.00                          # Taskr agents: $1/day
   security: 2.00                       # Security agents: $2/day
   memory: 0.50                         # Memory agents: $0.50/day
+  haven: 3.00                          # Haven agents: $3/day
+  vault: 3.00                          # Vault agents: $3/day
+  george: 1.00                         # George orchestrator: $1/day
 
 # ── Agent Lease Defaults ────────────────────────────────────────
 # Per-agent lease durations in seconds. A lease reserves a task for
@@ -81,6 +90,9 @@ agent_lease_defaults:
   taskr: 180                           # Taskr: 3 min
   security: 300                        # Security: 5 min
   memory: 180                          # Memory: 3 min
+  haven: 600                           # Haven: 10 min (complex analysis)
+  vault: 600                           # Vault: 10 min (deal analysis)
+  george: 300                          # George: 5 min (coordination)
 
 # ── Concurrency & Timing ───────────────────────────────────────
 # Global limits for the dispatch supervisor daemon.
@@ -177,6 +189,47 @@ tool_api_keys:
   serpapi_env: "SERPAPI_KEY"                    # SerpAPI (priority 1 for web_search)
   brave_search_env: "BRAVE_SEARCH_API_KEY"     # Brave Search (priority 2 for web_search)
   firecrawl_env: "FIRECRAWL_API_KEY"           # Firecrawl web scraping/crawling
+
+# ── Recovery / Self-Healing Configuration ─────────────────────
+# Controls the 8-stage task-level recovery pipeline.
+# All values are optional -- if omitted, the default value is used.
+recovery:
+  # -- General limits --
+  max_recovery_attempts: 5              # Max total recovery attempts per task (maps to strategy ladder tiers)
+  max_recovery_time_seconds: 1800       # Hard timeout for entire recovery pipeline per task (30 min)
+  max_concurrent_recoveries: 3          # Max tasks in dispatch_status='recovering' at once
+  recovery_timeout_per_attempt: 600     # Hard timeout per individual recovery attempt (10 min)
+
+  # -- Diagnostic Agent --
+  diagnostic_model: "claude-haiku-4-5"  # Model for diagnostic LLM calls (use cheapest available)
+  diagnostic_max_input_tokens: 4000     # Max tokens for diagnostic agent input context
+  diagnostic_prompt_file: "prompts/diagnostic_sop.md"  # Path to diagnostic system prompt
+
+  # -- Budget --
+  # Recovery budget per task = min(daily_budget_usd * recovery_budget_ratio, recovery_budget_cap_usd)
+  recovery_budget_ratio: 0.04           # 4% of daily_budget_usd allocated per task recovery
+  recovery_budget_cap_usd: 2.00         # Hard cap on per-task recovery spend
+
+  # -- Truncation limits --
+  raw_output_max_chars: 10000           # Max chars stored in dispatch_runs.raw_output
+  diagnostic_context_chars: 2000        # Max chars of raw_output sent to Diagnostic Agent
+  recovery_prompt_context_chars: 500    # Max chars of raw_output included in recovery prompt to agent
+  error_message_max_chars: 200          # Max chars for error messages in PreviousAttemptSummary
+
+  # -- Confidence threshold --
+  min_confidence_score: 0.3             # AgentResult.confidence_score below this triggers CONFIDENCE_TOO_LOW
+
+  # -- Systemic failure detection --
+  systemic_failure_threshold_count: 3   # Number of same-error failures to trigger systemic response
+  systemic_failure_window_minutes: 10   # Time window for counting correlated failures
+
+  # -- Escalation --
+  max_escalations_per_hour: 5           # Prevent alert fatigue
+  escalation_cooldown_seconds: 300      # Min time between escalations for same task
+
+  # -- Retention --
+  failure_memory_retention_days: 90     # Days to keep failure_memory entries
+  recovery_events_retention_days: 90    # Days to keep recovery_events entries
 
 # ── Tool Execution Limits ──────────────────────────────────────
 max_tool_iterations: 50                # Max tool call iterations per agent run

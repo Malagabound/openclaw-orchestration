@@ -822,6 +822,355 @@ def migrate_working_memory_value_not_null(db_path=None):
         conn.close()
 
 
+def migrate_add_recovering_dispatch_status(db_path=None):
+    """US-002 (self-healing): Add 'recovering' to dispatch_status CHECK constraint.
+
+    SQLite doesn't support ALTER COLUMN, so we rebuild the tasks table with
+    the updated CHECK constraint that includes 'recovering' in the allowed
+    dispatch_status values.
+
+    Idempotent: checks if 'recovering' is already allowed before migrating.
+    """
+    conn = _get_connection(db_path)
+    try:
+        # Check if 'recovering' is already in the constraint by attempting an insert
+        # First, check if the column exists
+        cursor = conn.execute("PRAGMA table_info(tasks)")
+        columns = {row[1] for row in cursor.fetchall()}
+        if "dispatch_status" not in columns:
+            return  # dispatch_status not added yet; skip
+
+        # Check the current table SQL for the CHECK constraint
+        cursor = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE type='table' AND name='tasks'"
+        )
+        row = cursor.fetchone()
+        if row and row[0] and "'recovering'" in row[0]:
+            return  # Already has 'recovering' in constraint
+
+        # Get all column info for rebuild
+        cursor = conn.execute("PRAGMA table_info(tasks)")
+        col_info = cursor.fetchall()
+        # col_info rows: (cid, name, type, notnull, dflt_value, pk)
+
+        # Build column definitions for temp table
+        # We need to preserve all constraints from the original CREATE TABLE
+        # plus the ALTER TABLE additions (dispatch_status, lease_until)
+        # The safest approach: read original SQL and modify it
+        table_sql = row[0] if row else None
+        if not table_sql:
+            return  # Can't proceed without table SQL
+
+        # Replace the old CHECK constraint with the new one that includes 'recovering'
+        old_check = (
+            "CHECK(dispatch_status IS NULL OR dispatch_status IN"
+            "\n                ('queued', 'dispatched', 'completed', 'failed',\n"
+            "                 'interrupted', 'dispatch_failed'))"
+        )
+        new_check = (
+            "CHECK(dispatch_status IS NULL OR dispatch_status IN"
+            "\n                ('queued', 'dispatched', 'completed', 'failed',\n"
+            "                 'interrupted', 'dispatch_failed', 'recovering'))"
+        )
+
+        # Try direct string replacement first
+        if old_check in table_sql:
+            new_table_sql = table_sql.replace(old_check, new_check)
+        else:
+            # Fallback: try a more flexible pattern match
+            # The CHECK may have different whitespace in the stored SQL
+            import re
+            pattern = (
+                r"CHECK\s*\(\s*dispatch_status\s+IS\s+NULL\s+OR\s+dispatch_status\s+IN\s*\("
+                r"[^)]+\)\s*\)"
+            )
+            replacement = (
+                "CHECK(dispatch_status IS NULL OR dispatch_status IN"
+                " ('queued', 'dispatched', 'completed', 'failed',"
+                " 'interrupted', 'dispatch_failed', 'recovering'))"
+            )
+            new_table_sql = re.sub(pattern, replacement, table_sql)
+
+            if new_table_sql == table_sql:
+                # If no CHECK constraint found at all (column added without one),
+                # nothing to update - the column accepts any value
+                return
+
+        # Create temp table with updated schema
+        temp_sql = new_table_sql.replace(
+            "CREATE TABLE tasks", "CREATE TABLE tasks_temp", 1
+        )
+        conn.execute(temp_sql)
+
+        # Copy all data
+        col_names = ", ".join(col[1] for col in col_info)
+        conn.execute(
+            f"INSERT INTO tasks_temp ({col_names}) SELECT {col_names} FROM tasks"
+        )
+
+        # Drop original and rename
+        conn.execute("DROP TABLE tasks")
+        conn.execute("ALTER TABLE tasks_temp RENAME TO tasks")
+
+        # Recreate indexes on tasks table
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_tasks_dispatch
+            ON tasks(dispatch_status, lease_until)
+            """
+        )
+
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def verify_recovering_dispatch_status(db_path=None):
+    """Verify dispatch_status CHECK constraint includes 'recovering'."""
+    conn = _get_connection(db_path)
+    try:
+        cursor = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE type='table' AND name='tasks'"
+        )
+        row = cursor.fetchone()
+        if row and row[0] and "'recovering'" in row[0]:
+            return True
+        # Also test by trying to insert and rollback
+        try:
+            conn.execute(
+                "INSERT INTO tasks (title, description, domain, dispatch_status) "
+                "VALUES ('__test__', '__test__', '__test__', 'recovering')"
+            )
+            # Delete the test row
+            conn.execute(
+                "DELETE FROM tasks WHERE title = '__test__' AND description = '__test__'"
+            )
+            conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
+    finally:
+        conn.close()
+
+
+def migrate_add_recovery_columns_to_dispatch_runs(db_path=None):
+    """US-001 (self-healing): Add recovery state columns to dispatch_runs table.
+
+    Adds 8 columns for the recovery pipeline:
+      - raw_output: Raw LLM response before parsing
+      - tool_call_log: JSON array of tool calls made during execution
+      - stop_reason: Why execution stopped (e.g., 'max_tokens', 'end_turn')
+      - error_context: JSON with exception type, message, traceback
+      - recovery_tier: Which recovery tier was used (1-5)
+      - recovery_strategy: Name of recovery strategy applied
+      - lease_extensions: Number of times the lease was extended
+      - tool_calls_count_at_last_extension: tool_calls_count when lease was last extended
+
+    Idempotent: skips columns that already exist.
+    """
+    conn = _get_connection(db_path)
+    try:
+        columns = [
+            ("raw_output", "TEXT"),
+            ("tool_call_log", "TEXT"),
+            ("stop_reason", "TEXT"),
+            ("error_context", "TEXT"),
+            ("recovery_tier", "INTEGER"),
+            ("recovery_strategy", "TEXT"),
+            ("lease_extensions", "INTEGER DEFAULT 0"),
+            ("tool_calls_count_at_last_extension", "INTEGER DEFAULT 0"),
+        ]
+        for col_name, col_type in columns:
+            try:
+                conn.execute(
+                    f"ALTER TABLE dispatch_runs ADD COLUMN {col_name} {col_type}"
+                )
+            except sqlite3.OperationalError as e:
+                if "duplicate column name" in str(e).lower():
+                    pass  # Column already exists - idempotent
+                else:
+                    raise
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def verify_recovery_columns_on_dispatch_runs(db_path=None):
+    """Verify all 8 recovery columns exist on dispatch_runs table."""
+    conn = _get_connection(db_path)
+    try:
+        cursor = conn.execute("PRAGMA table_info(dispatch_runs)")
+        columns = {row[1] for row in cursor.fetchall()}
+        required = {
+            "raw_output", "tool_call_log", "stop_reason", "error_context",
+            "recovery_tier", "recovery_strategy", "lease_extensions",
+            "tool_calls_count_at_last_extension",
+        }
+        return required.issubset(columns)
+    finally:
+        conn.close()
+
+
+def migrate_create_failure_memory(db_path=None):
+    """US-003 (self-healing): Create failure_memory table for pattern learning.
+
+    Stores error-diagnosis-fix triples so that the recovery system learns
+    from past successes. Includes indexes for fast similarity queries and
+    retention cleanup. Uses CREATE TABLE IF NOT EXISTS for idempotency.
+    """
+    conn = _get_connection(db_path)
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS failure_memory (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id INTEGER,
+                agent_name TEXT,
+                error_code TEXT,
+                error_pattern TEXT,
+                diagnostic_summary TEXT,
+                resolution_summary TEXT,
+                success INTEGER DEFAULT 0,
+                recovery_tier INTEGER,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                task_domain TEXT,
+                similarity_key TEXT GENERATED ALWAYS AS (
+                    COALESCE(error_code, '') || ':' || COALESCE(agent_name, '') || ':' || COALESCE(task_domain, '')
+                ) STORED,
+                FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_failure_memory_similarity
+            ON failure_memory(error_code, agent_name, success)
+            """
+        )
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_failure_memory_created_at
+            ON failure_memory(created_at)
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def verify_failure_memory_table(db_path=None):
+    """Verify failure_memory table and its indexes exist."""
+    conn = _get_connection(db_path)
+    try:
+        # Check table exists
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='failure_memory'"
+        )
+        if cursor.fetchone() is None:
+            return False
+        # Check indexes exist
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_failure_memory_similarity'"
+        )
+        if cursor.fetchone() is None:
+            return False
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_failure_memory_created_at'"
+        )
+        if cursor.fetchone() is None:
+            return False
+        # Verify key columns exist (use table_xinfo to include generated columns)
+        try:
+            cursor = conn.execute("PRAGMA table_xinfo(failure_memory)")
+        except sqlite3.OperationalError:
+            # Fallback for older SQLite without table_xinfo
+            cursor = conn.execute("PRAGMA table_info(failure_memory)")
+        columns = {row[1] for row in cursor.fetchall()}
+        required = {
+            "id", "task_id", "agent_name", "error_code", "error_pattern",
+            "diagnostic_summary", "resolution_summary", "success",
+            "recovery_tier", "created_at", "task_domain", "similarity_key",
+        }
+        return required.issubset(columns)
+    finally:
+        conn.close()
+
+
+def migrate_create_recovery_events(db_path=None):
+    """US-004 (self-healing): Create recovery_events table for observability.
+
+    Tracks every recovery pipeline stage for debugging and metrics.
+    Each event has a trace_id for correlating related recovery events,
+    event_type using dot notation (recovery.capture, recovery.diagnose.start, etc),
+    and optional metadata JSON. Uses CREATE TABLE IF NOT EXISTS for idempotency.
+    """
+    conn = _get_connection(db_path)
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS recovery_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id INTEGER,
+                trace_id TEXT,
+                event_type TEXT,
+                stage TEXT,
+                duration_ms INTEGER,
+                metadata TEXT,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_recovery_events_task_created
+            ON recovery_events(task_id, created_at)
+            """
+        )
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_recovery_events_trace_id
+            ON recovery_events(trace_id)
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def verify_recovery_events_table(db_path=None):
+    """Verify recovery_events table and its indexes exist."""
+    conn = _get_connection(db_path)
+    try:
+        # Check table exists
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='recovery_events'"
+        )
+        if cursor.fetchone() is None:
+            return False
+        # Check indexes exist
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_recovery_events_task_created'"
+        )
+        if cursor.fetchone() is None:
+            return False
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_recovery_events_trace_id'"
+        )
+        if cursor.fetchone() is None:
+            return False
+        # Verify key columns exist
+        cursor = conn.execute("PRAGMA table_info(recovery_events)")
+        columns = {row[1] for row in cursor.fetchall()}
+        required = {
+            "id", "task_id", "trace_id", "event_type", "stage",
+            "duration_ms", "metadata", "created_at",
+        }
+        return required.issubset(columns)
+    finally:
+        conn.close()
+
+
 if __name__ == "__main__":
     migrate_add_dispatch_status()
     if verify_dispatch_status_column():
@@ -906,3 +1255,31 @@ if __name__ == "__main__":
 
     migrate_working_memory_value_not_null()
     print("OK: working_memory.value NOT NULL migration applied")
+
+    # Recovery columns migration
+    migrate_add_recovery_columns_to_dispatch_runs()
+    if verify_recovery_columns_on_dispatch_runs():
+        print("OK: recovery columns verified on dispatch_runs table")
+    else:
+        print("FAIL: recovery columns not found on dispatch_runs table")
+
+    # Add 'recovering' to dispatch_status CHECK constraint
+    migrate_add_recovering_dispatch_status()
+    if verify_recovering_dispatch_status():
+        print("OK: dispatch_status CHECK constraint includes 'recovering'")
+    else:
+        print("FAIL: dispatch_status CHECK constraint missing 'recovering'")
+
+    # Create failure_memory table (self-healing system)
+    migrate_create_failure_memory()
+    if verify_failure_memory_table():
+        print("OK: failure_memory table and indexes verified")
+    else:
+        print("FAIL: failure_memory table or indexes not found")
+
+    # Create recovery_events table (self-healing system)
+    migrate_create_recovery_events()
+    if verify_recovery_events_table():
+        print("OK: recovery_events table and indexes verified")
+    else:
+        print("FAIL: recovery_events table or indexes not found")

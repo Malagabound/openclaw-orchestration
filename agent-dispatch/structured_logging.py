@@ -4,6 +4,10 @@ OpenClawd Agent Dispatch System - Structured JSON Logging
 US-071: Structured JSON logging to agent-dispatch/logs/supervisor.jsonl
 with consistent fields (timestamp, level, component, trace_id, agent_name,
 task_id, message, extra) so that logs are machine-readable.
+
+US-031: Recovery-specific event types for observability of the 8-stage
+recovery pipeline (capture, classify, diagnose, compensate, strategize,
+execute, verify, learn) plus guards and escalation events.
 """
 
 import json
@@ -16,6 +20,56 @@ from typing import Any, Dict, Optional
 # Path to the JSONL log file (relative to agent-dispatch/)
 _LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 LOG_FILE_PATH = os.path.join(_LOG_DIR, "supervisor.jsonl")
+
+
+# ---------------------------------------------------------------------------
+# Recovery event type constants (spec Section 5.7)
+# ---------------------------------------------------------------------------
+# 8-stage pipeline events
+RECOVERY_CAPTURE = "recovery.capture"
+RECOVERY_CLASSIFY = "recovery.classify"
+RECOVERY_DIAGNOSE_START = "recovery.diagnose.start"
+RECOVERY_DIAGNOSE_COMPLETE = "recovery.diagnose.complete"
+RECOVERY_COMPENSATE = "recovery.compensate"
+RECOVERY_STRATEGY_SELECTED = "recovery.strategy.selected"
+RECOVERY_EXECUTE_START = "recovery.execute.start"
+RECOVERY_EXECUTE_COMPLETE = "recovery.execute.complete"
+RECOVERY_VERIFY = "recovery.verify"
+RECOVERY_LEARN = "recovery.learn"
+
+# Escalation & terminal events
+RECOVERY_ESCALATE = "recovery.escalate"
+
+# Guard / concurrency events
+RECOVERY_CLAIM_SUCCESS = "recovery.claim.success"
+RECOVERY_CLAIM_FAILED = "recovery.claim.failed"
+RECOVERY_DEFERRED = "recovery.deferred"
+
+# Timeout & budget events
+RECOVERY_TIMEOUT = "recovery.timeout"
+RECOVERY_HARD_TIMEOUT = "recovery.hard_timeout"
+RECOVERY_BUDGET_EXCEEDED = "recovery.budget.exceeded"
+
+# All recovery event types for filtering (used by --recovery log filter)
+RECOVERY_EVENT_TYPES = frozenset({
+    RECOVERY_CAPTURE,
+    RECOVERY_CLASSIFY,
+    RECOVERY_DIAGNOSE_START,
+    RECOVERY_DIAGNOSE_COMPLETE,
+    RECOVERY_COMPENSATE,
+    RECOVERY_STRATEGY_SELECTED,
+    RECOVERY_EXECUTE_START,
+    RECOVERY_EXECUTE_COMPLETE,
+    RECOVERY_VERIFY,
+    RECOVERY_LEARN,
+    RECOVERY_ESCALATE,
+    RECOVERY_CLAIM_SUCCESS,
+    RECOVERY_CLAIM_FAILED,
+    RECOVERY_DEFERRED,
+    RECOVERY_TIMEOUT,
+    RECOVERY_HARD_TIMEOUT,
+    RECOVERY_BUDGET_EXCEEDED,
+})
 
 
 class JSONFormatter(logging.Formatter):
@@ -38,6 +92,11 @@ class JSONFormatter(logging.Formatter):
         # Extra structured data
         extra = getattr(record, "extra_data", None)
         if extra is not None:
+            # Promote event_type and duration_ms to top-level for easy filtering
+            if "event_type" in extra:
+                entry["event_type"] = extra["event_type"]
+            if "duration_ms" in extra:
+                entry["duration_ms"] = extra["duration_ms"]
             entry["extra"] = extra
 
         return json.dumps(entry, default=str)
@@ -88,6 +147,13 @@ def get_logger(component: str) -> logging.Logger:
         A child logger under 'agent_dispatch.<component>'.
     """
     return logging.getLogger(f"agent_dispatch.{component}")
+
+
+def is_recovery_event(event_type: Optional[str]) -> bool:
+    """Check if an event_type string is a recovery pipeline event."""
+    if event_type is None:
+        return False
+    return event_type.startswith("recovery.")
 
 
 def log_dispatch_event(

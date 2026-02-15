@@ -8,7 +8,1066 @@
 
 ## Codebase Patterns
 
-(Add reusable patterns discovered during implementation here)
+- ALTER TABLE ADD COLUMN migrations use try/except for "duplicate column name" to achieve idempotency
+- All migrations follow pattern: `_get_connection()`, try/execute/commit, finally close
+- `dispatch_db.run_migrations()` calls each migration function in order with db_path
+- Migrations live in `agent-dispatch/migrations.py`, registered in `agent-dispatch/dispatch_db.py:run_migrations()`
+- No npm/mypy/ruff available — verify syntax with `python3 -c "import ast; ast.parse(...)"`
+- To modify CHECK constraints in SQLite, use table rebuild pattern (create temp with updated SQL, copy, drop, rename)
+- Generated columns (GENERATED ALWAYS AS ... STORED) don't appear in PRAGMA table_info; use PRAGMA table_xinfo instead
+- Testing agent-dispatch modules: use importlib to register `agent_dispatch` in sys.modules (directory has a hyphen). Register submodules AND setattr on parent for patch() to work. (Discovered in US-050)
 
+---
+
+## 2026-02-15 - US-001
+- **Implemented:** Added 8 recovery state columns to dispatch_runs table
+- **Columns added:** raw_output (TEXT), tool_call_log (TEXT), stop_reason (TEXT), error_context (TEXT), recovery_tier (INTEGER), recovery_strategy (TEXT), lease_extensions (INTEGER DEFAULT 0), tool_calls_count_at_last_extension (INTEGER DEFAULT 0)
+- **Files changed:**
+  - `agent-dispatch/migrations.py` — Added `migrate_add_recovery_columns_to_dispatch_runs()` and `verify_recovery_columns_on_dispatch_runs()` functions, plus __main__ block verification
+  - `agent-dispatch/dispatch_db.py` — Registered new migration in `run_migrations()`
+- **Learnings for future iterations:**
+  - Migration is idempotent: each column addition wrapped in try/except checking "duplicate column name"
+  - dispatch_runs already has columns: id, task_id, agent_name, provider, model, status, attempt, started_at, completed_at, output_file, error_summary, tokens_used, cost_estimate, trace_id, tool_calls_count, next_retry_at
+  - The new recovery columns make dispatch_runs the primary data source for the recovery pipeline
+---
+
+## 2026-02-15 - US-002
+- **Implemented:** Added 'recovering' to dispatch_status CHECK constraint on tasks table
+- **Approach:** SQLite doesn't support ALTER COLUMN, so used table rebuild pattern: read current table SQL, replace CHECK constraint string to include 'recovering', create temp table with updated schema, copy data, drop original, rename temp, recreate indexes
+- **Files changed:**
+  - `agent-dispatch/migrations.py` — Added `migrate_add_recovering_dispatch_status()` and `verify_recovering_dispatch_status()` functions, plus __main__ block verification
+  - `agent-dispatch/dispatch_db.py` — Registered new migration in `run_migrations()`
+- **Learnings for future iterations:**
+  - To modify a CHECK constraint in SQLite, must rebuild the entire table (create temp, copy, drop, rename)
+  - The tasks table SQL is stored in sqlite_master and can be read with `SELECT sql FROM sqlite_master WHERE type='table' AND name='tasks'`
+  - For idempotency, check if 'recovering' already appears in the stored table SQL before running migration
+  - The dispatch_status CHECK constraint now allows: NULL, 'queued', 'dispatched', 'completed', 'failed', 'interrupted', 'dispatch_failed', 'recovering'
+  - Must recreate idx_tasks_dispatch index after table rebuild
+---
+
+## 2026-02-15 - US-003
+- **Implemented:** Created failure_memory table for recovery pattern learning
+- **Table columns:** id (INTEGER PK AUTOINCREMENT), task_id (FK to tasks ON DELETE CASCADE), agent_name (TEXT), error_code (TEXT), error_pattern (TEXT), diagnostic_summary (TEXT), resolution_summary (TEXT), success (INTEGER DEFAULT 0), recovery_tier (INTEGER), created_at (TEXT DEFAULT CURRENT_TIMESTAMP), task_domain (TEXT), similarity_key (GENERATED ALWAYS AS error_code:agent_name:task_domain STORED)
+- **Indexes:** idx_failure_memory_similarity (error_code, agent_name, success), idx_failure_memory_created_at (created_at)
+- **Files changed:**
+  - `agent-dispatch/migrations.py` — Added `migrate_create_failure_memory()` and `verify_failure_memory_table()` functions, plus __main__ block verification
+  - `agent-dispatch/dispatch_db.py` — Registered new migration in `run_migrations()`
+- **Learnings for future iterations:**
+  - SQLite generated columns (GENERATED ALWAYS AS ... STORED) work for computed keys but don't appear in `PRAGMA table_info`; must use `PRAGMA table_xinfo` to see them
+  - The verify function uses table_xinfo with fallback to table_info for compatibility
+  - success is stored as INTEGER (0/1) since SQLite has no native BOOLEAN type
+  - The 3-tier similarity query pattern (exact match → domain match → code-only match) will be implemented in US-015 (failure_memory.py module)
+---
+
+## 2026-02-15 - US-004
+- **Implemented:** Created recovery_events table for observability
+- **Table columns:** id (INTEGER PK AUTOINCREMENT), task_id (FK to tasks ON DELETE CASCADE), trace_id (TEXT), event_type (TEXT), stage (TEXT), duration_ms (INTEGER), metadata (TEXT for JSON), created_at (TEXT DEFAULT CURRENT_TIMESTAMP)
+- **Indexes:** idx_recovery_events_task_created (task_id, created_at), idx_recovery_events_trace_id (trace_id)
+- **Files changed:**
+  - `agent-dispatch/migrations.py` — Added `migrate_create_recovery_events()` and `verify_recovery_events_table()` functions, plus __main__ block verification
+  - `agent-dispatch/dispatch_db.py` — Registered new migration in `run_migrations()`
+- **Learnings for future iterations:**
+  - recovery_events follows same CREATE TABLE IF NOT EXISTS + index pattern as failure_memory
+  - trace_id enables correlating all events from a single recovery pipeline run (generated as UUID in handle_failure)
+  - event_type uses dot notation convention (recovery.capture, recovery.diagnose.start, recovery.execute.complete, etc.)
+  - metadata column stores arbitrary JSON as TEXT for event-specific data (error_code, strategy_name, etc.)
+---
+
+## 2026-02-15 - US-005
+- **Implemented:** Created error taxonomy lookup table with recovery parameters
+- **Created:** `agent-dispatch/recovery/` directory with `__init__.py` and `error_classifier.py`
+- **ErrorCategory dataclass:** frozen=True with fields: category, max_retries, requires_diagnosis, requires_compensation, initial_backoff_seconds, backoff_multiplier, max_backoff_seconds, compensating_action_keys
+- **ERROR_TAXONOMY:** 37 error codes across 6 categories, wrapped in MappingProxyType for immutability
+  - Transient (7): RATE_LIMITED, PROVIDER_5XX, PROVIDER_TIMEOUT, NETWORK_ERROR, SEARCH_API_UNAVAILABLE, DB_LOCKED, TOOL_TIMEOUT
+  - Execution (8): RESULT_SCHEMA_INVALID, RESULT_PARSE_FAILED, DELIVERABLE_EMPTY, DELIVERABLE_TRUNCATED, STATUS_INVALID, CONFIDENCE_TOO_LOW, TOOL_RESULT_MALFORMED, AGENT_SELF_REPORTED_FAILURE
+  - Logic (5): VALIDATION_REJECTED, TASK_MISMATCH, INCOMPLETE_RESEARCH, STALE_DATA, CONTRADICTORY_OUTPUT
+  - Structural (5): TOOL_LOOP_DETECTED, TOOL_DEPTH_EXCEEDED, STUCK_TASK, DEPENDENCY_DEADLOCK, COMPLETION_SEQUENCE_STUCK
+  - Configuration (7): API_KEY_MISSING, API_KEY_INVALID, PROVIDER_NOT_CONFIGURED, TOOL_NOT_AVAILABLE, AGENT_NOT_FOUND, DB_SCHEMA_INCOMPATIBLE, SEARCH_API_NO_KEYS
+  - Resource (5): GLOBAL_BUDGET_EXCEEDED, AGENT_BUDGET_EXCEEDED, CONTEXT_OVERFLOW, MAX_TOKENS_EXCEEDED, DISK_SPACE_LOW
+- **DEFAULT_CATEGORY:** category='unknown', max_retries=1, requires_diagnosis=True (for unknown error codes)
+- **Files changed:**
+  - `agent-dispatch/recovery/__init__.py` — Created new recovery package
+  - `agent-dispatch/recovery/error_classifier.py` — ErrorCategory dataclass + ERROR_TAXONOMY dict + DEFAULT_CATEGORY
+- **Learnings for future iterations:**
+  - Use `MappingProxyType` to make dicts immutable at runtime
+  - Use `frozen=True` on dataclass for immutable instances
+  - The recovery/ directory is the home for all recovery pipeline modules (US-006 through US-050)
+  - ERROR_TAXONOMY keys are the canonical error code strings used throughout the recovery pipeline
+  - compensating_action_keys tuple on ErrorCategory specifies which compensating actions to run (clear_working_memory, reset_lease, log_abandoned_output, defer_to_us051)
+---
+
+## 2026-02-15 - US-006
+- **Implemented:** detect_error_code() function for exception-to-error-code mapping + classify_error() function for error code to category lookup
+- **detect_error_code()** maps: anthropic.RateLimitError→RATE_LIMITED, requests.Timeout→PROVIDER_TIMEOUT, json.JSONDecodeError→RESULT_PARSE_FAILED, AgentRunnerError with message inspection (no agent-result block, invalid JSON, missing fields, loop detected, max iterations, provider call failed), AgentResult.status=='failed'→AGENT_SELF_REPORTED_FAILURE, confidence_score < threshold→CONFIDENCE_TOO_LOW, empty deliverable→DELIVERABLE_EMPTY, context dict tool_loop_detected flag→TOOL_LOOP_DETECTED, HTTP status codes (429, 5xx), fallback→UNKNOWN_ERROR
+- **classify_error()** looks up error_code in ERROR_TAXONOMY, returns DEFAULT_CATEGORY for unknown codes
+- **Files changed:**
+  - `agent-dispatch/recovery/error_classifier.py` — Added detect_error_code() and classify_error() functions, added `Any` to typing imports
+- **Learnings for future iterations:**
+  - Exception detection uses type name + module string matching (not isinstance) to avoid importing anthropic/requests as hard dependencies
+  - AgentRunnerError messages from agent_runner.py follow patterns: "No <agent-result> block", "Invalid JSON in <agent-result>", "missing required fields", "loop detected", "max iterations", "Provider call failed"
+  - detect_error_code() recurses into __cause__ for chained exceptions (e.g., AgentRunnerError wrapping a RateLimitError)
+  - classify_error() is a simple dict lookup with fallback — no complex logic needed
+  - The confidence_threshold default is 0.3 (matches config.recovery.min_confidence_score spec default)
+---
+
+## 2026-02-15 - US-007
+- **Implemented:** classify_error() was already implemented in US-006 iteration (combined with detect_error_code)
+- **Function:** classify_error(error_code: str) -> ErrorCategory at line 215 of error_classifier.py
+- **Behavior:** Simple lookup in ERROR_TAXONOMY dict with .get() fallback to DEFAULT_CATEGORY
+- **DEFAULT_CATEGORY:** category='unknown', max_retries=1, requires_diagnosis=True, requires_compensation=False
+- **Files changed:** None (already complete from US-006)
+- **Learnings for future iterations:**
+  - US-006 and US-007 were naturally combined since classify_error() is a one-liner dict lookup
+  - When stories are tightly coupled, earlier iterations may complete future stories ahead of schedule
+  - Always check if the target function already exists before implementing
+---
+
+## 2026-02-15 - US-008
+- **Implemented:** Created ErrorContext dataclass in recovery/error_capture.py
+- **ErrorContext fields:** error_code (str), error_category (str), error_message (str), error_pattern (Optional[str]), task_id (int), agent_name (str), task_domain (str), raw_output (Optional[str]), tool_call_log (Optional[list[dict]]), stop_reason (Optional[str]), tokens_used (int), provider (str), model (str), duration_ms (int), captured_at (str ISO 8601)
+- **Helper method:** now_iso() static method returns current UTC time as ISO 8601 string
+- **Files changed:**
+  - `agent-dispatch/recovery/error_capture.py` — Created new module with ErrorContext dataclass
+- **Learnings for future iterations:**
+  - ErrorContext fields match spec Appendix C.7 exactly
+  - raw_output truncation to config.recovery.raw_output_max_chars (default 10000) is not enforced in the dataclass itself — it will be enforced in capture_error() (US-009)
+  - The now_iso() helper uses datetime.now(timezone.utc).isoformat() for consistent timestamp format
+  - US-009 will add capture_error() function to this same file
+---
+
+## 2026-02-15 - US-009
+- **Implemented:** capture_error() function in recovery/error_capture.py
+- **Function signature:** capture_error(runner_error: BaseException, task_row: dict, dispatch_run_row: dict, config: Any) -> ErrorContext
+- **Behavior:**
+  - Extracts recovery config with defaults (raw_output_max_chars=10000)
+  - Reads task metadata (task_id, agent_name, domain) from task_row and dispatch_run_row
+  - Extracts raw_output from dispatch_run_row (with fallback to runner_error attribute for US-029)
+  - Truncates raw_output to config.recovery.raw_output_max_chars
+  - Parses tool_call_log from JSON TEXT column or list attribute
+  - Extracts stop_reason, tokens_used, provider, model from dispatch_run_row
+  - Calculates duration_ms from started_at/completed_at timestamps
+  - Calls detect_error_code() with exception, http_status, agent_result, and context
+  - Calls classify_error() with detected error code
+  - Returns fully populated ErrorContext dataclass
+- **Helper functions added:**
+  - `_get_recovery_config(config)` — extracts recovery section from config dict/object with defaults
+  - `_truncate(text, max_chars)` — truncates text to max_chars, None-safe
+  - `_parse_json_field(value)` — parses JSON TEXT column into list, handles string/list/None
+- **Files changed:**
+  - `agent-dispatch/recovery/error_capture.py` — Added capture_error() and 3 helper functions, added imports for json, Any, detect_error_code, classify_error
+- **Learnings for future iterations:**
+  - dispatch_run_row columns include: raw_output, tool_call_log, stop_reason, error_context (all added by US-001 migration)
+  - AgentRunnerError is a plain Exception subclass with no special attributes; US-029 will add raw_output, tool_call_log, stop_reason
+  - capture_error() uses getattr() fallbacks for runner_error attributes not yet added (forward-compatible with US-029)
+  - error_pattern field is left as None — US-044 will add normalization logic
+  - Config can be dict or object; _get_recovery_config() handles both patterns
+---
+
+## 2026-02-15 - US-010
+- **Implemented:** Created DiagnosticInput and DiagnosticOutput dataclasses in recovery/diagnostic_agent.py
+- **DiagnosticInput fields:** task_id (int), task_title (str), task_description (str), task_domain (str), assigned_agent (str), error_code (str), error_message (str), error_category (str), raw_agent_output (Optional[str]), tool_call_log (Optional[list]), stop_reason (Optional[str]), tokens_used (int), attempt_number (int), previous_attempts (list, default=[]), similar_past_fixes (list, default=[])
+- **DiagnosticOutput fields:** root_cause (str), root_cause_category (str), confidence (float 0.0-1.0), recommended_strategy (str), specific_fix (Optional[str]), tools_to_adjust (list, default=[]), avoid_approaches (list, default=[]), needs_human (bool, default=False), human_action_needed (Optional[str], default=None), is_repeat_failure (bool, default=False), cycle_detected (bool, default=False)
+- **Files changed:**
+  - `agent-dispatch/recovery/diagnostic_agent.py` — Created new module with DiagnosticInput and DiagnosticOutput dataclasses
+- **Learnings for future iterations:**
+  - DiagnosticInput uses field(default_factory=list) for mutable default fields (previous_attempts, similar_past_fixes)
+  - DiagnosticOutput uses field(default_factory=list) for tools_to_adjust and avoid_approaches, with bool/None defaults for flags
+  - Both dataclasses follow spec Appendix C.3 exactly
+  - US-011 will add diagnostic_sop.md prompt template, US-012 will add diagnose_failure() function that uses these dataclasses
+---
+
+## 2026-02-15 - US-011
+- **Implemented:** Created diagnostic system prompt template at agent-dispatch/prompts/diagnostic_sop.md
+- **Content:** Analytical prompt following spec Appendix A exactly, with template variables for context injection
+- **Key prompt elements:**
+  - Instructs LLM to diagnose only, not implement fixes
+  - 6 rules: be specific, reference evidence, admit low confidence, check for cycles, consider task clarity, consider tool alternatives
+  - Context section with template variables: {{task_title}}, {{task_description}}, {{task_domain}}, {{assigned_agent}}, {{error_code}}, {{error_category}}, {{error_message}}, {{attempt_number}}, {{raw_agent_output}}, {{tool_call_summary}}, {{stop_reason}}, {{tokens_used}}, {{previous_attempts}}, {{similar_past_fixes}}
+  - JSON output format requesting: root_cause, root_cause_category, confidence, recommended_strategy, specific_fix, tools_to_adjust, avoid_approaches, needs_human, human_action_needed, is_repeat_failure, cycle_detected
+- **Token count:** ~500 tokens for static prompt (well under 1500 token budget)
+- **Files changed:**
+  - `agent-dispatch/prompts/diagnostic_sop.md` — Created new prompt template file
+- **Learnings for future iterations:**
+  - The prompts/ directory now exists at agent-dispatch/prompts/ for prompt templates
+  - Template variables use {{variable_name}} convention for string replacement in diagnose_failure() (US-012)
+  - The prompt asks for JSON-only output (no markdown fences) to simplify parsing in diagnostic_agent.py
+  - US-012 will implement diagnose_failure() which loads this template and injects DiagnosticInput fields
+---
+
+## 2026-02-15 - US-012
+- **Implemented:** diagnose_failure() function with LLM call in recovery/diagnostic_agent.py
+- **Function signature:** diagnose_failure(diagnostic_input: DiagnosticInput, config: Any) -> DiagnosticOutput
+- **Behavior:**
+  - Loads diagnostic_sop.md prompt template from agent-dispatch/prompts/ directory
+  - Applies truncation before rendering: tool_call_log to last 10 entries, raw_output to 1000 chars, previous_attempts to 1-line summaries
+  - Renders prompt by replacing {{variable_name}} placeholders with DiagnosticInput fields
+  - Gets LLM provider configured for diagnostic model (default claude-haiku-4-5) via provider_registry.get_provider() with model override
+  - Falls back to primary provider if diagnostic model provider init fails
+  - Calls provider.complete() with rendered prompt as a single user Message
+  - Parses JSON response into DiagnosticOutput, handles markdown code fences
+  - On any failure (template not found, provider init, LLM call, JSON parse), returns low-confidence default diagnosis
+- **Helper functions added:**
+  - `_get_recovery_config(config)` — extracts recovery section from dict or object config
+  - `_load_prompt_template(config)` — loads diagnostic_sop.md, resolves path relative to agent-dispatch/
+  - `_truncate_for_diagnosis(diagnostic_input)` — applies spec truncation order for token budget
+  - `_render_prompt(template, di)` — injects DiagnosticInput into {{variable}} template
+  - `_parse_diagnostic_output(response_text)` — parses JSON to DiagnosticOutput, strips code fences
+  - `_default_diagnosis(error_code, error_message)` — returns safe fallback DiagnosticOutput
+  - `_get_diagnostic_provider(config)` — builds provider with diagnostic model override
+- **Files changed:**
+  - `agent-dispatch/recovery/diagnostic_agent.py` — Added diagnose_failure() and 7 helper functions, added imports for json, os, Any
+- **Learnings for future iterations:**
+  - Provider registry get_provider() accepts a config dict with "provider" section; override "model" key for diagnostic calls
+  - Use lazy imports (from ..provider_registry, from ..llm_provider) inside functions to avoid circular imports in recovery/
+  - _get_recovery_config() pattern handles both dict and object configs — reuse in other recovery modules
+  - The prompt template uses simple string replacement (not Jinja2) — keep templates with {{variable}} convention
+  - Always handle markdown code fences in LLM response parsing even when prompt says "no fences"
+  - max_tokens=2048 is sufficient for diagnostic JSON output (typically ~300-500 tokens)
+---
+
+## 2026-02-15 - US-013
+- **Implemented:** Created RecoveryStrategy dataclass in recovery/strategy_selector.py
+- **RecoveryStrategy fields:** strategy_name (str), tier (int), strategy_description (str), constraints (list[str]), prompt_modifications (dict), scope_reduction (Optional[str]), is_terminal (bool, default=False)
+- **Files changed:**
+  - `agent-dispatch/recovery/strategy_selector.py` — Created new module with RecoveryStrategy dataclass
+- **Learnings for future iterations:**
+  - RecoveryStrategy follows same dataclass pattern as ErrorContext and DiagnosticInput/Output
+  - strategy_name valid values: fix_specific, rewrite_with_diagnosis, simplify, decompose, escalate
+  - is_terminal=True for decompose (Tier 4) and escalate (Tier 5) — these stop retry loop
+  - US-014 will add select_strategy() function to this same file that implements the 5-tier ladder
+  - constraints and prompt_modifications use field(default_factory=...) for mutable defaults
+---
+
+## 2026-02-15 - US-014
+- **Implemented:** select_strategy() function implementing the 5-tier strategy ladder in recovery/strategy_selector.py
+- **Function signature:** select_strategy(attempt_number: int, error_category: ErrorCategory, diagnostic_output: Optional[DiagnosticOutput], config: Any = None) -> RecoveryStrategy
+- **Behavior:**
+  - Maps attempt_number to strategy tier: 1=fix_specific, 2=rewrite_with_diagnosis, 3=simplify, 4=decompose, 5+=escalate
+  - Special case: when error_category.max_retries == 1 AND requires_diagnosis == True, effective_tier = attempt_number + 1 (skips Tier 1, goes straight to Tier 2)
+  - Tier 4 (decompose) and Tier 5 (escalate) are terminal (is_terminal=True)
+  - Each tier incorporates diagnostic_output guidance when available (specific_fix, tools_to_adjust, avoid_approaches, root_cause)
+  - Tier 1: Sets inject_error_feedback prompt mod, optionally includes diagnostic hint
+  - Tier 2: Sets inject_diagnosis prompt mod, builds constraints from avoid_approaches and tools_to_adjust
+  - Tier 3: Adds scope_reduction, simplify_mode, tool/approach constraints
+  - Tier 4: Includes decomposition_suggestion from diagnostic_output
+  - Tier 5: Includes final_root_cause from diagnostic_output
+- **Helper functions:** _tier1_fix_specific(), _tier2_rewrite_with_diagnosis(), _tier3_simplify(), _tier4_decompose(), _tier5_escalate()
+- **Files changed:**
+  - `agent-dispatch/recovery/strategy_selector.py` — Added select_strategy() and 5 tier helper functions, added imports for ErrorCategory, DiagnosticOutput, Any
+- **Learnings for future iterations:**
+  - The select_strategy() function is the entry point for STRATEGIZE stage (stage 5) of the 8-stage recovery pipeline
+  - Imports from sibling modules (error_classifier, diagnostic_agent) use relative imports within the recovery package
+  - The special case for max_retries=1 + requires_diagnosis=True is important for STALE_DATA and similar single-retry errors
+  - prompt_modifications dict keys (inject_error_feedback, inject_diagnosis, simplify_mode, specific_fix, etc.) will be consumed by recovery_executor and agent_prompts in US-019/US-020
+  - US-051 (playbooks.py) will add deterministic playbook sequences that can override select_strategy() for specific error codes
+---
+
+## 2026-02-15 - US-015
+- **Implemented:** Created recovery/failure_memory.py module with 3 functions: record_attempt(), find_similar_fixes(), cleanup_old_entries()
+- **record_attempt():** Inserts a row into failure_memory table with all fields (task_id, error_code, agent_name, error_pattern, diagnostic_summary, resolution_summary, success as 0/1, recovery_tier, task_domain). Uses get_writer_connection(), commit/rollback with try/except.
+- **find_similar_fixes():** Implements 3-tier query strategy from spec Section 5.5:
+  - Tier 1: exact match on error_code + agent_name + success=1
+  - Tier 2: match error_code + task_domain + success=1 (skipped if task_domain is None)
+  - Tier 3: match error_code + success=1 only
+  - Returns first tier that produces results, limited to `limit` rows (default 3)
+  - Returns list of dicts with: error_code, resolution_summary, diagnostic_summary, recovery_tier
+  - Uses get_reader_connection() (cached singleton, not closed)
+- **cleanup_old_entries():** Deletes rows WHERE created_at < datetime('now', '-N days'). Returns count of deleted rows. Uses get_writer_connection(), closed after use.
+- **Files changed:**
+  - `agent-dispatch/recovery/failure_memory.py` — Created new module with 3 functions
+- **Learnings for future iterations:**
+  - get_reader_connection() returns a cached singleton — do NOT close it
+  - get_writer_connection() returns a fresh connection — MUST close it after use
+  - SQLite stores boolean as INTEGER 0/1, so success field needs conversion
+  - f-string in SQL SELECT columns is safe when the string is a constant defined in code (no user input)
+  - The similarity_key generated column in failure_memory is not used directly by these functions — the 3-tier query strategy uses explicit column matching instead
+  - US-034 (find_similar_fixes) is essentially a duplicate of the find_similar_fixes() function already implemented here
+---
+
+## 2026-02-15 - US-016
+- **Implemented:** Created RecoveryContext and PreviousAttemptSummary dataclasses in recovery/recovery_pipeline.py
+- **RecoveryContext fields:** attempt_number (int), total_max_attempts (int), error_code (str), error_message (str), error_category (str), previous_raw_output (Optional[str]), tool_call_summary (Optional[str]), diagnostic_analysis (Optional[str]), specific_fix (Optional[str]), strategy_name (str), strategy_description (str), constraints (list[str]), previous_attempts (list[PreviousAttemptSummary]), similar_past_fixes (list[str])
+- **PreviousAttemptSummary fields:** attempt_number (int), strategy_used (str), error_code (str), error_message (str, max 200 chars), diagnostic_summary (Optional[str]), tools_used (list[str]), duration_ms (int)
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Created new module with RecoveryContext and PreviousAttemptSummary dataclasses
+- **Learnings for future iterations:**
+  - RecoveryContext fields match spec Appendix C.1 exactly (not C.2 as the story description says — C.2 is RunnerError)
+  - PreviousAttemptSummary is defined in same file per spec Appendix C.4
+  - Both dataclasses use field(default_factory=list) for mutable defaults (constraints, previous_attempts, similar_past_fixes, tools_used)
+  - US-017 will verify PreviousAttemptSummary meets all its acceptance criteria (already defined here)
+  - US-021 will add RecoveryOutcome dataclass to this same file
+  - US-022 will add handle_failure() orchestrator function to this same file
+  - similar_past_fixes is list[str] (resolution summaries), not list[dict] as the story AC says — spec C.1 defines it as list[str]
+---
+
+## 2026-02-15 - US-017
+- **Implemented:** Added __post_init__ to PreviousAttemptSummary for error_message truncation enforcement (max 200 chars)
+- **Note:** PreviousAttemptSummary dataclass was already created in US-016 with all required fields. US-017 only needed the truncation enforcement added.
+- **Fields verified against spec Appendix C.4:**
+  - attempt_number (int) ✓
+  - strategy_used (str) ✓
+  - error_code (str) ✓
+  - error_message (str, truncated to 200 chars via __post_init__) ✓
+  - diagnostic_summary (Optional[str]) ✓
+  - tools_used (list[str], default_factory=list) ✓
+  - duration_ms (int, default=0) ✓
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added __post_init__ method to PreviousAttemptSummary for error_message truncation
+- **Learnings for future iterations:**
+  - PreviousAttemptSummary was already fully defined in US-016 — US-017 only needed truncation enforcement
+  - Use __post_init__ for field-level validation/truncation in dataclasses
+  - When stories overlap with previous implementations, verify all ACs and add any missing enforcement
+---
+
+## 2026-02-15 - US-018
+- **Implemented:** Created recovery/compensating_actions.py with compensate() function for pre-retry cleanup
+- **compensate() function:**
+  - Accepts task_id, agent_name, error_code, db_path
+  - Uses classify_error() to get ErrorCategory and check requires_compensation and compensating_action_keys
+  - Returns True early if compensation not required or no action keys defined
+  - Supports 4 compensating action keys from ErrorCategory:
+    - `clear_working_memory`: DELETE FROM working_memory WHERE task_id=? AND agent_name=? (preserves upstream deps)
+    - `reset_lease`: UPDATE tasks SET dispatch_status='queued', lease_until=NULL WHERE id=? AND dispatch_status IN ('failed','recovering','dispatched') (atomic WHERE guard)
+    - `log_abandoned_output`: Reads raw_output from last dispatch_run and logs first 200 chars
+    - `defer_to_us051`: Returns True immediately, letting recover_partial_completions handle it
+  - Uses get_writer_connection() (fresh connection, closed after use)
+  - All sqlite3.Error exceptions caught gracefully per action
+  - Logs all actions via structured_logging log_dispatch_event with event_type="recovery.compensate"
+  - Returns success bool (False if any critical action failed)
+- **Files changed:**
+  - `agent-dispatch/recovery/compensating_actions.py` — Created new module with compensate() function
+- **Learnings for future iterations:**
+  - ErrorCategory.compensating_action_keys is a tuple of strings specifying which compensating actions to run
+  - Error codes with requires_compensation=True: CONTRADICTORY_OUTPUT (clear_working_memory), TOOL_LOOP_DETECTED (clear_working_memory, log_abandoned_output), TOOL_DEPTH_EXCEEDED (clear_working_memory, log_abandoned_output), STUCK_TASK (reset_lease, log_abandoned_output), COMPLETION_SEQUENCE_STUCK (defer_to_us051)
+  - DEPENDENCY_DEADLOCK has requires_compensation=False despite being structural (no retry possible)
+  - Working memory rows are keyed by (task_id, agent_name, key) — clearing task+agent preserves entries from upstream dependency agents
+  - The reset_lease action uses WHERE guards to prevent race conditions with concurrent processes
+---
+
+## 2026-02-15 - US-019
+- **Implemented:** Enhanced agent_prompts.build_prompt() to accept optional recovery_context parameter
+- **Changes:**
+  - Added `recovery_context: Optional[Any] = None` parameter to build_prompt()
+  - Added `_format_recovery_context(recovery_context)` helper function that formats RecoveryContext into spec Appendix G XML format
+  - When recovery_context is provided, injects `<recovery-context>` XML block into USER message after task description, before working memory
+  - When recovery_context is None, behavior is unchanged (backward compatible)
+- **Recovery context format includes:**
+  - Attempt number and max attempts header
+  - Attempt Result section: error code, error message, raw output excerpt (truncated to 500 chars), tool call summary, diagnostic analysis
+  - Recovery Strategy section with strategy_description and specific_fix
+  - Constraints section (from RecoveryContext.constraints list)
+  - Previous Attempts Summary (from PreviousAttemptSummary list)
+  - Similar Past Fixes (from failure_memory resolution summaries)
+- **Files changed:**
+  - `agent-dispatch/agent_prompts.py` — Added _format_recovery_context() helper and recovery_context parameter to build_prompt()
+- **Learnings for future iterations:**
+  - build_prompt() uses `Optional[Any]` for recovery_context type to avoid circular imports with recovery_pipeline.py
+  - The recovery context is injected into user_parts list between task description and working memory sections
+  - raw_output truncation to 500 chars is done in _format_recovery_context() (matching spec Appendix G default), not in build_prompt()
+  - The existing user message structure is: task title/metadata → task description → [recovery context if provided] → working memory
+  - recovery_executor.execute() (US-020) will call build_prompt(recovery_context=...) to pass the RecoveryContext
+---
+
+## 2026-02-15 - US-020
+- **Implemented:** Created recovery/recovery_executor.py with execute() function and RecoveryExecutionResult dataclass
+- **execute() function:**
+  - Accepts task_id, recovery_context, config, dispatch_db
+  - Generates a unique trace_id (UUID) for each recovery execution
+  - Loads task row from database via dispatch_db.get_reader_connection()
+  - Gets provider via provider_registry.get_provider() and creates ToolRegistry
+  - Builds recovery-enriched prompt via agent_prompts.build_prompt(recovery_context=...)
+  - Calls agent_runner.run_agent() with the enriched prompt
+  - Verifies AgentResult schema: checks status is 'completed' or 'blocked' for success
+  - On failure: detects new error_code via error_classifier.detect_error_code()
+  - Compares new_error_code against recovery_context.error_code (same_error flag)
+  - Returns RecoveryExecutionResult with success indicator, error comparison, tokens, duration
+  - Handles AgentRunnerError (agent-level) and generic Exception (unexpected) separately
+- **RecoveryExecutionResult dataclass:** success (bool), agent_result (Any), new_error_code (Optional[str]), new_error_message (Optional[str]), same_error (bool), tokens_used (int), duration_ms (int), trace_id (str)
+- **Logging:** Logs recovery.execute.start and recovery.execute.complete events via structured_logging with metadata (attempt_number, strategy_name, error_code, success, duration_ms)
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_executor.py` — Created new module with execute() function, RecoveryExecutionResult dataclass, _elapsed_ms() helper
+- **Learnings for future iterations:**
+  - run_agent() internally calls build_prompt(), but recovery_executor calls build_prompt() separately with recovery_context for the enriched prompt
+  - The run_agent() function signature expects: agent_name, task_dict, provider, tool_registry, config, working_memory_entries, max_iterations, db_path, trace_id, adapter
+  - get_provider() accepts config dict and optional agent_name for per-agent model overrides
+  - ToolRegistry() is instantiated without args (loads from default YAML path)
+  - detect_error_code() can be used to classify new exceptions from retry attempts
+  - The same_error flag helps the pipeline decide whether to escalate (same error = strategy didn't help)
+  - Use lazy imports inside execute() to avoid circular imports within the recovery package
+---
+
+## 2026-02-15 - US-021
+- **Implemented:** Created RecoveryOutcome dataclass in recovery/recovery_pipeline.py
+- **RecoveryOutcome fields:** task_id (int), success (bool), final_status (str), attempts_used (int), winning_strategy (Optional[str]), escalation_reason (Optional[str]), total_duration_ms (int), total_cost_usd (float), error_code (str), trace_id (str)
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added RecoveryOutcome dataclass after RecoveryContext
+- **Learnings for future iterations:**
+  - RecoveryOutcome follows spec Appendix C.9 exactly
+  - final_status valid values: 'completed', 'failed', 'dispatch_failed'
+  - winning_strategy is None when all strategies failed (success=False)
+  - escalation_reason is None when success=True
+  - trace_id is a UUID string for correlating recovery_events table entries
+  - US-022 will use RecoveryOutcome as the return type for handle_failure()
+  - total_cost_usd is float (not int) since costs can be fractional
+---
+
+## 2026-02-15 - US-022
+- **Implemented:** handle_failure() orchestrator function in recovery/recovery_pipeline.py that runs all 8 recovery stages
+- **Function signature:** handle_failure(task_id, runner_error, task_row, dispatch_run_row, config, dispatch_db) -> RecoveryOutcome
+- **8-stage pipeline behavior:**
+  - Stage 1 CAPTURE: Calls error_capture.capture_error() to build ErrorContext from exception and task/run data
+  - Stage 2 CLASSIFY: Calls error_classifier.classify_error() to get ErrorCategory with recovery parameters
+  - Early exit: If max_retries == 0, escalates immediately with dispatch_failed status
+  - Stage 3 DIAGNOSE: If requires_diagnosis=True, builds DiagnosticInput (with similar_past_fixes from failure_memory), calls diagnose_failure()
+  - Stage 4 COMPENSATE: If requires_compensation=True, calls compensating_actions.compensate()
+  - Stages 5-7 loop: For each attempt up to max_retries:
+    - Stage 5 STRATEGIZE: Checks playbooks.has_playbook() first (try/except ImportError for US-051), falls back to strategy_selector.select_strategy()
+    - Terminal strategy check: If strategy.is_terminal (decompose/escalate), records to failure_memory and returns dispatch_failed
+    - Builds RecoveryContext with error info, diagnosis, strategy, previous_attempts, similar fixes
+    - Stage 6 EXECUTE: Calls recovery_executor.execute() with recovery context
+    - Stage 7 VERIFY: If success, records to failure_memory and returns completed. If failed, appends PreviousAttemptSummary for next iteration
+  - Stage 8 LEARN: Records attempt outcome to failure_memory at every exit path (success, terminal escalation, exhaustion, immediate escalation)
+- **Helper functions added:**
+  - `_log_recovery_event()` - Wraps structured_logging.log_dispatch_event with recovery-standard fields
+  - `_build_tool_call_summary()` - Summarizes tool_call_log as "N tool calls: tool1 xN, tool2 xM"
+  - `_elapsed_ms()` - Calculates elapsed milliseconds from monotonic start time
+- **All recovery event types logged:** recovery.capture, recovery.classify, recovery.diagnose.start/complete, recovery.compensate, recovery.strategy.selected, recovery.execute.start/complete, recovery.verify, recovery.learn, recovery.escalate
+- **Imports:** Uses lazy imports inside handle_failure() to avoid circular imports
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added handle_failure() function, _log_recovery_event(), _build_tool_call_summary(), _elapsed_ms(), plus imports for logging, time, uuid, Any
+- **Learnings for future iterations:**
+  - handle_failure() signature includes task_row and dispatch_run_row in addition to task_id — these are needed by capture_error() and for building DiagnosticInput
+  - playbooks.py (US-051) is imported with try/except ImportError so handle_failure() works before playbooks are created
+  - The retry loop iterates attempt in range(1, max_retries+1) and checks strategy.is_terminal before executing
+  - similar_past_fixes is queried both for diagnostic input (Stage 3) and for RecoveryContext (inside retry loop)
+  - Cost estimation uses rough tokens_used * 0.000003 — will be refined in US-049
+  - All exit paths (max_retries=0 early exit, terminal strategy, success, exhaustion) record to failure_memory and log recovery.learn
+---
+
+## 2026-02-15 - US-023
+- **Implemented:** Atomic dispatch_status transition from 'failed' to 'recovering' at the start of handle_failure()
+- **Behavior:**
+  - Before Stage 1 (CAPTURE), uses dispatch_db.get_writer_connection() to get a fresh writer connection
+  - Executes: `UPDATE tasks SET dispatch_status='recovering' WHERE id=? AND dispatch_status='failed'`
+  - Commits immediately and checks cursor.rowcount
+  - If rowcount == 0 (task not in 'failed' state, already claimed by another process), returns RecoveryOutcome(success=False, final_status='failed', escalation_reason='duplicate_recovery') and logs recovery.claim.failed event
+  - If rowcount > 0, logs recovery.claim.success event and proceeds with recovery pipeline
+  - Handles sqlite3.Error and generic Exception gracefully (treats as failed claim)
+  - Writer connection is always closed after the atomic claim attempt
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added atomic claim block before Stage 1, added `import sqlite3`
+- **Learnings for future iterations:**
+  - The atomic UPDATE with WHERE dispatch_status='failed' prevents duplicate recovery by using SQLite's row-level locking in WAL mode
+  - dispatch_db.get_writer_connection() returns a fresh connection with DEFERRED isolation — must commit and close after use
+  - The claim block is wrapped in try/except at two levels: inner for sqlite3.Error (rollback), outer for any Exception (e.g., get_writer_connection itself fails)
+  - The early-return RecoveryOutcome uses error_code='UNKNOWN_ERROR' since we haven't captured the actual error yet at that point
+---
+
+## 2026-02-15 - US-024
+- **Implemented:** Per-task recovery budget check before retry execution
+- **RecoveryBudgetExceeded exception:** Added to recovery_executor.py with task_id, total_cost, budget fields
+- **_check_recovery_budget() helper:** Queries SUM(cost_estimate) FROM dispatch_runs WHERE task_id=? AND recovery_tier IS NOT NULL. Calculates recovery_budget = min(daily_budget_usd * recovery_budget_ratio, recovery_budget_cap_usd). Raises RecoveryBudgetExceeded if total >= budget. Fails open (allows recovery) if query fails.
+- **Config access:** daily_budget_usd from top-level config (default 50.0), recovery_budget_ratio (default 0.04), recovery_budget_cap_usd (default 2.00) from config.recovery section
+- **handle_failure() integration:** Added RecoveryBudgetExceeded catch in recovery retry loop around recovery_execute() call. On catch: records failure_memory, logs recovery.learn and recovery.escalate events, returns RecoveryOutcome with final_status='dispatch_failed' and escalation_reason from the exception message.
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_executor.py` — Added RecoveryBudgetExceeded exception class, _check_recovery_budget() helper function, budget check call before agent_runner.run()
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added RecoveryBudgetExceeded import, try/except block in retry loop to catch budget exceeded and escalate
+- **Learnings for future iterations:**
+  - daily_budget_usd is a top-level config key (not under recovery), accessed via config.get("daily_budget_usd", 50.0) — see dispatch_db.py line 172 for the pattern
+  - recovery_budget_ratio and recovery_budget_cap_usd are under config.recovery section
+  - The budget check uses dispatch_db.get_reader_connection() (not writer) since it's read-only
+  - Budget check fails open (allows recovery to proceed) if the query fails, to avoid blocking recovery on transient DB issues
+  - RecoveryBudgetExceeded is caught at the same level as the execute() call in handle_failure(), enabling clean escalation with proper failure_memory recording
+---
+
+## 2026-02-15 - US-025
+- **Implemented:** Max concurrent recoveries guard in handle_failure() before atomic claim
+- **Behavior:**
+  - Before claiming a task for recovery, queries `SELECT COUNT(*) FROM tasks WHERE dispatch_status='recovering'`
+  - Reads `config.recovery.max_concurrent_recoveries` (default 3), handles both dict and object configs
+  - If count >= limit, defers recovery by setting `next_retry_at` on the latest dispatch_run to now + 60 seconds
+  - Returns `RecoveryOutcome(success=False, final_status='failed', escalation_reason='concurrency_limit')`
+  - Logs `recovery.deferred` event with recovering_count, max_concurrent, defer_seconds metadata
+  - Fails open: if the count query fails, assumes 0 and allows recovery to proceed
+  - Uses `get_reader_connection()` for the count query (read-only), `get_writer_connection()` for the defer UPDATE (write, closed after use)
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added concurrency guard block before atomic claim, added `import datetime`
+- **Learnings for future iterations:**
+  - The concurrency guard must go BEFORE the atomic claim block, because once you claim a task (failed → recovering), you've already incremented the count
+  - Use `datetime.datetime.now(datetime.timezone.utc)` for ISO 8601 timestamps in UTC
+  - The subquery `SELECT MAX(id) FROM dispatch_runs WHERE task_id=?` targets the latest dispatch_run row for the task
+  - Config access pattern for recovery section: `config.get("recovery", {}) if isinstance(config, dict) else getattr(config, "recovery", {}) or {}`
+  - The final_status is 'failed' (not 'dispatch_failed') because deferral is temporary — next poll cycle will retry
+---
+
+## 2026-02-15 - US-026
+- **Implemented:** Per-attempt recovery timeout enforcement in recovery_executor.execute()
+- **RecoveryTimeoutError exception:** Added to recovery_executor.py with task_id and timeout_seconds fields
+- **_run_agent_with_timeout() helper:** Runs agent_runner.run_agent() in a daemon thread and waits up to timeout_seconds. If the thread doesn't finish in time, raises RecoveryTimeoutError. Uses threading.Thread (not signal.alarm, which only works on main thread).
+- **_get_recovery_timeout() helper:** Extracts config.recovery.recovery_timeout_per_attempt (default 600s), handles both dict and object configs.
+- **handle_failure() integration:** Added RecoveryTimeoutError catch in retry loop after RecoveryBudgetExceeded. On timeout:
+  - Logs recovery.timeout event with timeout_seconds and attempt number
+  - Appends PreviousAttemptSummary with error_code="RECOVERY_TIMEOUT"
+  - Continues to next iteration (treats timeout as failed attempt, not terminal escalation)
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_executor.py` — Added RecoveryTimeoutError class, _get_recovery_timeout() helper, _run_agent_with_timeout() helper, replaced direct run_agent() call with timeout-wrapped version, added `import threading`
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added RecoveryTimeoutError import, try/except block in retry loop to catch timeout and continue
+- **Learnings for future iterations:**
+  - Use threading.Thread(daemon=True) for timeouts since signal.alarm only works on main thread and recovery may run from supervisor daemon threads
+  - The daemon thread approach means the agent continues running in the background after timeout — it will be cleaned up when the process exits
+  - RecoveryTimeoutError is treated as a non-terminal failure (continues to next tier), unlike RecoveryBudgetExceeded which escalates immediately
+  - The timeout default of 600s (10 minutes) matches spec Appendix E
+---
+
+## 2026-02-15 - US-027
+- **Implemented:** Total recovery time hard timeout in handle_failure() retry loop
+- **Behavior:**
+  - Reads `config.recovery.max_recovery_time_seconds` (default 1800s = 30 minutes) from recovery_config (already parsed for concurrency guard)
+  - Before each retry attempt in the loop, calculates elapsed seconds since `pipeline_start` (already tracked via `time.monotonic()`)
+  - If elapsed time exceeds max_recovery_time_seconds, breaks out of loop with immediate escalation
+  - Logs `recovery.hard_timeout` event with elapsed_seconds, max_recovery_time_seconds, and current attempt number
+  - Records to failure_memory via record_attempt() (Stage 8: LEARN) before returning
+  - Returns RecoveryOutcome with `final_status='dispatch_failed'` and `escalation_reason='max_recovery_time_exceeded'`
+  - attempts_used is set to `attempt - 1` (the current attempt didn't execute, only the check ran)
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added hard timeout check at top of retry loop, reads max_recovery_time_seconds from recovery_config
+- **Learnings for future iterations:**
+  - `recovery_config` is already parsed before the retry loop (for concurrency guard) — reuse it for max_recovery_time_seconds
+  - `pipeline_start` was already tracked at line 161 via `time.monotonic()` — no new timer needed
+  - The hard timeout is a safeguard above per-attempt timeout (US-026, 600s) — it catches cases where diagnosis + compensation + multiple attempts accumulate
+  - Config access pattern matches US-025: `recovery_config.get(key, default) if isinstance(recovery_config, dict) else getattr(recovery_config, key, default)`
+---
+
+## 2026-02-15 - US-028
+- **Implemented:** Integrated recovery pipeline into agent_supervisor's failure handling
+- **Changes:**
+  - Refactored `_run_agent_task()` exception handler to call `_handle_agent_failure()` instead of directly calling `handle_dispatch_failure()`
+  - `_handle_agent_failure()` checks `config.recovery.enabled` (default True) and routes to recovery pipeline or fallback
+  - Imports `recovery.recovery_pipeline.handle_failure` and passes task_id, runner_error, task_row (task_dict), dispatch_run_row, config, and dispatch_db module
+  - Handles `RecoveryOutcome.final_status`:
+    - `completed`: Logs success (recovery_executor already handles task completion internally)
+    - `failed`: Logs deferral (recovery pipeline already sets next_retry_at)
+    - `dispatch_failed`: Creates urgent notification via adapter with error_code and escalation_reason
+  - `_fallback_handle_failure()` preserves original `handle_dispatch_failure()` behavior
+  - `_get_dispatch_run_row()` fetches dispatch_run row as dict using trace_id with sqlite3.Row factory
+- **Files changed:**
+  - `agent-dispatch/agent_supervisor.py` — Refactored exception handler, added _handle_agent_failure(), _fallback_handle_failure(), _get_dispatch_run_row() methods
+- **Learnings for future iterations:**
+  - The recovery pipeline's handle_failure() expects dispatch_db as a module reference (not a connection), accessed via `from . import dispatch_db as dispatch_db_module`
+  - handle_failure() signature: (task_id, runner_error, task_row, dispatch_run_row, config, dispatch_db) -> RecoveryOutcome
+  - task_dict from get_dispatchable_tasks() can be used directly as task_row
+  - dispatch_run_row can be fetched via trace_id from the reader connection
+  - Recovery pipeline already handles: task completion (via recovery_executor), next_retry_at setting (via concurrency guard), and dispatch_status transitions
+  - The heartbeat timeout handler still uses the original handle_dispatch_failure() since it doesn't have task_dict context
+  - Config access pattern for recovery.enabled: `recovery_config.get("enabled", True)` — defaults to enabled if no config section
+---
+
+## 2026-02-15 - US-029
+- **Implemented:** Enhanced AgentRunnerError with structured error context fields and added error context capture to agent_runner.run()
+- **Changes to AgentRunnerError:**
+  - Added `raw_output`, `tool_call_log`, `stop_reason` parameters to `__init__`
+  - Stores these as instance attributes for recovery pipeline consumption
+- **Changes to run_agent():**
+  - Added `tool_call_log: List[Dict]` accumulator that records each tool call with name, arguments, result_excerpt (500 chars), and iteration number
+  - Added `raw_output_parts: List[str]` to capture raw LLM response content from each provider call iteration
+  - On provider error: writes error context to dispatch_runs (raw_output, tool_call_log, stop_reason, error_context JSON) and raises enriched AgentRunnerError
+  - On validation error: writes error context to dispatch_runs and raises enriched AgentRunnerError
+  - Success path unchanged — tool_call_log and raw_output_parts are just accumulated alongside existing logic
+- **New helper function:** `_write_error_context_to_dispatch_runs()` — writes raw_output, tool_call_log (as JSON), stop_reason, and error_context (as JSON with exception_type, message, traceback) to dispatch_runs WHERE trace_id=?
+  - Truncates raw_output per config.recovery.raw_output_max_chars (default 10000)
+  - Uses direct sqlite3 connection (same pattern as _record_audit_log)
+- **Added import:** `traceback` for formatting exception tracebacks
+- **Files changed:**
+  - `agent-dispatch/agent_runner.py` — Enhanced AgentRunnerError, added _write_error_context_to_dispatch_runs(), modified run_agent() to accumulate tool_call_log and raw_output and capture on failures
+- **Learnings for future iterations:**
+  - AgentRunnerError now has raw_output, tool_call_log, stop_reason attributes — recovery/error_capture.py capture_error() already uses getattr() to access these
+  - stop_reason values: "provider_error" (provider.complete() failed), "validation_error" (_validate_agent_result failed)
+  - raw_output_parts captures content from all iterations (intermediate tool calls + final response), combined with newlines
+  - tool_call_log entries have: name, arguments, result_excerpt (first 500 chars), iteration number
+  - error_context JSON includes: exception_type, message, traceback (and exception_module for provider errors)
+  - The _write_error_context_to_dispatch_runs() function reuses the same sqlite3 connect/WAL/foreign_keys pattern as _record_audit_log
+---
+
+## 2026-02-15 - US-030
+- **Implemented:** Added recovery configuration section to openclawd.config.yaml and config loader in config.py
+- **YAML changes:** Added `recovery:` section to openclawd.config.yaml with all 20 parameters from spec Appendix E:
+  - General limits: max_recovery_attempts (5), max_recovery_time_seconds (1800), max_concurrent_recoveries (3), recovery_timeout_per_attempt (600)
+  - Diagnostic Agent: diagnostic_model (claude-haiku-4-5), diagnostic_max_input_tokens (4000), diagnostic_prompt_file (prompts/diagnostic_sop.md)
+  - Budget: recovery_budget_ratio (0.04), recovery_budget_cap_usd (2.00)
+  - Truncation: raw_output_max_chars (10000), diagnostic_context_chars (2000), recovery_prompt_context_chars (500), error_message_max_chars (200)
+  - Confidence: min_confidence_score (0.3)
+  - Systemic: systemic_failure_threshold_count (3), systemic_failure_window_minutes (10)
+  - Escalation: max_escalations_per_hour (5), escalation_cooldown_seconds (300)
+  - Retention: failure_memory_retention_days (90), recovery_events_retention_days (90)
+- **Config loader changes:** Added `RECOVERY_DEFAULTS` dict and `get_recovery_config(config)` function to config.py
+  - `get_recovery_config()` merges config["recovery"] with RECOVERY_DEFAULTS, guaranteeing all keys present
+  - Falls back to full defaults if recovery section missing or non-dict
+- **Files changed:**
+  - `agent-dispatch/openclawd.config.yaml` — Added recovery section with all 20 spec Appendix E parameters
+  - `agent-dispatch/config.py` — Added RECOVERY_DEFAULTS dict and get_recovery_config() function
+- **Learnings for future iterations:**
+  - Recovery modules already access config.get("recovery", {}).get(key, default) with inline defaults — get_recovery_config() centralizes these defaults
+  - The RECOVERY_DEFAULTS dict in config.py is the canonical source of default values for all recovery parameters
+  - get_recovery_config() can replace inline `_get_recovery_config()` helpers in recovery modules (recovery_pipeline.py, diagnostic_agent.py, error_capture.py, recovery_executor.py)
+---
+
+## 2026-02-15 - US-031
+- **Implemented:** Added all 17 recovery event type constants and supporting utilities to structured_logging.py
+- **Constants added:** RECOVERY_CAPTURE, RECOVERY_CLASSIFY, RECOVERY_DIAGNOSE_START, RECOVERY_DIAGNOSE_COMPLETE, RECOVERY_COMPENSATE, RECOVERY_STRATEGY_SELECTED, RECOVERY_EXECUTE_START, RECOVERY_EXECUTE_COMPLETE, RECOVERY_VERIFY, RECOVERY_LEARN, RECOVERY_ESCALATE, RECOVERY_CLAIM_SUCCESS, RECOVERY_CLAIM_FAILED, RECOVERY_DEFERRED, RECOVERY_TIMEOUT, RECOVERY_HARD_TIMEOUT, RECOVERY_BUDGET_EXCEEDED
+- **RECOVERY_EVENT_TYPES frozenset:** All 17 event types in a frozenset for efficient filtering (used by US-047 --recovery log filter)
+- **JSONFormatter enhancement:** Promoted `event_type` and `duration_ms` from nested `extra` dict to top-level JSON fields for easy filtering and querying
+- **is_recovery_event() helper:** Simple predicate function checking if event_type starts with "recovery." prefix
+- **Files changed:**
+  - `agent-dispatch/structured_logging.py` — Added 17 recovery event type constants, RECOVERY_EVENT_TYPES frozenset, promoted event_type/duration_ms to top-level in JSONFormatter, added is_recovery_event() helper
+- **Learnings for future iterations:**
+  - Recovery modules already pass event_type as string in the extra dict (e.g., `{"event_type": "recovery.capture", ...}`) — the constants can be used by callers but existing code works without changes
+  - The JSONFormatter now promotes event_type and duration_ms from extra to top-level JSON fields, so log lines are: `{"timestamp":..., "event_type":"recovery.capture", "task_id":..., "duration_ms":..., "extra":{...}}`
+  - RECOVERY_EVENT_TYPES frozenset enables O(1) membership checks for US-047's log filtering
+  - is_recovery_event() uses prefix matching ("recovery.") which is simpler and forward-compatible with new event types
+---
+
+## 2026-02-15 - US-032
+- **Implemented:** Integrated failure_memory cleanup into data_retention.py scheduled sweep
+- **Changes:**
+  - `cleanup_old_entries()` in `recovery/failure_memory.py` was already implemented in US-015 with correct logic: deletes rows WHERE created_at < datetime('now', '-N days'), uses get_writer_connection(), handles sqlite3.Error
+  - Added call to `cleanup_old_entries()` in `data_retention.py:run_retention_job()` after main DB transaction commit
+  - Uses `get_recovery_config(config)["failure_memory_retention_days"]` (default 90) for configurable retention
+  - Wrapped in try/except to handle import errors or failures gracefully (does not break main retention job)
+  - Added `get_recovery_config` import to data_retention.py
+  - Updated docstring to document step 6 in retention job
+- **Files changed:**
+  - `agent-dispatch/data_retention.py` — Added failure_memory cleanup integration in run_retention_job(), added get_recovery_config import
+- **Learnings for future iterations:**
+  - failure_memory.cleanup_old_entries() manages its own writer connection (get_writer_connection/close) — must be called AFTER the main conn.commit() in run_retention_job() to avoid conflicts
+  - US-033 (recovery_events cleanup) will follow the same integration pattern — add similar call after failure_memory cleanup
+  - get_recovery_config() from config.py centralizes all recovery config defaults — use it instead of inline defaults
+---
+
+## 2026-02-15 - US-033
+- **Implemented:** Created cleanup_recovery_events() function in recovery/recovery_pipeline.py and integrated into data_retention.py
+- **cleanup_recovery_events() function:**
+  - Accepts retention_days (default 90) and optional db_path
+  - Deletes recovery_events rows WHERE created_at < datetime('now', '-N days') using parameterized query
+  - Uses get_writer_connection() (fresh connection, closed after use)
+  - Handles sqlite3.Error gracefully with rollback
+  - Logs count of deleted rows
+  - Returns number of deleted rows (0 on error)
+- **data_retention.py integration:**
+  - Added call to cleanup_recovery_events() in run_retention_job() after failure_memory cleanup
+  - Uses get_recovery_config(config)["recovery_events_retention_days"] (default 90) for configurable retention
+  - Wrapped in try/except to handle import errors or failures gracefully
+  - Updated docstring to document step 7
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added cleanup_recovery_events() function before _elapsed_ms()
+  - `agent-dispatch/data_retention.py` — Added recovery_events cleanup integration in run_retention_job(), updated docstring
+- **Learnings for future iterations:**
+  - cleanup_recovery_events() follows exact same pattern as failure_memory.cleanup_old_entries() — own writer connection, parameterized datetime subtraction, try/except/finally close
+  - Both recovery table cleanup functions (failure_memory, recovery_events) are called AFTER the main conn.commit() in run_retention_job() since they use their own writer connections
+  - The recovery_events_retention_days config key is in the recovery section, accessed via get_recovery_config()
+---
+
+## 2026-02-15 - US-034
+- **Implemented:** find_similar_fixes() was already fully implemented in US-015 (failure_memory.py lines 82-172)
+- **Verification:** All 9 acceptance criteria verified against existing implementation:
+  - Accepts error_code, agent_name, task_domain, limit parameters ✓
+  - Tier 1: exact match on error_code + agent_name + success=1 ✓
+  - Tier 2: match error_code + task_domain + success=1 (skipped if task_domain is None) ✓
+  - Tier 3: match error_code + success=1 only ✓
+  - Returns first tier that produces results ✓
+  - Limit defaults to 3 ✓
+  - Returns list of dicts with: error_code, resolution_summary, diagnostic_summary, recovery_tier ✓
+  - Handles sqlite3.Error gracefully ✓
+  - Syntax check passes ✓
+- **Files changed:** None (already complete from US-015)
+- **Learnings for future iterations:**
+  - US-034 was a duplicate of find_similar_fixes() already implemented in US-015
+  - When stories overlap with earlier implementations, verify all ACs and mark complete without changes
+---
+
+## 2026-02-15 - US-035
+- **Implemented:** All integration of similar fixes into diagnostic agent input was already complete from prior stories
+- **Verification of all 6 acceptance criteria:**
+  1. Before creating DiagnosticInput, query failure_memory.find_similar_fixes() — Done in recovery_pipeline.py:353-357 (US-022)
+  2. Pass error_code, agent_name, task_domain from ErrorContext — Done in recovery_pipeline.py:354-356 (US-022)
+  3. Populate DiagnosticInput.similar_past_fixes with query results — Done in recovery_pipeline.py:374 (US-022)
+  4. diagnostic_sop.md prompt template includes section for similar_past_fixes — Done at diagnostic_sop.md:51-52 (US-011), rendered by _render_prompt() at diagnostic_agent.py:181-190 (US-012)
+  5. If no similar fixes found, similar_past_fixes is empty list — find_similar_fixes() returns [] and DiagnosticInput.similar_past_fixes defaults to [] (US-015/US-010)
+  6. Typecheck passes — All 3 files pass python3 ast.parse syntax check
+- **Files changed:** None (all work already complete from US-010, US-011, US-012, US-015, US-022)
+- **Learnings for future iterations:**
+  - US-035 was fully covered by US-022 (handle_failure wired find_similar_fixes → DiagnosticInput) and US-012 (diagnose_failure renders similar_past_fixes in prompt)
+  - When handle_failure() was implemented in US-022, it proactively included the similar fixes integration that US-035 specifies
+  - Pattern: when a pipeline orchestrator (handle_failure) is implemented, downstream integration stories may already be complete
+---
+
+## 2026-02-15 - US-036
+- **Implemented:** Added escalation notification for terminal recovery failures in handle_failure()
+- **New functions added to recovery_pipeline.py:**
+  - `_check_escalation_rate_limit(task_id, config)` — Enforces max_escalations_per_hour (default 5) and per-task escalation_cooldown_seconds (default 300) using in-memory tracking
+  - `_record_escalation(task_id)` — Records escalation timestamp for rate limiting
+  - `_send_escalation_notification(task_id, task_row, error_code, diagnostic_summary, attempts_used, escalation_reason, trace_id, config, slog)` — Sends urgent notification via notification_delivery.deliver_notification() with full diagnostic report
+- **In-memory rate limiting state:**
+  - `_escalation_timestamps: list[float]` — monotonic timestamps of all escalations (pruned to last hour)
+  - `_task_escalation_times: dict[int, float]` — per-task last escalation time for cooldown
+- **Integration points:** Added `_send_escalation_notification()` calls before all 4 `dispatch_failed` return paths in handle_failure():
+  1. No retries allowed (max_retries=0) — immediate escalation
+  2. Hard timeout exceeded (max_recovery_time_seconds) — recovery took too long
+  3. Terminal strategy (decompose/escalate) — strategy ladder exhausted
+  4. Budget exceeded (RecoveryBudgetExceeded) — cost limit hit
+- **Notification content includes:** task_id, task_title, task_description (truncated to 500 chars), error_code, diagnostic_summary, attempts_used, escalation_reason, trace_id
+- **Uses:** `from ..notification_delivery import deliver_notification` with urgency='urgent'
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added rate limiting state, 3 helper functions, 4 notification call sites
+- **Learnings for future iterations:**
+  - deliver_notification(notification_dict, urgency, config) is the main API — notification_dict needs 'title' and 'message' keys
+  - Rate limiting uses in-memory state (per-process) — resets on daemon restart, which is acceptable for escalation frequency control
+  - The `from ..notification_delivery import deliver_notification` import is lazy (inside the function body) to avoid circular imports
+  - config may be a dict or an object — use isinstance check and getattr fallback for config_dict conversion
+---
+
+## 2026-02-15 - US-037
+- **Implemented:** Tier 4 decomposition recommendation notification with dedicated notification function and routing in handle_failure()
+- **Changes to strategy_selector.py:**
+  - Enhanced `_tier4_decompose()` to include `decomposition_root_cause` and `decomposition_tools_to_adjust` in prompt_modifications alongside existing `decomposition_suggestion`
+- **Changes to recovery_pipeline.py:**
+  - Added `_send_decomposition_notification()` function: sends notification with urgency='high' (distinct from escalation's 'urgent'), includes decomposition guidance from diagnostic_output.specific_fix, recommends operator use 'openclawd pipeline create' to split the task. Shares rate limiting with escalation notifications via `_check_escalation_rate_limit()` and `_record_escalation()`.
+  - Modified terminal strategy block in handle_failure() to route `strategy.strategy_name == "decompose"` to `_send_decomposition_notification()` instead of `_send_escalation_notification()`. Other terminal strategies (escalate) still use the existing escalation path.
+  - Added `recovery.decompose` log event for decomposition recommendation before sending notification
+- **Files changed:**
+  - `agent-dispatch/recovery/strategy_selector.py` — Enhanced _tier4_decompose() with richer prompt_modifications
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added _send_decomposition_notification(), updated terminal strategy routing in handle_failure()
+- **Learnings for future iterations:**
+  - deliver_notification() supports urgency levels including 'high' (not just 'urgent') — use 'high' for actionable recommendations, 'urgent' for terminal failures
+  - Decomposition notifications share rate limiting state with escalation notifications to avoid alert storms
+  - The terminal strategy block in handle_failure() now has two paths: decompose → _send_decomposition_notification(), escalate → _send_escalation_notification()
+  - strategy.prompt_modifications dict is the channel for passing diagnostic data from select_strategy() through to notifications
+---
+
+## 2026-02-15 - US-038
+- **Implemented:** Added 'recovering' status handling to recover_interrupted_tasks() in dispatch_db.py
+- **Changes:**
+  - Added Phase 2 to recover_interrupted_tasks(): queries tasks with dispatch_status='recovering' and resets them to 'failed' so they re-enter the recovery pipeline on the next poll cycle
+  - Phase 1 (existing US-056 'interrupted' → 'queued' recovery) is preserved unchanged
+  - Phase 2 uses atomic UPDATE with WHERE dispatch_status='recovering' guard
+  - Logs recovering count separately from interrupted count
+  - Updated docstring to document US-038 behavior
+  - Both phases commit in a single transaction
+- **Files changed:**
+  - `agent-dispatch/dispatch_db.py` — Modified recover_interrupted_tasks() to add Phase 2 for 'recovering' status
+- **Learnings for future iterations:**
+  - recover_interrupted_tasks() already runs on daemon startup via AgentSupervisor.run() at line 336
+  - 'recovering' tasks are reset to 'failed' (not 'queued') because they need to re-enter the recovery pipeline, not skip straight to dispatch
+  - The function now handles three categories in its output: interrupted tasks (re-queued), recovering tasks (reset to failed), combined in the returned list
+  - No changes needed to agent_supervisor.py — it already calls recover_interrupted_tasks() on startup and logs the result
+---
+
+## 2026-02-15 - US-039
+- **Implemented:** Added INCOMPLETE_RESEARCH auto-detection for research tasks in detect_error_code()
+- **Changes:**
+  - Added `import re` at the top of error_classifier.py
+  - Added post-completion check in detect_error_code(): when agent_result.status='completed' AND context.task_domain='research', counts distinct URLs (http/https pattern) in deliverable_content using `re.findall(r'https?://[^\s<>"\')\]]+', ...)` with a set for uniqueness
+  - If fewer than 3 distinct URLs found, returns 'INCOMPLETE_RESEARCH' error code
+  - Check placed after DELIVERABLE_EMPTY check (since empty deliverable is more severe) but before fallback UNKNOWN_ERROR
+- **Files changed:**
+  - `agent-dispatch/recovery/error_classifier.py` — Added `import re`, added INCOMPLETE_RESEARCH detection block in detect_error_code() AgentResult section
+- **Learnings for future iterations:**
+  - task_domain is passed via the `context` dict parameter to detect_error_code(), accessed via `context.get("task_domain")`
+  - The URL regex `https?://[^\s<>"')\]]+` matches http:// and https:// URLs, stopping at whitespace, angle brackets, quotes, closing parens, and closing brackets
+  - Using `set()` around `re.findall()` ensures distinct URL counting (same URL appearing multiple times counts once)
+  - INCOMPLETE_RESEARCH is already defined in ERROR_TAXONOMY as a logic error with max_retries=2 and requires_diagnosis=True
+---
+
+## 2026-02-15 - US-040
+- **Implemented:** Added STUCK_TASK detection for long-running dispatched tasks in agent_supervisor.py poll loop
+- **Changes:**
+  - Added `_detect_stuck_tasks()` method to `AgentSupervisor` class — queries for tasks stuck in 'dispatched' status with expired leases
+  - Called from `_poll_once()` before the recovery sweep and main dispatch logic
+  - Primary detection: `dispatch_status='dispatched' AND lease_until < now AND (julianday('now') - julianday(started_at)) * 86400 > agent_timeout_seconds`
+  - Alternative detection: `lease_extensions >= 3 AND tool_calls_count <= tool_calls_count_at_last_extension` (stalled agent making no progress)
+  - Skips tasks already being tracked in `_active_tasks` (avoids conflict with in-process agents)
+  - Atomically transitions stuck tasks from 'dispatched' to 'failed' using WHERE guard to prevent races
+  - Updates the dispatch_run with status='failed' and error_summary='STUCK_TASK: ...'
+  - Creates `AgentRunnerError` with stop_reason='stuck_task' and descriptive message
+  - Triggers recovery pipeline via `_handle_agent_failure()` (same path as normal agent failures)
+  - Logs `recovery.stuck_task_detected` event via `log_dispatch_event()` with full metadata
+- **Files changed:**
+  - `agent-dispatch/agent_supervisor.py` — Added `_detect_stuck_tasks()` method, added call in `_poll_once()` before recovery sweep
+- **Learnings for future iterations:**
+  - Stuck tasks are detected at poll loop level (not heartbeat), because heartbeat only tracks _active_tasks from this supervisor instance
+  - Stuck tasks can come from previous supervisor instances that crashed without marking tasks as interrupted
+  - The detection uses LEFT JOIN with dispatch_runs subquery to get the latest dispatch_run for each stuck task
+  - SQLite date arithmetic: `(julianday('now') - julianday(started_at)) * 86400` converts Julian day difference to seconds
+  - The `_active_tasks` check prevents the supervisor from treating its own in-flight tasks as stuck (they're handled by heartbeat timeout)
+  - STUCK_TASK error code is already defined in ERROR_TAXONOMY (structural error, max_retries=2, requires_compensation=True with compensating_action_keys=('reset_lease', 'log_abandoned_output'))
+---
+
+## 2026-02-15 - US-041
+- **Implemented:** Provider health coordination in recovery_executor.execute() before retry
+- **Changes:**
+  - Added `ProviderHealthDeferred` exception class to `recovery_executor.py` — raised when provider is degraded/down
+  - Added `_check_provider_health()` helper function to `recovery_executor.py`:
+    - Queries last 5 rows from `provider_health` table for the task's assigned provider/model
+    - Determines provider status: healthy (pass_rate >= 60%), degraded (pass_rate > 0% but < 60%), down (pass_rate = 0%)
+    - If degraded/down: defers recovery by setting `next_retry_at = now + 60s` on latest dispatch_run, then raises ProviderHealthDeferred
+    - If no health data or query fails: fails open (allows recovery to proceed)
+    - Logs `recovery.provider_health_check` event in all cases with status, provider, model, pass_rate
+  - Integrated `_check_provider_health()` call in `execute()` after loading task row (step 1b) but before budget check (step 1c)
+  - Resolves provider name from `config.provider.name` and model from `config.provider.model` with agent-specific override from `config.agent_models`
+  - Added `ProviderHealthDeferred` handler in `recovery_pipeline.py` retry loop:
+    - Catches ProviderHealthDeferred, logs the event, and returns RecoveryOutcome with final_status='failed' and escalation_reason='provider_health_deferred'
+    - This is a non-terminal deferral (final_status='failed' not 'dispatch_failed') so next poll cycle will retry when provider recovers
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_executor.py` — Added ProviderHealthDeferred class, _check_provider_health() function, integrated health check in execute()
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added ProviderHealthDeferred import, added catch block in retry loop
+- **Learnings for future iterations:**
+  - provider_health table stores canary test results with provider, model, test_name, passed, latency_ms columns — query ORDER BY tested_at DESC LIMIT 5 for recent health
+  - Provider name comes from config.provider.name, model from config.provider.model (overridden per-agent via config.agent_models)
+  - The 60% pass rate threshold (3 out of 5 recent checks must pass) balances sensitivity with false-positive avoidance
+  - ProviderHealthDeferred returns final_status='failed' (not 'dispatch_failed') because it's a temporary deferral — recovery will retry on next poll cycle after health/self_healer.py completes provider healing
+  - Fail-open pattern: if provider_health query fails or no data exists, allow recovery to proceed
+---
+
+## 2026-02-15 - US-042
+- **Implemented:** Added detect_systemic_pattern() function to recovery/failure_memory.py
+- **Function signature:** detect_systemic_pattern(error_code: str, window_minutes: int = 10, threshold_count: int = 3, db_path: Optional[str] = None) -> bool
+- **Behavior:**
+  - Queries failure_memory for rows WHERE error_code=? AND created_at > datetime('now', '-N minutes')
+  - Counts DISTINCT task_id values (not total rows — systemic = multiple different tasks failing with same error)
+  - Returns True if count >= threshold_count
+  - Uses get_reader_connection() (read-only query, cached singleton not closed)
+  - Handles sqlite3.Error gracefully (returns False on error — fail-safe)
+  - Logs warning when systemic pattern detected with error_code, count, threshold, window details
+- **Config integration:** Default parameters match config.recovery.systemic_failure_threshold_count (3) and systemic_failure_window_minutes (10) — callers can pass config values to override defaults
+- **Files changed:**
+  - `agent-dispatch/recovery/failure_memory.py` — Added detect_systemic_pattern() function before cleanup_old_entries()
+- **Learnings for future iterations:**
+  - Uses parameterized datetime subtraction: `datetime('now', '-' || ? || ' minutes')` — same SQLite pattern as cleanup_old_entries() but with minutes instead of days
+  - COUNT(DISTINCT task_id) is the right metric for systemic detection — multiple failures of the SAME task are not systemic, but the SAME error across DIFFERENT tasks is
+  - US-043 will call detect_systemic_pattern() from handle_failure() after recording to failure_memory and send urgent alert if True
+---
+
+## 2026-02-15 - US-043
+- **Implemented:** Added systemic failure alert on pattern detection in recovery_pipeline.py
+- **New function:** `_check_systemic_and_alert(task_id, error_code, trace_id, config, slog)` — checks for systemic failure pattern after each failure_memory.record_attempt() and sends urgent notification if detected
+- **Behavior:**
+  - Calls `failure_memory.detect_systemic_pattern(error_code, window_minutes, threshold_count)` using config values (defaults: 10 min window, 3 task threshold)
+  - If systemic pattern detected AND not rate-limited, sends urgent notification via `deliver_notification()`
+  - Notification content includes: error_code, affected task count, time window, latest affected task_id
+  - Recommends system-level investigation: check provider health, API keys, database connectivity, recovery logs
+  - Rate-limited to max 1 alert per error_code per hour using `_systemic_alert_times` dict (in-memory, per-process)
+  - Logs `recovery.systemic_failure_detected` event when pattern detected
+  - Logs `recovery.systemic_alert.rate_limited` event when alert suppressed
+  - Logs `recovery.systemic_alert.notified` event when alert sent
+  - Fails silently on any exception (best-effort alerting)
+- **New state:** `_systemic_alert_times: dict[str, float]` — maps error_code to last alert monotonic time
+- **Integration points:** Added `_check_systemic_and_alert()` calls after every failed `recovery.learn` event in handle_failure():
+  1. No retries allowed (max_retries=0) immediate escalation
+  2. Hard timeout exceeded
+  3. Terminal strategy (decompose/escalate)
+  4. Budget exceeded
+  5. All attempts exhausted
+  - NOT called after successful recovery (no systemic alert needed on success)
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_pipeline.py` — Added `_systemic_alert_times` state, `_check_systemic_and_alert()` function, 5 call sites in handle_failure()
+- **Learnings for future iterations:**
+  - Systemic alert rate limiting is separate from escalation rate limiting — uses `_systemic_alert_times` (per error_code per hour) vs `_escalation_timestamps` (global per hour)
+  - `detect_systemic_pattern()` counts DISTINCT task_ids, not total failures — same task failing repeatedly doesn't trigger systemic alert
+  - The systemic check runs after every failed record_attempt() call, making it responsive to emerging patterns
+  - Config keys: systemic_failure_window_minutes (default 10), systemic_failure_threshold_count (default 3) — from config.recovery section
+---
+
+## 2026-02-15 - US-044
+- **Implemented:** Added error_pattern generation for similarity matching in error_capture.py
+- **New function:** `_normalize_error_pattern(error_message: str) -> str` — normalizes error messages by replacing variable-specific values with placeholders for similarity matching
+- **Regex patterns defined (module-level compiled):**
+  - `_UUID_RE`: Matches UUIDs (8-4-4-4-12 hex format) → `<UUID>`
+  - `_TASK_ID_RE`: Matches task ID references (task_id 123, task-42, etc.) → `<TASK_ID>`
+  - `_NUMERIC_ID_RE`: Matches generic numeric IDs (id=123, ID:456, etc.) → `<ID>`
+  - `_TIMESTAMP_ISO_RE`: Matches ISO 8601 timestamps (2026-02-15T10:30:00Z, etc.) → `<TIMESTAMP>`
+  - `_TIMESTAMP_EPOCH_RE`: Matches epoch timestamps (10-13 digit numbers) → `<EPOCH>`
+  - `_URL_RE`: Matches http/https URLs → `<URL>`
+- **Replacement order:** URLs first (most specific, prevents partial matches), then UUIDs, ISO timestamps, task IDs, numeric IDs, epoch timestamps
+- **Integration:** `capture_error()` now calls `_normalize_error_pattern(str(runner_error))` instead of setting `error_pattern=None`
+- **failure_memory integration:** All 6 `record_attempt()` call sites in recovery_pipeline.py already pass `error_context.error_pattern`, so no changes needed there
+- **Files changed:**
+  - `agent-dispatch/recovery/error_capture.py` — Added `import re`, 6 compiled regex patterns, `_normalize_error_pattern()` function, updated `capture_error()` to generate error_pattern
+- **Learnings for future iterations:**
+  - Compile regex patterns at module level (not inside function) for performance — they're reused across many capture_error() calls
+  - Replacement order matters: URLs contain timestamps and IDs, so replace URLs first to avoid partial matches
+  - The _TASK_ID_RE uses case-insensitive matching to catch "Task ID", "task_id", "TASK-123" etc.
+  - error_pattern is stored in both ErrorContext (for pipeline use) and failure_memory (for future similarity queries)
+  - Future enhancement: failure_memory.find_similar_fixes() could use error_pattern for fuzzy matching instead of exact error_code matching
+---
+
+## 2026-02-15 - US-045
+- **Implemented:** Wired config.recovery.min_confidence_score into CONFIDENCE_TOO_LOW detection
+- **What was done:**
+  - detect_error_code() in error_classifier.py already had CONFIDENCE_TOO_LOW detection using `context.get("confidence_threshold", 0.3)` (from US-006)
+  - The missing piece was that capture_error() in error_capture.py was not passing the configured threshold through the context dict
+  - Added `detection_context["confidence_threshold"] = recovery_cfg.get("min_confidence_score", 0.3)` so the configured value from openclawd.config.yaml is used
+  - Also added `detection_context["task_domain"] = task_domain` passthrough for INCOMPLETE_RESEARCH domain check consistency
+- **Files changed:**
+  - `agent-dispatch/recovery/error_capture.py` — Added confidence_threshold and task_domain to detection_context dict passed to detect_error_code()
+- **Acceptance criteria verified:**
+  - detect_error_code() checks agent_result.confidence_score field ✓ (line 194)
+  - If confidence_score is None, skip check ✓ (line 202: `confidence_score is not None`)
+  - If confidence_score < config.recovery.min_confidence_score, return CONFIDENCE_TOO_LOW ✓ (now config value flows through context)
+  - Uses config.recovery.min_confidence_score (default 0.3) ✓ (via recovery_cfg.get("min_confidence_score", 0.3))
+  - Only applies if agent_result.status='completed' ✓ (line 202: `status == "completed"`)
+  - Syntax check passes ✓
+- **Learnings for future iterations:**
+  - detect_error_code() uses the `context` dict as its configuration channel — callers must pass config values through context
+  - capture_error() has access to the full config object — it's responsible for extracting and passing relevant config values to detect_error_code()
+  - The confidence threshold default (0.3) appears in three places: ERROR_TAXONOMY (US-005), detect_error_code() context.get default (US-006), and config.py RECOVERY_DEFAULTS (US-030) — keep them in sync
+---
+
+## 2026-02-15 - US-046
+- **Implemented:** Added recovery_state to GET /status endpoint and cmd_status display
+- **Changes to _get_status_dict():**
+  - Added recovery_state query: SELECT from tasks WHERE dispatch_status='recovering' LEFT JOIN dispatch_runs (latest run per task)
+  - Extracts: task_id, attempt_number (from dr.attempt), recovery_tier, error_code (from error_context JSON), time_in_recovery_seconds (calculated from started_at)
+  - Returns empty list if no active recoveries (graceful sqlite3.Error handling)
+  - recovery_state key added to returned dict alongside existing keys (preserves structure)
+- **Changes to cmd_status() rich display:**
+  - Added "Active Recoveries" count row to status table
+  - When recoveries exist, renders a second "Active Recoveries" table with columns: Task ID, Attempt, Tier, Error Code, Duration
+  - Duration formatted as seconds or minutes+seconds for readability
+- **Files changed:**
+  - `agent-dispatch/cli.py` — Modified _get_status_dict() to add recovery_state query and return key, modified cmd_status() to display recovery state in Rich tables
+- **Learnings for future iterations:**
+  - _get_status_dict() is shared by cmd_status and cmd_serve /status endpoint — changes here apply to both
+  - error_code is stored in dispatch_runs.error_context as JSON — needs json.loads() to extract
+  - dispatch_runs.recovery_strategy stores strategy name (not error_code) — don't confuse the two
+  - The LEFT JOIN with MAX(id) subquery pattern gets the latest dispatch_run per task
+  - time_in_recovery_seconds uses started_at from dispatch_runs, not from tasks table
+---
+
+## 2026-02-15 - US-047
+- **Implemented:** Added --recovery flag to openclawd logs command for recovery event filtering
+- **Changes to cmd_logs():**
+  - Added `--recovery` flag to argparse sub_logs parser (action="store_true", default=False)
+  - Modified `_matches()` inner function: when --recovery is set, filters for entries where event_type starts with "recovery." (checks both top-level and extra.event_type for backward compatibility with older log format)
+  - Modified `_format_entry()` inner function: for recovery events, shows event_type prominently with task_id, duration_ms, and key metadata fields (error_code, recovery_tier, strategy_name, success, escalation_reason) in a compact readable format. JSON mode uses indent=2 for readability.
+  - Recovery filter works with --follow flag (tail mode) since the existing follow loop passes through _matches()
+  - Recovery filter combines with other filters (--task, --trace, --level, --agent) for refined recovery event viewing
+- **Files changed:**
+  - `agent-dispatch/cli.py` — Added --recovery argparse flag, recovery filter in _matches(), recovery-aware formatting in _format_entry()
+- **Learnings for future iterations:**
+  - event_type can be at top-level (US-031 promoted it) or inside extra dict (older log entries) — always check both
+  - The --follow flag uses the same _matches() filter, so recovery filter works for live viewing automatically
+  - json.dumps with indent=2 makes recovery event JSON readable for debugging
+  - The _format_entry() function has access to `args` from the enclosing cmd_logs scope (closure)
+---
+
+## 2026-02-15 - US-048
+- **Implemented:** Added recovery health metrics section to openclawd doctor diagnostic output
+- **Changes to cmd_doctor():**
+  - Added section 6: "Recovery health metrics (last 24h)" between compatibility check and output
+  - Checks if failure_memory and recovery_events tables exist before querying
+  - Queries failure_memory for: total_attempts_24h, success_rate_overall, success_rate_by_tier (1-5), top_error_codes (top 5), systemic_patterns (3+ distinct tasks in 10 min window)
+  - Queries recovery_events for: total_events_24h
+  - Queries dispatch_runs for: budget_used_usd (SUM of cost_estimate WHERE recovery_tier IS NOT NULL)
+  - Calculates budget_utilization_pct from config.daily_budget_usd * recovery_budget_ratio vs recovery_budget_cap_usd
+  - Flags warnings for: systemic patterns detected, budget utilization > 80%
+  - JSON output includes full recovery_data dict in report["recovery"]
+  - Terminal output has custom formatting: attempts, success rate, tier breakdown, top errors, systemic patterns, budget usage
+  - Graceful handling: if tables don't exist, shows informational message; if queries fail, shows error
+- **Files changed:**
+  - `agent-dispatch/cli.py` — Added recovery section to cmd_doctor() with queries and formatted output
+- **Learnings for future iterations:**
+  - _get_connection() returns a sqlite3.Row factory connection — column access works with both index and name
+  - The doctor command uses a report dict with status/issues pattern — each section has status (ok/warning/error) and issues list
+  - Recovery budget is calculated as min(daily_budget_usd * recovery_budget_ratio, recovery_budget_cap_usd) — same formula as recovery_executor._check_recovery_budget()
+  - The systemic patterns query (3+ distinct tasks in 10 min) mirrors failure_memory.detect_systemic_pattern() but runs as a single SQL query
+  - For terminal output, the recovery section has custom formatting separate from the generic key-value display used by other sections
+---
+
+## 2026-02-15 - US-049
+- **Implemented:** Added recovery cost tracking to dispatch_runs in recovery_executor.py
+- **New function:** `_store_recovery_cost(task_id, tokens_used, recovery_tier, config, dispatch_db, trace_id, slog)` — calculates cost_estimate and writes it along with recovery_tier to the dispatch_runs row for each recovery attempt
+- **Cost calculation strategy:**
+  - Primary: Uses `dispatch_db.calculate_cost()` with configured pricing (input_per_1m_tokens, output_per_1m_tokens) and a 70/30 input/output token split estimate
+  - Fallback: Uses rough `tokens_used * 0.000003` estimate when pricing config is unavailable
+- **Integration points in execute():**
+  1. Success path: After tokens_used estimated from raw_response, stores cost and recovery_tier before returning success result
+  2. AgentRunnerError path: Estimates tokens from error's raw_output, stores cost and recovery_tier
+  3. Generic Exception path: Stores cost with 0 tokens and recovery_tier
+- **UPDATE query:** `UPDATE dispatch_runs SET cost_estimate = ?, recovery_tier = ? WHERE trace_id = ?`
+- **Files changed:**
+  - `agent-dispatch/recovery/recovery_executor.py` — Added `_store_recovery_cost()` function and 3 call sites in execute()
+- **Learnings for future iterations:**
+  - dispatch_db.calculate_cost() requires a config dict with pricing.{provider}.{model}.{input_per_1m_tokens, output_per_1m_tokens} structure
+  - AgentResult doesn't have separate input_tokens/output_tokens — only raw_response length is available for estimation
+  - The 70/30 input/output token split is a reasonable approximation for agent tasks (prompts are typically longer than completions)
+  - recovery_tier is set to recovery_context.attempt_number (1-based) to match the strategy tier for this attempt
+  - _store_recovery_cost() fails silently (logs warning) on DB errors to avoid blocking recovery execution
+---
+
+## 2026-02-15 - US-050
+- **Implemented:** Integration test for full recovery pipeline on RESULT_SCHEMA_INVALID error
+- **Test 1:** `test_full_recovery_pipeline_schema_error` — Simulates RESULT_SCHEMA_INVALID, verifies all 8 recovery stages execute, recovery succeeds on first attempt with fix_specific strategy (Tier 1)
+- **Test 2:** `test_recovery_pipeline_fails_then_succeeds_on_second_attempt` — First recovery attempt fails (same error), second succeeds with rewrite_with_diagnosis strategy (Tier 2)
+- **Verifications include:**
+  - RecoveryOutcome: success=True, final_status='completed', winning_strategy correct
+  - Stage 1 CAPTURE: error_code correctly detected as RESULT_SCHEMA_INVALID
+  - Stage 2 CLASSIFY: execution category triggers diagnosis
+  - Stage 3 DIAGNOSE: diagnose_failure() called with DiagnosticInput
+  - Stage 4 COMPENSATE: NOT called (requires_compensation=False for execution errors)
+  - Stage 5 STRATEGIZE: correct strategy selected per tier
+  - Stage 6 EXECUTE: recovery_executor.execute() called with correct task_id
+  - Stage 7 VERIFY: success verified
+  - Stage 8 LEARN: record_attempt() called with success=True, correct error_code and recovery_tier
+  - All 10 recovery event types logged (claim.success, capture, classify, diagnose.start, diagnose.complete, strategy.selected, execute.start, execute.complete, verify, learn)
+- **Module import challenge:** agent-dispatch/ directory has a hyphen (invalid Python package name). Solved via importlib.util.spec_from_file_location() to register `agent_dispatch` in sys.modules with proper parent-child module wiring for unittest.mock.patch() to work
+- **Files changed:**
+  - `agent-dispatch/tests/__init__.py` — Created new tests package
+  - `agent-dispatch/tests/test_recovery_pipeline.py` — Created integration test with 2 test cases
+- **Learnings for future iterations:**
+  - To write tests for agent-dispatch modules, must use importlib to register the package as `agent_dispatch` in sys.modules (directory name has a hyphen)
+  - Each submodule must be registered AND set as attribute on parent module for patch() to resolve dotted paths
+  - Mock dispatch_db with separate reader/writer connection mocks; use side_effect for SQL routing
+  - AgentRunnerError must be a custom class (can't modify built-in Exception class attributes)
+  - The handle_failure() function has lazy imports inside the function body — mocking must patch the module-level targets, not the lazy import references
+---
+
+## 2026-02-15 - US-051
+- **Implemented:** Created recovery/playbooks.py with deterministic playbook sequences for 7 known error scenarios
+- **PlaybookStep dataclass:** stage, action, parameters (dict), condition (Optional[str]) — matches spec Appendix C.6
+- **Playbook dataclass:** error_code, steps (list[PlaybookStep]), select_strategy(attempt, error_code, classification) -> RecoveryStrategy
+- **Module-level functions:** has_playbook(error_code) -> bool, get_playbook(error_code) -> Playbook
+- **7 playbooks implemented:**
+  1. SEARCH_API_UNAVAILABLE — backoff retries (30s, 60s), then alternative tools, then escalate
+  2. TOOL_RESULT_MALFORMED — schema example injection, then diagnosis + fallback, then escalate
+  3. RESULT_SCHEMA_INVALID — format enforcement, then diagnosis + truncation limits, then simplify output
+  4. TOOL_LOOP_DETECTED — constrain tools (15 max), then strict limit (10 max), then escalate
+  5. STALE_DATA — dependency recheck + diagnosis, then decompose recommendation
+  6. COMPLETION_SEQUENCE_STUCK — state recovery, then full reset, then escalate
+  7. PROVIDER_5XX — defer for provider recovery (120s), then retry with diagnosis, then escalate
+- **Registry pattern:** _PLAYBOOKS dict maps error_code strings to Playbook instances; has_playbook/get_playbook wrap dict access
+- **Integration:** recovery_pipeline.py handle_failure() already has `from .playbooks import has_playbook, get_playbook` at line 806 (was try/except ImportError before this module existed)
+- **Files changed:**
+  - `agent-dispatch/recovery/playbooks.py` — Created new module with PlaybookStep, Playbook, has_playbook, get_playbook, and 7 playbook definitions
+- **Learnings for future iterations:**
+  - Playbook.select_strategy() indexes into strategize steps by attempt number (0-based from 1-based attempt)
+  - When attempt exceeds available strategize steps, uses the last step (stays at highest tier)
+  - Error code mapping: TOOL_CALL_MALFORMED → TOOL_RESULT_MALFORMED, DEPENDENCY_STALE → STALE_DATA, SUPERVISOR_CRASH → COMPLETION_SEQUENCE_STUCK, SYSTEMIC_FAILURE → PROVIDER_5XX
+  - The playbook only replaces the STRATEGIZE step — all other pipeline stages (DIAGNOSE, COMPENSATE, EXECUTE, VERIFY, LEARN) still run normally
+  - handle_failure() checks has_playbook() BEFORE falling back to select_strategy(), so playbooks take priority
+---
+
+## 2026-02-15 - US-052
+- **Implemented:** Added `openclawd recovery status` and `openclawd recovery history` CLI subcommands
+- **Changes:**
+  - Added `recovery` subcommand group to main() argparse with `status` and `history` sub-subcommands
+  - `cmd_recovery_status()`: Queries tasks WHERE dispatch_status='recovering' LEFT JOIN dispatch_runs (latest per task). Outputs task_id, error_code (from error_context JSON), recovery_tier, attempt, started_at. Rich table with colored headers, plain-text fallback. Empty state message when no active recoveries.
+  - `cmd_recovery_history()`: Queries failure_memory GROUP BY error_code ORDER BY count DESC LIMIT 20. Outputs error_code, count, success_rate (%), last_seen. Rich table with color-coded success rates (green >=50%, yellow >=20%, red <20%), plain-text fallback. Checks if failure_memory table exists first. Empty state message when no entries.
+  - Both commands support `--json` flag from parent parser for machine-readable output.
+- **Files changed:**
+  - `agent-dispatch/cli.py` — Added cmd_recovery_status(), cmd_recovery_history(), and recovery subcommand group registration in main()
+- **Learnings for future iterations:**
+  - Subcommand groups pattern: create parser via add_subparsers, then add_parser for each sub-command, set_defaults(func=...) on each, and set_defaults(func=lambda: print_help) on the group itself for bare `openclawd recovery` invocation
+  - error_code is stored inside dispatch_runs.error_context as JSON — needs json.loads() to extract (same pattern as _get_status_dict)
+  - The failure_memory table may not exist if recovery system hasn't been initialized — always check sqlite_master first
+  - Rich table output with color-coded success rates provides good visual feedback for operators
 ---
 

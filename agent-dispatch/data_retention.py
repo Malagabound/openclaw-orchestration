@@ -27,7 +27,7 @@ import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
-from .config import DEFAULT_DB_PATH, load_config
+from .config import DEFAULT_DB_PATH, get_recovery_config, load_config
 from .dispatch_db import _get_db_path, get_writer_connection
 
 logger = logging.getLogger(__name__)
@@ -456,6 +456,8 @@ def run_retention_job(config: Optional[Dict[str, Any]] = None) -> Dict[str, int]
     3. Aggregate provider_health (30 days)
     4. Clean up old records (90 days) - EXCEPT audit_log which is permanent
     5. Clean up resolved provider_incidents (180 days)
+    6. Clean up failure_memory (config.recovery.failure_memory_retention_days, default 90)
+    7. Clean up recovery_events (config.recovery.recovery_events_retention_days, default 90)
 
     IMPORTANT (REQ-066): audit_log is PERMANENT and never cleaned up.
 
@@ -488,6 +490,26 @@ def run_retention_job(config: Optional[Dict[str, Any]] = None) -> Dict[str, int]
         log_rotation = rotate_logs(config)
         results["logs_rotated"] = log_rotation.get("rotated", False)
         results["old_logs_deleted"] = log_rotation.get("deleted_count", 0)
+
+        # Recovery table cleanup (uses own writer connection)
+        recovery_cfg = get_recovery_config(config)
+        try:
+            from .recovery.failure_memory import cleanup_old_entries as cleanup_failure_memory
+            results["failure_memory_deleted"] = cleanup_failure_memory(
+                retention_days=recovery_cfg["failure_memory_retention_days"],
+            )
+        except Exception as e:
+            logger.warning("Failed to cleanup failure_memory: %s", e)
+            results["failure_memory_deleted"] = 0
+
+        try:
+            from .recovery.recovery_pipeline import cleanup_recovery_events
+            results["recovery_events_deleted"] = cleanup_recovery_events(
+                retention_days=recovery_cfg["recovery_events_retention_days"],
+            )
+        except Exception as e:
+            logger.warning("Failed to cleanup recovery_events: %s", e)
+            results["recovery_events_deleted"] = 0
 
         logger.info("Data retention job completed: %s", results)
 

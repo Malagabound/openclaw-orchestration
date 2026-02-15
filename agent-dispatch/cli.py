@@ -153,7 +153,31 @@ def cmd_status(args: argparse.Namespace) -> None:
             total = health.get("total_checks", 0)
             table.add_row("Health Checks", f"{passed}/{total} passed")
 
+        # Active recoveries count
+        recovery_state = result.get("recovery_state", [])
+        table.add_row("Active Recoveries", str(len(recovery_state)))
+
         console.print(table)
+
+        # Show recovery details if any active
+        if recovery_state:
+            rec_table = Table(title="Active Recoveries", show_header=True, header_style="bold magenta")
+            rec_table.add_column("Task ID", style="cyan", no_wrap=True, width=8)
+            rec_table.add_column("Attempt", style="white", width=8)
+            rec_table.add_column("Tier", style="white", width=6)
+            rec_table.add_column("Error Code", style="white", width=25)
+            rec_table.add_column("Duration", style="white", width=12)
+            for rec in recovery_state:
+                dur = rec.get("time_in_recovery_seconds", 0)
+                dur_str = f"{dur}s" if dur < 60 else f"{dur // 60}m {dur % 60}s"
+                rec_table.add_row(
+                    str(rec.get("task_id", "")),
+                    str(rec.get("attempt_number", 0)),
+                    str(rec.get("recovery_tier") or "-"),
+                    str(rec.get("error_code") or "-"),
+                    dur_str,
+                )
+            console.print(rec_table)
     else:
         _output(result, False)
 
@@ -538,6 +562,16 @@ def cmd_logs(args: argparse.Namespace) -> None:
         sys.exit(1)
 
     def _matches(entry: Dict[str, Any]) -> bool:
+        # Recovery filter: only show recovery.* event_type entries
+        if args.recovery:
+            event_type = entry.get("event_type", "")
+            # Also check inside extra dict for event_type (older log format)
+            if not event_type:
+                extra = entry.get("extra", {})
+                if isinstance(extra, dict):
+                    event_type = extra.get("event_type", "")
+            if not str(event_type).startswith("recovery."):
+                return False
         if args.level and entry.get("level", "").upper() != args.level.upper():
             return False
         if args.agent and entry.get("agent_name") != args.agent:
@@ -550,11 +584,35 @@ def cmd_logs(args: argparse.Namespace) -> None:
 
     def _format_entry(entry: Dict[str, Any], as_json: bool) -> str:
         if as_json:
-            return json.dumps(entry, default=str)
+            return json.dumps(entry, indent=2, default=str)
         ts = entry.get("timestamp", "")
         level = entry.get("level", "?")
         component = entry.get("component", "")
         message = entry.get("message", "")
+        # For recovery events, show event_type prominently with metadata
+        event_type = entry.get("event_type", "")
+        if not event_type:
+            extra = entry.get("extra", {})
+            if isinstance(extra, dict):
+                event_type = extra.get("event_type", "")
+        if args.recovery and str(event_type).startswith("recovery."):
+            line = f"{ts} {event_type}"
+            task_id = entry.get("task_id")
+            if task_id is not None:
+                line += f"  task_id={task_id}"
+            duration_ms = entry.get("duration_ms")
+            if duration_ms is not None:
+                line += f"  duration={duration_ms}ms"
+            # Show key metadata fields from extra
+            extra = entry.get("extra", {})
+            if isinstance(extra, dict):
+                for key in ("error_code", "recovery_tier", "strategy_name", "success", "escalation_reason"):
+                    val = extra.get(key)
+                    if val is not None:
+                        line += f"  {key}={val}"
+            if message:
+                line += f"  {message}"
+            return line
         parts = [f"{ts} [{level}] {component}: {message}"]
         for field in ("trace_id", "agent_name", "task_id"):
             val = entry.get(field)
@@ -787,6 +845,118 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         report["compatibility"]["status"] = "error"
         report["compatibility"]["issues"] = [str(exc)]
 
+    # 6. Recovery health metrics (last 24h)
+    report["recovery"] = {"status": "unknown", "issues": []}
+    try:
+        conn = _get_connection(db_path)
+        # Check if recovery tables exist
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        existing_tables = {row[0] for row in cursor.fetchall()}
+        has_failure_memory = "failure_memory" in existing_tables
+        has_recovery_events = "recovery_events" in existing_tables
+
+        if not has_failure_memory and not has_recovery_events:
+            report["recovery"]["status"] = "ok"
+            report["recovery"]["message"] = "No recovery tables found (recovery system may not be initialized)"
+        else:
+            recovery_data: Dict[str, Any] = {}
+
+            if has_failure_memory:
+                # Total recovery attempts (24h)
+                row = conn.execute(
+                    "SELECT COUNT(*) FROM failure_memory WHERE created_at > datetime('now', '-1 day')"
+                ).fetchone()
+                total_attempts = row[0] if row else 0
+                recovery_data["total_attempts_24h"] = total_attempts
+
+                # Overall success rate (24h)
+                if total_attempts > 0:
+                    row = conn.execute(
+                        "SELECT COUNT(*) FROM failure_memory WHERE created_at > datetime('now', '-1 day') AND success = 1"
+                    ).fetchone()
+                    successes = row[0] if row else 0
+                    recovery_data["success_rate_overall"] = round(successes / total_attempts * 100, 1)
+                else:
+                    recovery_data["success_rate_overall"] = None
+
+                # Success rate by tier (1-5) in 24h
+                tier_rates: Dict[str, Any] = {}
+                rows = conn.execute(
+                    "SELECT recovery_tier, COUNT(*) as total, SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as wins "
+                    "FROM failure_memory WHERE created_at > datetime('now', '-1 day') AND recovery_tier IS NOT NULL "
+                    "GROUP BY recovery_tier ORDER BY recovery_tier"
+                ).fetchall()
+                for r in rows:
+                    tier = r[0]
+                    total = r[1]
+                    wins = r[2]
+                    rate = round(wins / total * 100, 1) if total > 0 else 0.0
+                    tier_rates[f"tier_{tier}"] = {"attempts": total, "successes": wins, "rate_pct": rate}
+                recovery_data["success_rate_by_tier"] = tier_rates
+
+                # Top 5 error codes by frequency (24h)
+                rows = conn.execute(
+                    "SELECT error_code, COUNT(*) as cnt FROM failure_memory "
+                    "WHERE created_at > datetime('now', '-1 day') "
+                    "GROUP BY error_code ORDER BY cnt DESC LIMIT 5"
+                ).fetchall()
+                top_errors = [{"error_code": r[0], "count": r[1]} for r in rows]
+                recovery_data["top_error_codes"] = top_errors
+
+                # Detected systemic patterns (same error across 3+ tasks in last 10 min)
+                rows = conn.execute(
+                    "SELECT error_code, COUNT(DISTINCT task_id) as affected_tasks "
+                    "FROM failure_memory WHERE created_at > datetime('now', '-10 minutes') "
+                    "GROUP BY error_code HAVING COUNT(DISTINCT task_id) >= 3"
+                ).fetchall()
+                systemic = [{"error_code": r[0], "affected_tasks": r[1]} for r in rows]
+                recovery_data["systemic_patterns"] = systemic
+
+            if has_recovery_events:
+                # Cross-check with recovery_events for additional metrics
+                row = conn.execute(
+                    "SELECT COUNT(*) FROM recovery_events WHERE created_at > datetime('now', '-1 day')"
+                ).fetchone()
+                recovery_data["total_events_24h"] = row[0] if row else 0
+
+            # Recovery budget utilization
+            daily_budget = config.get("daily_budget_usd", 50.0) if isinstance(config, dict) else getattr(config, "daily_budget_usd", 50.0)
+            recovery_cfg = config.get("recovery", {}) if isinstance(config, dict) else getattr(config, "recovery", {}) or {}
+            budget_ratio = recovery_cfg.get("recovery_budget_ratio", 0.04) if isinstance(recovery_cfg, dict) else getattr(recovery_cfg, "recovery_budget_ratio", 0.04)
+            budget_cap = recovery_cfg.get("recovery_budget_cap_usd", 2.00) if isinstance(recovery_cfg, dict) else getattr(recovery_cfg, "recovery_budget_cap_usd", 2.00)
+            recovery_budget = min(daily_budget * budget_ratio, budget_cap)
+
+            # Sum recovery costs from dispatch_runs where recovery_tier IS NOT NULL (last 24h)
+            if "dispatch_runs" in existing_tables:
+                row = conn.execute(
+                    "SELECT COALESCE(SUM(cost_estimate), 0.0) FROM dispatch_runs "
+                    "WHERE recovery_tier IS NOT NULL AND started_at > datetime('now', '-1 day')"
+                ).fetchone()
+                recovery_cost = row[0] if row else 0.0
+                recovery_data["budget_used_usd"] = round(recovery_cost, 4)
+                recovery_data["budget_limit_usd"] = round(recovery_budget, 2)
+                recovery_data["budget_utilization_pct"] = round(recovery_cost / recovery_budget * 100, 1) if recovery_budget > 0 else 0.0
+
+            report["recovery"].update(recovery_data)
+            report["recovery"]["status"] = "ok"
+
+            # Flag warnings
+            if recovery_data.get("systemic_patterns"):
+                report["recovery"]["status"] = "warning"
+                report["recovery"]["issues"].append(
+                    f"Systemic failure patterns detected: {len(recovery_data['systemic_patterns'])} error codes affecting 3+ tasks"
+                )
+            if recovery_data.get("budget_utilization_pct", 0) > 80:
+                report["recovery"]["status"] = "warning"
+                report["recovery"]["issues"].append(
+                    f"Recovery budget utilization at {recovery_data['budget_utilization_pct']}%"
+                )
+
+        conn.close()
+    except (sqlite3.Error, OSError) as exc:
+        report["recovery"]["status"] = "error"
+        report["recovery"]["issues"].append(f"Cannot query recovery data: {exc}")
+
     if args.json:
         _output(report, True)
     else:
@@ -797,10 +967,52 @@ def cmd_doctor(args: argparse.Namespace) -> None:
             status_icon = {"ok": "[OK]", "warning": "[WARN]", "error": "[ERR]", "unknown": "[??]"}.get(status, "[??]")
             print(f"\n{status_icon} {section_name.replace('_', ' ').title()}")
 
-            for key, value in section_data.items():
-                if key in ("status", "issues"):
-                    continue
-                print(f"  {key}: {value}")
+            # Special formatting for recovery section
+            if section_name == "recovery":
+                if section_data.get("message"):
+                    print(f"  {section_data['message']}")
+                else:
+                    total = section_data.get("total_attempts_24h", 0)
+                    rate = section_data.get("success_rate_overall")
+                    print(f"  Attempts (24h): {total}")
+                    if rate is not None:
+                        print(f"  Success rate: {rate}%")
+                    else:
+                        print(f"  Success rate: N/A (no attempts)")
+
+                    # Tier breakdown
+                    tier_data = section_data.get("success_rate_by_tier", {})
+                    if tier_data:
+                        print(f"  By tier:")
+                        for tier_key in sorted(tier_data.keys()):
+                            td = tier_data[tier_key]
+                            print(f"    {tier_key}: {td['successes']}/{td['attempts']} ({td['rate_pct']}%)")
+
+                    # Top error codes
+                    top_errors = section_data.get("top_error_codes", [])
+                    if top_errors:
+                        print(f"  Top error codes:")
+                        for err in top_errors:
+                            print(f"    {err['error_code']}: {err['count']}")
+
+                    # Systemic patterns
+                    systemic = section_data.get("systemic_patterns", [])
+                    if systemic:
+                        print(f"  Systemic patterns (active):")
+                        for sp in systemic:
+                            print(f"    {sp['error_code']}: {sp['affected_tasks']} tasks")
+
+                    # Budget
+                    budget_used = section_data.get("budget_used_usd")
+                    budget_limit = section_data.get("budget_limit_usd")
+                    budget_pct = section_data.get("budget_utilization_pct")
+                    if budget_used is not None:
+                        print(f"  Budget: ${budget_used:.4f} / ${budget_limit:.2f} ({budget_pct}%)")
+            else:
+                for key, value in section_data.items():
+                    if key in ("status", "issues"):
+                        continue
+                    print(f"  {key}: {value}")
 
             issues = section_data.get("issues", [])
             if issues:
@@ -1062,6 +1274,61 @@ def _get_status_dict(config: Dict[str, Any]) -> Dict[str, Any]:
         health_summary["passed"] = 0
         health_summary["failed"] = 0
 
+    # Recovery state: tasks currently in 'recovering' status with metadata
+    recovery_state: List[Dict[str, Any]] = []
+    try:
+        import datetime as _dt
+        conn = _get_connection(db_path)
+        rows = conn.execute(
+            """
+            SELECT t.id AS task_id,
+                   dr.recovery_tier,
+                   dr.error_context,
+                   dr.attempt,
+                   dr.started_at
+            FROM tasks t
+            LEFT JOIN dispatch_runs dr ON dr.id = (
+                SELECT MAX(dr2.id) FROM dispatch_runs dr2 WHERE dr2.task_id = t.id
+            )
+            WHERE t.dispatch_status = 'recovering'
+            """
+        ).fetchall()
+        now_utc = _dt.datetime.now(_dt.timezone.utc)
+        for row in rows:
+            r = dict(row)
+            # Calculate time_in_recovery_seconds from started_at
+            time_in_recovery = 0
+            started_at = r.get("started_at")
+            if started_at:
+                try:
+                    # Parse ISO 8601 started_at
+                    sa = started_at.replace("Z", "+00:00")
+                    started_dt = _dt.datetime.fromisoformat(sa)
+                    if started_dt.tzinfo is None:
+                        started_dt = started_dt.replace(tzinfo=_dt.timezone.utc)
+                    time_in_recovery = int((now_utc - started_dt).total_seconds())
+                except (ValueError, TypeError):
+                    pass
+            # Read error_code from error_context JSON if available
+            error_code = None
+            error_ctx_raw = r.get("error_context")
+            if error_ctx_raw:
+                try:
+                    error_ctx = json.loads(error_ctx_raw)
+                    error_code = error_ctx.get("error_code") if isinstance(error_ctx, dict) else None
+                except (json.JSONDecodeError, TypeError):
+                    pass
+            recovery_state.append({
+                "task_id": r.get("task_id"),
+                "attempt_number": r.get("attempt") or 0,
+                "recovery_tier": r.get("recovery_tier"),
+                "error_code": error_code,
+                "time_in_recovery_seconds": max(time_in_recovery, 0),
+            })
+        conn.close()
+    except (sqlite3.Error, OSError):
+        pass
+
     return {
         "status": "running" if running else "stopped",
         "pid": pid if running else None,
@@ -1069,6 +1336,7 @@ def _get_status_dict(config: Dict[str, Any]) -> Dict[str, Any]:
         "queued_tasks": queued_tasks,
         "budget_usage": budget_usage,
         "health_summary": health_summary,
+        "recovery_state": recovery_state,
     }
 
 
@@ -1384,6 +1652,158 @@ def cmd_pipeline_create(args: argparse.Namespace) -> None:
             print(f"  [{child['id']}] {child['title']}{agent_str}")
 
 
+def cmd_recovery_status(args: argparse.Namespace) -> None:
+    """Show all tasks currently in 'recovering' status with metadata."""
+    config = load_config()
+    db_path = _get_db_path(config)
+
+    try:
+        conn = _get_connection(db_path)
+        import datetime as _dt
+        now_utc = _dt.datetime.now(_dt.timezone.utc)
+
+        rows = conn.execute(
+            """
+            SELECT t.id AS task_id,
+                   dr.recovery_tier,
+                   dr.error_context,
+                   dr.attempt,
+                   dr.started_at
+            FROM tasks t
+            LEFT JOIN dispatch_runs dr ON dr.id = (
+                SELECT MAX(dr2.id) FROM dispatch_runs dr2 WHERE dr2.task_id = t.id
+            )
+            WHERE t.dispatch_status = 'recovering'
+            ORDER BY t.id
+            """
+        ).fetchall()
+        conn.close()
+    except (sqlite3.Error, OSError) as e:
+        _output({"error": str(e)}, args.json)
+        sys.exit(1)
+
+    results: List[Dict[str, Any]] = []
+    for row in rows:
+        r = dict(row)
+        # Parse error_code from error_context JSON
+        error_code = None
+        error_ctx_raw = r.get("error_context")
+        if error_ctx_raw:
+            try:
+                error_ctx = json.loads(error_ctx_raw)
+                error_code = error_ctx.get("error_code") if isinstance(error_ctx, dict) else None
+            except (json.JSONDecodeError, TypeError):
+                pass
+        # Calculate time_in_recovery from started_at
+        started_at = r.get("started_at") or ""
+        results.append({
+            "task_id": r.get("task_id"),
+            "error_code": error_code or "-",
+            "recovery_tier": r.get("recovery_tier") or "-",
+            "attempt": r.get("attempt") or 0,
+            "started_at": started_at,
+        })
+
+    if args.json:
+        _output(results, True)
+    elif not results:
+        print("No active recoveries.")
+    elif HAS_RICH:
+        console = Console()
+        table = Table(title="Active Recoveries", show_header=True, header_style="bold magenta")
+        table.add_column("Task ID", style="cyan", no_wrap=True, width=8)
+        table.add_column("Error Code", style="white", width=30)
+        table.add_column("Tier", style="white", width=6)
+        table.add_column("Attempt", style="white", width=8)
+        table.add_column("Started At", style="white", width=22)
+        for item in results:
+            table.add_row(
+                str(item["task_id"]),
+                str(item["error_code"]),
+                str(item["recovery_tier"]),
+                str(item["attempt"]),
+                str(item["started_at"]),
+            )
+        console.print(table)
+    else:
+        print(f"{'Task ID':<10} {'Error Code':<30} {'Tier':<6} {'Attempt':<8} {'Started At'}")
+        print("-" * 82)
+        for item in results:
+            print(f"{item['task_id']:<10} {item['error_code']:<30} {str(item['recovery_tier']):<6} {item['attempt']:<8} {item['started_at']}")
+
+
+def cmd_recovery_history(args: argparse.Namespace) -> None:
+    """Show top 20 error codes by frequency from failure_memory with success rates."""
+    config = load_config()
+    db_path = _get_db_path(config)
+
+    try:
+        conn = _get_connection(db_path)
+        # Check if failure_memory table exists
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='failure_memory'")
+        if not cursor.fetchone():
+            conn.close()
+            if args.json:
+                _output([], True)
+            else:
+                print("No failure memory data (failure_memory table does not exist).")
+            return
+
+        rows = conn.execute(
+            """
+            SELECT error_code,
+                   COUNT(*) AS count,
+                   ROUND(SUM(CASE WHEN success = 1 THEN 1.0 ELSE 0.0 END) / COUNT(*) * 100, 1) AS success_rate,
+                   MAX(created_at) AS last_seen
+            FROM failure_memory
+            GROUP BY error_code
+            ORDER BY count DESC
+            LIMIT 20
+            """
+        ).fetchall()
+        conn.close()
+    except (sqlite3.Error, OSError) as e:
+        _output({"error": str(e)}, args.json)
+        sys.exit(1)
+
+    results = [
+        {
+            "error_code": dict(r)["error_code"],
+            "count": dict(r)["count"],
+            "success_rate": dict(r)["success_rate"] or 0.0,
+            "last_seen": dict(r)["last_seen"] or "-",
+        }
+        for r in rows
+    ]
+
+    if args.json:
+        _output(results, True)
+    elif not results:
+        print("No failure memory entries found.")
+    elif HAS_RICH:
+        console = Console()
+        table = Table(title="Recovery History (Top 20 Error Codes)", show_header=True, header_style="bold magenta")
+        table.add_column("Error Code", style="cyan", width=30)
+        table.add_column("Count", style="white", width=8, justify="right")
+        table.add_column("Success %", style="white", width=10, justify="right")
+        table.add_column("Last Seen", style="white", width=22)
+        for item in results:
+            rate = item["success_rate"]
+            rate_color = "green" if rate >= 50 else ("yellow" if rate >= 20 else "red")
+            table.add_row(
+                str(item["error_code"]),
+                str(item["count"]),
+                f"[{rate_color}]{rate}%[/{rate_color}]",
+                str(item["last_seen"]),
+            )
+        console.print(table)
+    else:
+        print(f"{'Error Code':<30} {'Count':>8} {'Success %':>10} {'Last Seen'}")
+        print("-" * 78)
+        for item in results:
+            print(f"{item['error_code']:<30} {item['count']:>8} {item['success_rate']:>9.1f}% {item['last_seen']}")
+
+
 def cmd_tool_test(args: argparse.Namespace) -> None:
     """Run tool test blocks from YAML definitions to verify tool executors work."""
     from .tool_registry import ToolRegistry, ToolRegistryError
@@ -1544,6 +1964,7 @@ def main() -> None:
     # logs
     sub_logs = subparsers.add_parser("logs", help="Tail supervisor log with filters")
     sub_logs.add_argument("--follow", "-f", action="store_true", default=False, help="Follow log output continuously")
+    sub_logs.add_argument("--recovery", action="store_true", default=False, help="Show only recovery pipeline events (event_type starting with 'recovery.')")
     sub_logs.add_argument("--level", type=str, default=None, help="Filter by log level (e.g. ERROR, INFO)")
     sub_logs.add_argument("--agent", type=str, default=None, help="Filter by agent_name")
     sub_logs.add_argument("--task", type=str, default=None, help="Filter by task_id")
@@ -1577,6 +1998,15 @@ def main() -> None:
     sub_tool_test.add_argument("tool_name", type=str, help="Name of the tool to test")
     sub_tool_test.set_defaults(func=cmd_tool_test)
     sub_tool.set_defaults(func=lambda a: sub_tool.print_help())
+
+    # recovery (with sub-subcommands)
+    sub_recovery = subparsers.add_parser("recovery", help="Recovery inspection commands")
+    recovery_subparsers = sub_recovery.add_subparsers(dest="recovery_command", help="Recovery subcommands")
+    sub_recovery_status = recovery_subparsers.add_parser("status", help="Show tasks currently in recovery")
+    sub_recovery_status.set_defaults(func=cmd_recovery_status)
+    sub_recovery_history = recovery_subparsers.add_parser("history", help="Show error code frequency and success rates from failure memory")
+    sub_recovery_history.set_defaults(func=cmd_recovery_history)
+    sub_recovery.set_defaults(func=lambda a: sub_recovery.print_help())
 
     # pipeline (with sub-subcommands)
     sub_pipeline = subparsers.add_parser("pipeline", help="Task pipeline management commands")

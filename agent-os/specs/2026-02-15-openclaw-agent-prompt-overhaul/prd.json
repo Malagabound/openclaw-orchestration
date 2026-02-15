@@ -1,0 +1,411 @@
+{
+  "project": "OpenClaw",
+  "branchName": "feature-agent-prompt-overhaul",
+  "specFile": "agent-os/specs/2026-02-15-openclaw-agent-prompt-overhaul/spec.md",
+  "description": "Overhaul all OpenClaw agent prompts to integrate dispatch system awareness, establish George as a pure coordinator, add 'Figure It Out' directives, and resolve identity contradictions.",
+
+  "componentContext": {
+    "components": [],
+    "forbiddenPatterns": [
+      "Do not create new prompt sections without checking for existing ones (idempotency)",
+      "Do not modify dispatch system code (agent_runner.py, dispatch_db.py) beyond docstring updates",
+      "Do not create YAML tool definitions for George's adapter methods"
+    ],
+    "discoveryNote": "All prompt files follow a consistent structure: Identity -> Expertise -> Domains -> Allowed Tools -> SOP Workflow -> Quality Standards -> Routing Keywords. New sections should be inserted between Quality Standards and Routing Keywords."
+  },
+
+  "systemContext": {
+    "systems": [
+      {
+        "name": "dispatch_prompt_assembly",
+        "description": "Loads persona files from prompts/ directory and assembles them with base_sop.md and skill summaries",
+        "integration_points": {
+          "build_prompt": "Loads prompts/{agent_name}.md where agent_name matches AGENT_SKILLS key",
+          "agent_name_resolution": "Agent name must match both AGENT_SKILLS key AND prompts/{agent_name}.md filename"
+        },
+        "primary_files": [
+          "agent-dispatch/agent_prompts.py"
+        ],
+        "gotchas": [
+          "Current AGENT_SKILLS keys (research, product, etc.) do NOT match persona filenames (research.md, product.md, etc.)",
+          "This mismatch prevents prompt assembly for existing agents",
+          "Adding skills to George's AGENT_SKILLS entry will inject SKILL.md files and consume context budget - keep empty"
+        ]
+      },
+      {
+        "name": "openclawd_adapter",
+        "description": "Provides George's coordination capabilities as adapter methods (NOT universal tools)",
+        "integration_points": {
+          "available_methods": "create_task, complete_task, add_task_contribution, log_agent_activity, create_notification, squad_chat_post, get_dashboard_summary, agent_checkin, determine_agents, get_coordination_summary",
+          "nonexistent_methods": "get_task_status, get_task_contributions - DO NOT reference these"
+        },
+        "primary_files": [
+          "agent-dispatch/openclawd_adapter.py"
+        ],
+        "gotchas": [
+          "These are adapter methods available in direct chat sessions, not tool-call-loop tools",
+          "No YAML definitions exist in tools/definitions/ for these methods",
+          "George cannot call these via standard tool_call mechanism unless YAML definitions are created (out of scope)"
+        ]
+      },
+      {
+        "name": "agent_skills_config",
+        "description": "Maps agent names to skill directory lists for prompt assembly",
+        "integration_points": {
+          "AGENT_SKILLS": "Dict mapping agent names to list of skill directories",
+          "key_naming": "Keys must match persona filename stems (e.g., 'george' maps to prompts/george.md)"
+        },
+        "primary_files": [
+          "agent-dispatch/config.py"
+        ],
+        "gotchas": [
+          "After renaming keys, all code referencing old functional names must be updated",
+          "Search codebase for hardcoded string literals matching old key names"
+        ]
+      }
+    ],
+    "discoveryNote": "Search the codebase for hardcoded agent name strings when updating AGENT_SKILLS keys."
+  },
+
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Create george.md orchestrator prompt with cardinal rules and delegation SOP",
+      "description": "As Alan, I want George to have a comprehensive orchestrator prompt that establishes him as a pure coordinator (never doing domain work himself) so that he intelligently delegates to specialists. **Implementation: Create prompts/george.md with Identity, Cardinal Rule (no domain work), Specialist Directory table (7 agents with activation status), Delegation SOP (receive -> decompose -> create_task -> monitor -> deliver), Orchestrator Figure It Out directive (coordination only), Anti-patterns section, Pre-action Decision Gate, Lightweight tasks George CAN do, Multi-step decomposition guidance, and Alan-facing response format.**",
+      "acceptanceCriteria": [
+        "File prompts/george.md exists",
+        "Contains bold Cardinal Rule section prohibiting domain work (research, analysis, product creation, financial modeling, email drafting, code writing)",
+        "Contains Specialist Directory table with 7 agents (Rex ACTIVE, Pixel ACTIVE, Scout ACTIVE, Keeper ACTIVE, Haven DEACTIVATED, Vault DEACTIVATED, Nora DEACTIVATED)",
+        "Contains Delegation SOP with steps: receive from Alan -> decompose -> create_task -> monitor -> deliver back to Alan",
+        "Describes coordination capabilities: create_task, complete_task, add_task_contribution, log_agent_activity, create_notification, squad_chat_post, get_dashboard_summary, agent_checkin, determine_agents, get_coordination_summary",
+        "Includes note that these are adapter methods (NOT universal tool-loop tools), available in direct chat sessions where adapter is imported as Python module",
+        "Includes note that if George is ever dispatched through supervisor daemon, YAML tool definitions would need to be created in tools/definitions/",
+        "Contains Anti-patterns section with examples: 'let me just quickly research this...', 'I'll draft this email myself...', 'let me analyze these financials...'",
+        "Contains bold pre-action Decision Gate: 'Decision Gate: Am I about to do domain work? If YES, delegate instead. If NO, proceed.'",
+        "Defines lightweight tasks George CAN do: system status checks, config updates, simple factual questions from memory, summarizing results",
+        "Contains multi-step request decomposition guidance with dependency chains",
+        "Defines Alan-facing response format: concise, include task IDs, report outcomes not process",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: george.md exists with Cardinal Rule, Specialist Directory (7 agents), Delegation SOP, Coordination Capabilities (10 adapter methods with notes), Anti-patterns, Decision Gate, Lightweight Tasks, Multi-step Decomposition, Alan-facing Response Format."
+    },
+    {
+      "id": "US-002",
+      "title": "Add George's <agent-result> format conventions to george.md",
+      "description": "As Alan, I want George's agent-result format to reflect his coordination role (not execution) so that his deliverables are properly structured. **Implementation: Add a section to george.md defining George's <agent-result> JSON conventions: deliverable_content contains delegation plan (task IDs, agents assigned, dependency chain), confidence_score is routing confidence (1.0 = clear single-agent match, lower for ambiguous routing), working_memory uses delegation_plan key with task-to-agent mappings, follow_up_tasks left empty (George creates tasks via create_task during execution).**",
+      "acceptanceCriteria": [
+        "Section in george.md defines George's <agent-result> conventions",
+        "deliverable_content documented as delegation plan with task IDs, agents assigned, dependency chain",
+        "confidence_score documented as routing confidence (0.0-1.0 float, 1.0 = clear match)",
+        "working_memory documented to use delegation_plan key",
+        "follow_up_tasks documented as empty (George creates tasks via create_task, not follow-ups)",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: george.md already contains <agent-result> format section (lines 117-125) with deliverable_content (delegation plan), confidence_score (0.0-1.0 routing confidence), working_memory (delegation_plan key), and follow_up_tasks (empty, uses create_task instead)."
+    },
+    {
+      "id": "US-003",
+      "title": "Add Dispatch System Awareness section to research.md",
+      "description": "As a specialist agent, I want to understand the dispatch system so I operate correctly within the automated pipeline. **Implementation: Add 'Dispatch System Awareness' section to prompts/research.md after Quality Standards and before Routing Keywords. Cover: task arrival via supervisor daemon polling coordination.db, lease lifecycle (300s initial, heartbeat every 2min, 1800s hard timeout), working memory protocol (5000 char limit, UNIQUE(task_id, agent_name, key) upsert, dependency-scoped reads), tool permissions (allowed_agents/denied_agents, denied takes precedence, access-denied error if unauthorized), context budget (skill summaries trimmed first, then task description truncated), squad chat milestones (every 4 tool calls, max 3 updates), health monitoring (5-tier self-healing, provider canary tests every 6 hours, automatic fallback).**",
+      "acceptanceCriteria": [
+        "Dispatch System Awareness section exists in research.md",
+        "Section inserted after Quality Standards and before Routing Keywords",
+        "Documents task arrival via supervisor daemon polling coordination.db",
+        "Documents lease lifecycle: 300s initial, heartbeat every 2min, 1800s hard timeout",
+        "Documents working memory: 5000 char limit, UNIQUE(task_id, agent_name, key), dependency-scoped reads",
+        "Documents tool permissions: allowed_agents/denied_agents, denied takes precedence, access-denied on unauthorized call",
+        "Documents context budget: skill summaries trimmed first, then task description truncated",
+        "Documents squad chat milestones: every 4 tool calls, max 3 updates per task",
+        "Documents health monitoring: 5-tier self-healing, canary tests every 6 hours, automatic fallback",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: research.md already contains Dispatch System Awareness section (lines 98-113) with task arrival (supervisor daemon polling coordination.db), lease lifecycle (300s/2min/1800s), working memory (5000 char, UNIQUE key, dependency-scoped), tool permissions (allowed/denied, denied precedence, access-denied), context budget (skill summaries first, then task description), squad chat (every 4 tool calls, max 3), health monitoring (5-tier, canary every 6h, automatic fallback). Section is after Quality Standards and before Routing Keywords. Idempotent (already exists, no duplicates)."
+    },
+    {
+      "id": "US-004",
+      "title": "Add Dispatch System Awareness section to product.md, meta.md, ops.md",
+      "description": "As a specialist agent, I want to understand the dispatch system so I operate correctly within the automated pipeline. **Implementation: Add identical 'Dispatch System Awareness' section (from research.md) to prompts/product.md, prompts/meta.md, and prompts/ops.md after Quality Standards and before Routing Keywords.**",
+      "acceptanceCriteria": [
+        "Dispatch System Awareness section exists in product.md",
+        "Dispatch System Awareness section exists in meta.md",
+        "Dispatch System Awareness section exists in ops.md",
+        "All sections inserted after Quality Standards and before Routing Keywords",
+        "Content matches research.md Dispatch System Awareness section",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: product.md (lines 100-114), meta.md (lines 114-128), and ops.md (lines 114-128) all contain identical Dispatch System Awareness sections matching research.md. All sections positioned after Quality Standards and before Routing Keywords. Idempotent (no duplicates). No package.json so typecheck is vacuously true."
+    },
+    {
+      "id": "US-005",
+      "title": "Add Dispatch System Awareness section to haven.md, vault.md, comms.md",
+      "description": "As a specialist agent, I want to understand the dispatch system so I operate correctly within the automated pipeline. **Implementation: Add identical 'Dispatch System Awareness' section (from research.md) to prompts/haven.md, prompts/vault.md, and prompts/comms.md after Quality Standards and before Routing Keywords.**",
+      "acceptanceCriteria": [
+        "Dispatch System Awareness section exists in haven.md",
+        "Dispatch System Awareness section exists in vault.md",
+        "Dispatch System Awareness section exists in comms.md",
+        "All sections inserted after Quality Standards and before Routing Keywords",
+        "Content matches research.md Dispatch System Awareness section",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: haven.md (lines 98-113), vault.md (lines 110-125), and comms.md (lines 102-117) all contain identical Dispatch System Awareness sections matching research.md. All sections positioned after Quality Standards and before Routing Keywords. Idempotent (no duplicates). No package.json so typecheck is vacuously true."
+    },
+    {
+      "id": "US-006",
+      "title": "Add Figure It Out directive to research.md",
+      "description": "As a specialist agent, I want clear guidance to be resourceful and try multiple approaches before declaring failure. **Implementation: Add 'Figure It Out' section to prompts/research.md after Dispatch System Awareness and before Routing Keywords. Core message: 'Figure out HOW to do the work. When tools fail or approaches don't work, try 3+ alternatives before declaring failure. Don't go back to George asking for instructions.' Include mandate: before setting status to failed, agent MUST have tried at least 3 different approaches and documented why each failed. Preserve existing domain expertise, SOP steps, tool lists, and working memory keys.**",
+      "acceptanceCriteria": [
+        "Figure It Out section exists in research.md",
+        "Section inserted after Dispatch System Awareness and before Routing Keywords",
+        "Core message present: try 3+ alternatives before declaring failure",
+        "Mandate present: before status=failed, must have tried 3+ approaches with documented failures",
+        "Existing domain expertise, SOP steps, tool lists, working memory keys preserved",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: research.md already contains Figure It Out section (lines 116-126) with core message (try 3+ alternatives before declaring failure), mandate (before status=failed, must have tried 3+ approaches with documented failures), and preservation note for existing domain expertise/SOP/tools/working memory. Section is after Dispatch System Awareness (lines 98-113) and before Routing Keywords (line 144). Idempotent (already exists, no duplicates). No package.json so typecheck is vacuously true."
+    },
+    {
+      "id": "US-007",
+      "title": "Add Figure It Out directive to product.md, meta.md",
+      "description": "As a specialist agent, I want clear guidance to be resourceful and try multiple approaches before declaring failure. **Implementation: Add identical 'Figure It Out' section (from research.md) to prompts/product.md and prompts/meta.md after Dispatch System Awareness and before Routing Keywords.**",
+      "acceptanceCriteria": [
+        "Figure It Out section exists in product.md",
+        "Figure It Out section exists in meta.md",
+        "Sections inserted after Dispatch System Awareness and before Routing Keywords",
+        "Content matches research.md Figure It Out section",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: product.md (lines 118-127) and meta.md (lines 132-141) both contain identical Figure It Out sections matching research.md. Sections positioned after Dispatch System Awareness and before Routing Keywords. Idempotent (no duplicates). No package.json so typecheck is vacuously true."
+    },
+    {
+      "id": "US-008",
+      "title": "Update ops.md Step 3 Decision Gate to align with 3+ approach policy",
+      "description": "As Keeper, I want my Step 3 Decision Gate updated to match the Figure It Out directive (try 3+ approaches, not just retry once). **Implementation: In prompts/ops.md Step 3 Decision Gate (line 70), replace 'IF maintenance operation fails, THEN retry once; if fails again, set status to failed and alert' with 'IF maintenance operation fails, THEN try at least 3 different approaches before setting status to failed. Document each attempt and why it failed.'**",
+      "acceptanceCriteria": [
+        "ops.md Step 3 Decision Gate updated to 3+ approach policy",
+        "Old text 'retry once; if fails again' replaced",
+        "New text includes 'try at least 3 different approaches' and 'document each attempt'",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: ops.md Step 3 Decision Gate (line 70) already updated to 3+ approach policy. Old 'retry once; if fails again' text replaced with 'try at least 3 different approaches before setting status to failed. Document each attempt and why it failed.' No package.json so typecheck is vacuously true."
+    },
+    {
+      "id": "US-009",
+      "title": "Add Figure It Out directive to ops.md, haven.md, vault.md, comms.md",
+      "description": "As a specialist agent, I want clear guidance to be resourceful and try multiple approaches before declaring failure. **Implementation: Add identical 'Figure It Out' section (from research.md) to prompts/ops.md, prompts/haven.md, prompts/vault.md, and prompts/comms.md after Dispatch System Awareness and before Routing Keywords. Also update comms.md Step 3 Decision Gate (line 71) to align with 3+ approach policy (replace 'retry once; if fails again' with 'try at least 3 different approaches').**",
+      "acceptanceCriteria": [
+        "Figure It Out section exists in ops.md",
+        "Figure It Out section exists in haven.md",
+        "Figure It Out section exists in vault.md",
+        "Figure It Out section exists in comms.md",
+        "Sections inserted after Dispatch System Awareness and before Routing Keywords",
+        "Content matches research.md Figure It Out section",
+        "comms.md Step 3 Decision Gate updated to 3+ approach policy",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: ops.md (lines 132-141), haven.md (lines 116-125), vault.md (lines 128-137), and comms.md (lines 120-129) all contain identical Figure It Out sections matching research.md. All sections positioned after Dispatch System Awareness and before Routing Keywords. comms.md Step 3 Decision Gate (line 71) already updated to 3+ approach policy. Idempotent (no duplicates). No package.json so typecheck is vacuously true."
+    },
+    {
+      "id": "US-010",
+      "title": "Add Cross-Agent Handoff Protocol to research.md with Scout validation threshold",
+      "description": "As a specialist agent, I want clear guidance on when and how to hand off work to other agents. **Implementation: Add 'Cross-Agent Handoff' section to prompts/research.md after Figure It Out and before Routing Keywords. Define: (1) Scout validation trigger when specialist's own confidence < 0.5 (separate from SOUL.md 20/30 rubric score), (2) escalation to George via status=blocked when blocked on cross-domain need, (3) working memory as inter-agent data bus with descriptive keys. Include clarifying note on three separate threshold systems: base_sop.md confidence_score (0.0-1.0 continuous float for result reporting), Rex's internal routing threshold (< 0.5 triggers Scout review, already in research.md Step 3), SOUL.md scoring (20/30 rubric for Phase 1→Phase 2 pipeline).**",
+      "acceptanceCriteria": [
+        "Cross-Agent Handoff section exists in research.md",
+        "Section inserted after Figure It Out and before Routing Keywords",
+        "Scout validation trigger defined: specialist's confidence < 0.5",
+        "Escalation to George defined: status=blocked with cross-domain need described",
+        "Working memory as data bus defined: store key findings with descriptive keys",
+        "Clarifying note present on three threshold systems: base_sop.md confidence_score (0.0-1.0), Rex's < 0.5 threshold, SOUL.md 20/30 rubric",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: research.md already contains Cross-Agent Handoff section (lines 129-141) with Scout validation trigger (confidence < 0.5), three threshold systems clarification (base_sop.md 0.0-1.0, specialist < 0.5, SOUL.md 20/30 rubric), escalation to George (status=blocked with cross-domain need), and working memory as data bus (descriptive keys). Section is after Figure It Out (lines 116-127) and before Routing Keywords (line 144). Idempotent (already exists, no duplicates). No package.json so typecheck is vacuously true."
+    },
+    {
+      "id": "US-011",
+      "title": "Add Cross-Agent Handoff Protocol to product.md, meta.md, ops.md, haven.md, vault.md, comms.md",
+      "description": "As a specialist agent, I want clear guidance on when and how to hand off work to other agents. **Implementation: Add identical 'Cross-Agent Handoff' section (from research.md) to prompts/product.md, prompts/meta.md, prompts/ops.md, prompts/haven.md, prompts/vault.md, and prompts/comms.md after Figure It Out and before Routing Keywords.**",
+      "acceptanceCriteria": [
+        "Cross-Agent Handoff section exists in product.md",
+        "Cross-Agent Handoff section exists in meta.md",
+        "Cross-Agent Handoff section exists in ops.md",
+        "Cross-Agent Handoff section exists in haven.md",
+        "Cross-Agent Handoff section exists in vault.md",
+        "Cross-Agent Handoff section exists in comms.md",
+        "All sections inserted after Figure It Out and before Routing Keywords",
+        "Content matches research.md Cross-Agent Handoff section",
+        "Idempotent: running update again does not create duplicate sections",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: Cross-Agent Handoff sections exist in all 6 files - product.md (line 131), meta.md (line 145), ops.md (line 145), haven.md (line 129), vault.md (line 141), comms.md (line 133). All sections positioned after Figure It Out and before Routing Keywords. Content matches research.md core structure (Scout validation trigger, Escalation to George, Working memory as data bus). Idempotent (no duplicates)."
+    },
+    {
+      "id": "US-012",
+      "title": "Add Dispatch System Context preamble to base_sop.md",
+      "description": "As an agent, I want to understand how tasks arrive and how the dispatch system works before executing the base SOP. **Implementation: Add 'Dispatch System Context' preamble section to prompts/base_sop.md before Step 1. Explain: tasks arrive via supervisor daemon claiming from coordination.db, agent receives task via prompt assembly. Add conditional path: 'If you are an orchestrator agent (e.g., George), skip Step 3 (Execute Work) and follow your persona's Delegation SOP instead. george.md contains the replacement for Step 3: task decomposition and delegation. Steps 1, 2, 4, and 5 still apply.'**",
+      "acceptanceCriteria": [
+        "Dispatch System Context preamble exists in base_sop.md before Step 1",
+        "Explains task arrival: supervisor daemon claims from coordination.db, agent receives via prompt assembly",
+        "Contains orchestrator conditional path: skip Step 3, follow persona's Delegation SOP",
+        "References george.md as replacement for Step 3",
+        "States Steps 1, 2, 4, 5 still apply to orchestrators",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: Dispatch System Context preamble exists in base_sop.md (line 7) before Step 1 (line 15). Explains task arrival via supervisor daemon polling coordination.db. Contains orchestrator conditional path: skip Step 3, follow persona's Delegation SOP. References george.md as replacement for Step 3. States Steps 1, 2, 4, 5 still apply to orchestrators."
+    },
+    {
+      "id": "US-013",
+      "title": "Add shared Figure It Out directive to base_sop.md between Steps 2 and 3",
+      "description": "As an agent, I want a shared Figure It Out directive that applies to all agents before execution. **Implementation: Add 'Figure It Out' section to prompts/base_sop.md between Step 2 (Analyze Requirements) and Step 3 (Execute Work). Core message: 'Figure out HOW to do the work. When tools fail or approaches don't work, try 3+ alternatives before declaring failure. Don't escalate asking for instructions until you've exhausted multiple approaches.' Include mandate: before setting status to failed, must have tried at least 3 different approaches and documented why each failed.**",
+      "acceptanceCriteria": [
+        "Figure It Out section exists in base_sop.md between Steps 2 and 3",
+        "Core message present: try 3+ alternatives before declaring failure",
+        "Mandate present: before status=failed, must have tried 3+ approaches with documented failures",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: Figure It Out section exists in base_sop.md (lines 44-54) between Step 2 (line 29) and Step 3 (line 57). Core message present: try 3+ alternatives before declaring failure. Mandate present: 3 numbered requirements (3+ approaches, documented failures, confirmed no alternatives)."
+    },
+    {
+      "id": "US-014",
+      "title": "Update base_sop.md Step 3 Decision Gate to align with 3+ approach policy",
+      "description": "As an agent, I want Step 3's Decision Gate to be consistent with the Figure It Out directive. **Implementation: In prompts/base_sop.md Step 3 Decision Gate, replace 'IF a tool call fails, THEN retry once. If it fails again, set status to failed with the error summary.' with 'IF a tool call fails, THEN try at least 3 different approaches (alternative tools, different parameters, workaround strategies) before setting status to failed. Document each attempt and why it failed.'**",
+      "acceptanceCriteria": [
+        "base_sop.md Step 3 Decision Gate updated to 3+ approach policy",
+        "Old text 'retry once. If it fails again' replaced",
+        "New text includes 'try at least 3 different approaches (alternative tools, different parameters, workaround strategies)' and 'document each attempt'",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: base_sop.md Step 3 Decision Gate (line 64) updated to 3+ approach policy. Old 'retry once' text replaced with 'try at least 3 different approaches (alternative tools, different parameters, workaround strategies) before setting status to failed. Document each attempt and why it failed.'"
+    },
+    {
+      "id": "US-015",
+      "title": "Add <agent-result> programmatic parsing note, working memory protocol, tool permission awareness, and context budget awareness to base_sop.md",
+      "description": "As an agent, I want additional guidance on result format, working memory limits, tool permissions, and context budget so I operate correctly. **Implementation: In prompts/base_sop.md Step 5, add note that dispatch system parses <agent-result> block programmatically and malformed JSON causes fallback to raw response. Add working memory protocol details to Step 3 or Step 4: 5000 char value limit, UNIQUE key behavior, dependency-scoped reads. Add tool permission awareness note to Step 3: if tool call returns access-denied, do not retry same tool, report permission gap as blocker. Add context budget awareness note: if prompt feels truncated (missing skill details, shortened task description), proceed with available information rather than requesting re-dispatch.**",
+      "acceptanceCriteria": [
+        "Step 5 includes note on programmatic <agent-result> parsing and fallback on malformed JSON",
+        "Working memory protocol details added: 5000 char limit, UNIQUE key behavior, dependency-scoped reads",
+        "Tool permission awareness note added to Step 3: access-denied means do not retry, report as blocker",
+        "Context budget awareness note added: proceed with available info if prompt truncated, do not request re-dispatch",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: Step 5 (line 106) includes agent-result programmatic parsing note with malformed JSON fallback. Working memory protocol (lines 69-72): 5000 char limit, UNIQUE key behavior, dependency-scoped reads. Tool permission awareness (line 65): access-denied means do not retry, report as blocker. Context budget awareness (line 74): proceed with available info if prompt truncated."
+    },
+    {
+      "id": "US-016",
+      "title": "Rename prompt files to match functional config keys and add new agent config entries",
+      "description": "As the dispatch system, I want prompt filenames to match AGENT_SKILLS keys so build_prompt() can load persona files correctly. **Implementation: (1) git mv prompts/research.md -> prompts/research.md, product.md -> product.md, comms.md -> comms.md, ops.md -> ops.md, meta.md -> meta.md. (2) Add AGENT_SKILLS entries in config.py: 'haven': [], 'vault': [], 'george': []. (3) Add haven, vault, george entries to all 4 per-agent sections in openclawd.config.yaml.**",
+      "acceptanceCriteria": [
+        "prompts/research.md exists (renamed from research.md)",
+        "prompts/product.md exists (renamed from product.md)",
+        "prompts/comms.md exists (renamed from comms.md)",
+        "prompts/ops.md exists (renamed from ops.md)",
+        "prompts/meta.md exists (renamed from meta.md)",
+        "AGENT_SKILLS has entries for haven, vault, george with empty skill lists",
+        "openclawd.config.yaml has haven, vault, george in agent_models, agent_fallbacks, agent_budgets, agent_lease_defaults",
+        "No existing AGENT_SKILLS keys renamed",
+        "No existing YAML config keys renamed"
+      ],
+      "priority": 1,
+      "qa_required": false,
+      "passes": true,
+      "notes": "Revised approach: rename files instead of config keys to avoid self-healing system conflicts"
+    },
+    {
+      "id": "US-020",
+      "title": "Replace AGENTS.md orchestrator sections with george.md cross-reference",
+      "description": "As Alan, I want a single source of truth for orchestrator behavior in george.md instead of duplicated content in AGENTS.md. **Implementation: In AGENTS.md, replace lines 32-70 (from '## Be the Orchestrator' header through end of 'Figure It Out Directive' content) with: '## Orchestrator Role & Figure It Out Directive\n\nSee `prompts/george.md` for the complete orchestrator prompt, delegation SOP, and Figure It Out directive. George coordinates specialists; he does not do domain work.'**",
+      "acceptanceCriteria": [
+        "AGENTS.md lines 32-70 replaced with cross-reference section",
+        "New section header: '## Orchestrator Role & Figure It Out Directive'",
+        "Cross-reference points to prompts/george.md",
+        "Brief description: 'George coordinates specialists; he does not do domain work.'",
+        "Typecheck passes"
+      ],
+      "priority": 20,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: AGENTS.md lines 32-34 contain cross-reference section with header '## Orchestrator Role & Figure It Out Directive', points to prompts/george.md, includes 'George coordinates specialists; he does not do domain work.'"
+    },
+    {
+      "id": "US-021",
+      "title": "Update MEMORY.md George role description to delegation-oriented language",
+      "description": "As Alan, I want MEMORY.md to accurately reflect George's coordination role instead of listing domain work. **Implementation: In MEMORY.md line 95, replace 'George: Research niches, present options, define strategy, handle customers/sales/marketing, BUILD THE PRODUCT (vibe coding)' with 'George: Coordinate specialist agents, decompose tasks, route work to Rex/Pixel/Scout/Keeper, monitor progress, deliver results to Alan. George delegates ALL domain work -- research, product creation, email, operations -- to the appropriate specialist.'**",
+      "acceptanceCriteria": [
+        "MEMORY.md line 95 updated with new George role description",
+        "New description emphasizes coordination: decompose, route, monitor, deliver",
+        "States George delegates ALL domain work to specialists",
+        "Typecheck passes"
+      ],
+      "priority": 21,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: MEMORY.md line 95 updated with delegation-oriented George role description. Emphasizes coordination: decompose tasks, route work to Rex/Pixel/Scout/Keeper, monitor progress, deliver results. States George delegates ALL domain work to specialists."
+    },
+    {
+      "id": "US-022",
+      "title": "Replace SOUL.md Operating Model section with george.md cross-reference",
+      "description": "As Alan, I want a single source of truth for orchestrator operating model in george.md instead of duplicated content in SOUL.md. **Implementation: In SOUL.md, replace lines 123-160 (from '## Operating Model: Orchestrator-First' through end of 'Operating Rules' subsections) with: '## Operating Model: Orchestrator-First\n\nSee `prompts/george.md` for the complete orchestrator prompt, delegation SOP, operating rules, and dispatch-aware coordination protocol. The principle remains: I am the conductor, not the musician.'**",
+      "acceptanceCriteria": [
+        "SOUL.md lines 123-160 replaced with cross-reference section",
+        "New section header: '## Operating Model: Orchestrator-First'",
+        "Cross-reference points to prompts/george.md",
+        "Preserves principle: 'I am the conductor, not the musician.'",
+        "Typecheck passes"
+      ],
+      "priority": 22,
+      "qa_required": false,
+      "passes": true,
+      "notes": "All acceptance criteria verified: SOUL.md lines 123-125 contain cross-reference section with header '## Operating Model: Orchestrator-First', points to prompts/george.md, preserves principle 'I am the conductor, not the musician.'"
+    }
+  ]
+}

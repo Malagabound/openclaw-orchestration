@@ -89,6 +89,9 @@ AGENT_SKILLS: Dict[str, List[str]] = {
     "memory": [
         "supermemory",
     ],
+    "haven": [],
+    "vault": [],
+    "george": [],
 }
 
 # ── Default DB Path ──────────────────────────────────────────────
@@ -233,6 +236,62 @@ def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:
         return {}
 
     return data
+
+
+# ── Recovery Configuration Defaults ─────────────────────────────
+# All keys from spec Appendix E with their default values.
+
+RECOVERY_DEFAULTS: Dict[str, Any] = {
+    # General limits
+    "max_recovery_attempts": 5,
+    "max_recovery_time_seconds": 1800,
+    "max_concurrent_recoveries": 3,
+    "recovery_timeout_per_attempt": 600,
+    # Diagnostic Agent
+    "diagnostic_model": "claude-haiku-4-5",
+    "diagnostic_max_input_tokens": 4000,
+    "diagnostic_prompt_file": "prompts/diagnostic_sop.md",
+    # Budget
+    "recovery_budget_ratio": 0.04,
+    "recovery_budget_cap_usd": 2.00,
+    # Truncation limits
+    "raw_output_max_chars": 10000,
+    "diagnostic_context_chars": 2000,
+    "recovery_prompt_context_chars": 500,
+    "error_message_max_chars": 200,
+    # Confidence threshold
+    "min_confidence_score": 0.3,
+    # Systemic failure detection
+    "systemic_failure_threshold_count": 3,
+    "systemic_failure_window_minutes": 10,
+    # Escalation
+    "max_escalations_per_hour": 5,
+    "escalation_cooldown_seconds": 300,
+    # Retention
+    "failure_memory_retention_days": 90,
+    "recovery_events_retention_days": 90,
+}
+
+
+def get_recovery_config(config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Extract the recovery section from config with fallback to defaults.
+
+    Reads config["recovery"] and merges with RECOVERY_DEFAULTS so that
+    any missing key falls back to its default value.
+
+    Args:
+        config: Full config dict from load_config().
+
+    Returns:
+        Recovery config dict with all keys guaranteed present.
+    """
+    user_recovery = config.get("recovery", {})
+    if not isinstance(user_recovery, dict):
+        user_recovery = {}
+    merged = dict(RECOVERY_DEFAULTS)
+    merged.update(user_recovery)
+    return merged
 
 
 # ── SDK Module Mapping ──────────────────────────────────────────
