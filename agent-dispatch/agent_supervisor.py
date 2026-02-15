@@ -36,6 +36,7 @@ from .config import (
     POLL_INTERVAL_SECONDS,
     TIMEOUT_SECONDS,
     load_config,
+    normalize_agent_name,
 )
 from .dispatch_db import (
     check_budget,
@@ -462,7 +463,7 @@ class AgentSupervisor:
                     continue
 
             # US-066: Check per-agent budget before claiming
-            agent_name = task.get("assigned_agent", "research")
+            agent_name = normalize_agent_name(task.get("assigned_agent"))
             budget_status = check_budget(
                 self.config, agent_name=agent_name, adapter=self.adapter,
             )
@@ -483,7 +484,7 @@ class AgentSupervisor:
                 continue
 
             # Determine agent and attempt
-            agent_name = task.get("assigned_agent", "research")
+            agent_name = normalize_agent_name(task.get("assigned_agent"))
             attempt = self._get_attempt_count(task_id) + 1
             trace_id = str(uuid.uuid4())
 

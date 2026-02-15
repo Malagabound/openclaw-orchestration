@@ -38,7 +38,7 @@ class OrchestratorDashboard:
                     status TEXT DEFAULT 'open' CHECK(status IN ('open', 'in_progress', 'review', 'completed', 'blocked')),
                     priority INTEGER DEFAULT 3 CHECK(priority BETWEEN 1 AND 5),
                     domain TEXT NOT NULL, -- 'research', 'digital_products' [DEACTIVATED: 'real_estate', 'business_acquisition', 'operations']
-                    assigned_agent TEXT, -- 'rex', 'pixel', 'scout', 'keeper' [DEACTIVATED: 'haven', 'vault', 'nora']
+                    assigned_agent TEXT, -- 'research', 'product', 'meta', 'ops', 'comms', 'haven', 'vault', 'george'
                     created_by TEXT DEFAULT 'george',
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -147,14 +147,10 @@ class OrchestratorDashboard:
         
         # Domain mapping for agents
         agent_domains = {
-            'rex': ['research', 'market_analysis', 'software_subscriptions'],
-            'pixel': ['digital_products', 'product_validation'], 
-            # DEACTIVATED AGENTS - Groups remain but no task routing
-            # 'haven': ['real_estate', 'property_analysis'],
-            # 'vault': ['business_acquisition', 'investment_analysis'],
-            # 'nora': ['operations', 'day_job', 'management'],
-            'scout': ['validation', 'quality_control'],
-            'keeper': ['maintenance', 'email', 'automation']
+            'research': ['research', 'market_analysis', 'software_subscriptions'],
+            'product': ['digital_products', 'product_validation'],
+            'meta': ['validation', 'quality_control'],
+            'ops': ['maintenance', 'email', 'automation']
         }
         
         domains = agent_domains.get(agent_name, [])
@@ -368,32 +364,32 @@ def test_dashboard():
         description="Research podcasts in the AI/SaaS space that would be good for founder interviews. Focus on growth potential and audience alignment.",
         domain="research",
         priority=4,
-        assigned_agent="rex",
+        assigned_agent="research",
         deliverable_type="analysis",
         business_impact=4
     )
-    print(f"✅ Created task with ID: {task_id}")
-    
+    print(f"Created task with ID: {task_id}")
+
     # Test agent check-in
-    checkin_result = dashboard.agent_checkin("rex")
-    print(f"✅ Rex checked in and found {checkin_result['tasks_count']} tasks")
-    
+    checkin_result = dashboard.agent_checkin("research")
+    print(f"Research checked in and found {checkin_result['tasks_count']} tasks")
+
     # Test contribution
     dashboard.add_task_contribution(
         task_id=task_id,
-        agent_name="rex", 
+        agent_name="research",
         contribution_type="insight",
         content="Found 15 AI podcasts with 10k+ listeners. Identified top 5 based on host engagement and audience overlap."
     )
-    print("✅ Rex added contribution to podcast research task")
-    
+    print("Research added contribution to podcast research task")
+
     # Test squad chat
     dashboard.squad_chat_post(
-        agent_name="pixel",
+        agent_name="product",
         message="Noticed podcast research happening. Digital product creators often get good traction on developer-focused shows. Happy to analyze which shows convert best for product launches.",
         related_task_id=task_id
     )
-    print("✅ Pixel added insight to squad chat")
+    print("Product added insight to squad chat")
     
     # Test dashboard summary
     summary = dashboard.get_dashboard_summary()

@@ -58,14 +58,10 @@ class AgentCoordinator:
         
         # Agent expertise mapping
         agent_expertise = {
-            'rex': ['research', 'market_analysis', 'competitive_analysis', 'customer_research', 'software_subscriptions', 'saas_opportunities'],
-            'pixel': ['digital_products', 'product_validation', 'marketplace_strategy', 'product_creation'],
-            # DEACTIVATED AGENTS - Groups remain but no task routing
-            # 'haven': ['real_estate', 'property_analysis', 'investment_analysis', 'market_research'],
-            # 'vault': ['business_acquisition', 'deal_analysis', 'roi_assessment', 'due_diligence'],
-            # 'nora': ['operations', 'day_job', 'financial_management', 'task_management'],
-            'scout': ['validation', 'quality_control', 'fact_checking', 'cross_domain_review'],
-            'keeper': ['maintenance', 'email_management', 'automation', 'system_health']
+            'research': ['research', 'market_analysis', 'competitive_analysis', 'customer_research', 'software_subscriptions', 'saas_opportunities'],
+            'product': ['digital_products', 'product_validation', 'marketplace_strategy', 'product_creation'],
+            'meta': ['validation', 'quality_control', 'fact_checking', 'cross_domain_review'],
+            'ops': ['maintenance', 'email_management', 'automation', 'system_health']
         }
         
         expertise = agent_expertise.get(agent_name, [])
@@ -76,14 +72,14 @@ class AgentCoordinator:
             return True
             
         # Cross-domain opportunities
-        if agent_name == 'scout':  # Scout can validate everything
+        if agent_name == 'meta':  # Meta can validate everything
             return True
             
-        if 'research' in task['title'].lower() and agent_name == 'rex':
+        if 'research' in task['title'].lower() and agent_name == 'research':
             return True
-            
+
         if any(keyword in task['description'].lower() for keyword in ['product', 'market', 'customer']):
-            if agent_name in ['rex', 'pixel']:
+            if agent_name in ['research', 'product']:
                 return True
         
         return False
@@ -123,24 +119,13 @@ class AgentCoordinator:
         
         # Keyword-based agent selection
         if any(word in content_lower for word in ['research', 'analyze', 'market', 'competitive']):
-            relevant_agents.append('rex')
-            
+            relevant_agents.append('research')
+
         if any(word in content_lower for word in ['product', 'digital', 'template', 'course', 'gumroad']):
-            relevant_agents.append('pixel')
-            
-        # DEACTIVATED ROUTING - No longer routing to haven, vault, nora per Alan's request
-        # if any(word in content_lower for word in ['real estate', 'property', 'rental', 'investment']):
-        #     relevant_agents.append('haven')
-        #     
-        # if any(word in content_lower for word in ['business', 'acquisition', 'buy', 'deal']):
-        #     relevant_agents.append('vault')
-        #     
-        # if any(word in content_lower for word in ['quickbooks', 'email', 'operation', 'management']):
-        #     relevant_agents.append('nora')
-        
-        # Always include Scout for validation of important tasks
+            relevant_agents.append('product')
+
         if 'validation' in content_lower or 'validate' in content_lower:
-            relevant_agents.append('scout')
+            relevant_agents.append('meta')
         
         return list(set(relevant_agents))  # Remove duplicates
     
@@ -210,7 +195,7 @@ def test_coordination():
     
     # Test agent check-ins
     print("2. Testing agent check-ins...")
-    agents = ['rex', 'pixel', 'scout']
+    agents = ['research', 'product', 'meta']
     
     for agent in agents:
         checkin = coordinator.process_agent_checkin(agent)
@@ -219,20 +204,20 @@ def test_coordination():
     # Test task contribution
     print("3. Testing task contributions...")
     coordinator.agent_contribute_to_task(
-        agent_name="rex",
+        agent_name="research",
         task_id=task_id,
-        contribution_type="analysis", 
+        contribution_type="analysis",
         content="Initial market research shows 15+ established players (Asana, Monday.com, etc.) but identified 3 underserved niches: construction project management, event planning workflows, and creative agency resource allocation."
     )
-    print("   ✅ Rex added market analysis contribution")
-    
+    print("   Research added market analysis contribution")
+
     coordinator.agent_contribute_to_task(
-        agent_name="pixel",
+        agent_name="product",
         task_id=task_id,
         contribution_type="insight",
         content="Construction PM niche has highest potential - analyzed 5 existing solutions, all are either too complex or missing key features like permit tracking and subcontractor coordination. Market size ~$500M with low digital adoption."
     )
-    print("   ✅ Pixel added product validation insight")
+    print("   Product added product validation insight")
     
     # Test coordination status
     print("4. Testing coordination status...")

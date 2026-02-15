@@ -23,6 +23,28 @@ TIMEOUT_SECONDS: int = 1800
 MAX_CONCURRENT_AGENTS: int = 3
 MAX_TOOL_ITERATIONS: int = 50
 
+# ── Legacy Agent Name Mapping ────────────────────────────────────
+# Maps old agent names to new names for backward compatibility with
+# tasks already in the database that use the old naming scheme.
+LEGACY_AGENT_NAMES: Dict[str, str] = {
+    "rex": "research",
+    "pixel": "product",
+    "scout": "meta",
+    "keeper": "ops",
+    "nora": "comms",
+}
+
+
+def normalize_agent_name(name: Optional[str]) -> str:
+    """Resolve legacy agent names to current names.
+
+    Returns the normalized name, or 'research' as a fallback for None.
+    """
+    if name is None:
+        return "research"
+    return LEGACY_AGENT_NAMES.get(name, name)
+
+
 # ── Agent-to-Skills Mapping ──────────────────────────────────────
 # Maps agent names to lists of skill directories they can access.
 
