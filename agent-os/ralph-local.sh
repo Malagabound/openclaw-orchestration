@@ -21,6 +21,9 @@ unset CLAUDECODE 2>/dev/null || true
 MAX_FIX_ATTEMPTS=3          # Max diagnosis+fix cycles per blocking story
 DIAGNOSIS_TIMEOUT=300       # 5 minutes for diagnosis agent
 FIX_TIMEOUT=600             # 10 minutes for fix agent
+IVV_TIMEOUT=900             # 15 minutes for IVV audit agent
+IVV_FIX_TIMEOUT=600         # 10 minutes for IVV fix agent
+MAX_IVV_ITERATIONS=5        # Max IVV audit+fix cycles before escalating
 
 # macOS doesn't have GNU timeout by default, so we detect and adapt
 TIMEOUT_CMD=""
@@ -575,6 +578,129 @@ After editing, output:
 }
 
 # =============================================================================
+# IVV AUDIT AGENT - Independent Verification & Validation
+# =============================================================================
+
+run_ivv_agent() {
+  local spec_file="$1"
+  local output_file="$2"
+
+  echo -e "${CYAN}▶ Running IVV audit agent...${NC}"
+
+  local prompt="You are the Independent Verification & Validation (IVV) auditor, based on NASA IV&V, IEEE 1012, and DO-178C methodology.
+
+Your job is to verify the implementation matches the spec. You are COMPLETELY INDEPENDENT.
+
+SPEC FILE: $spec_file
+PROJECT ROOT: $PROJECT_ROOT
+
+METHODOLOGY:
+1. Read the spec at $spec_file to understand ALL requirements
+2. Build a Requirements Verification Traceability Matrix (RVTM) - list every testable requirement
+3. For each requirement, verify the implementation by reading the actual code files
+4. Run any available tests (pytest, npm test, etc.) to validate behavior
+5. Check that each requirement is properly implemented
+
+CRITICAL RULES:
+- You are INDEPENDENT - do NOT read QA reports, progress files, implementation logs, or prd.json
+- Verify by reading actual source code and running actual tests
+- Be thorough - check every requirement in the spec
+- A requirement is CERTIFIED only if you can point to specific code that implements it
+- A requirement is NOT_CERTIFIED if implementation is missing, incomplete, or incorrect
+
+OUTPUT FORMAT (MANDATORY):
+For each requirement, output:
+
+<requirement id=\"REQ-N\">
+<description>What the spec requires</description>
+<status>CERTIFIED|NOT_CERTIFIED</status>
+<evidence>What you found in the code/tests</evidence>
+<fix_needed>Description of what needs to be fixed (only if NOT_CERTIFIED)</fix_needed>
+</requirement>
+
+At the end, output EXACTLY one of:
+
+<ivv-result>ALL_CERTIFIED</ivv-result>
+
+or
+
+<ivv-result>NOT_CERTIFIED</ivv-result>
+<ivv-summary>
+Concise list of what needs to be fixed, with specific file paths and required changes.
+</ivv-summary>
+
+IMPORTANT: Output ALL_CERTIFIED only if EVERY requirement passes. Even one failure means NOT_CERTIFIED."
+
+  export prompt
+  run_with_timeout ${IVV_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1' | tee "$output_file"
+  return ${PIPESTATUS[0]}
+}
+
+apply_ivv_fixes() {
+  local ivv_output_file="$1"
+
+  echo -e "${CYAN}▶ Spawning IVV fix agent...${NC}"
+
+  # Extract the NOT_CERTIFIED requirements and summary
+  local not_certified=$(grep -B 3 -A 10 "NOT_CERTIFIED" "$ivv_output_file")
+  local summary=$(sed -n '/<ivv-summary>/,/<\/ivv-summary>/p' "$ivv_output_file" | sed 's/<[^>]*>//g')
+
+  local prompt="You are the IVV Fix Agent. The IVV auditor found issues that must be fixed for the project to pass certification.
+
+PROJECT ROOT: $PROJECT_ROOT
+SPEC FILE: $SPEC_DIR/spec.md
+
+IVV FINDINGS (NOT_CERTIFIED requirements):
+$not_certified
+
+IVV SUMMARY OF REQUIRED FIXES:
+$summary
+
+YOUR TASK:
+1. Read the spec to understand what was expected
+2. Read the relevant implementation files
+3. Make the MINIMUM changes needed to satisfy each NOT_CERTIFIED requirement
+4. Run tests after making changes to verify your fixes (pytest, npm test, etc.)
+5. Do NOT refactor or improve code beyond what's needed for certification
+
+RULES:
+- Fix ONLY the issues identified by IVV - nothing more
+- Do NOT add features, refactor, or make improvements
+- Do NOT modify the spec or prd.json
+- Run available tests after fixes to confirm they pass
+
+After making fixes, output exactly:
+<fix-result>SUCCESS</fix-result>
+<fix-summary>Brief description of what was fixed</fix-summary>
+
+If you cannot fix all issues, output:
+<fix-result>PARTIAL</fix-result>
+<fix-summary>What was fixed and what could not be fixed</fix-summary>"
+
+  export prompt
+  local result=$(run_with_timeout ${IVV_FIX_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1')
+  echo "$result"
+
+  if echo "$result" | grep -q "<fix-result>SUCCESS</fix-result>"; then
+    local fix_summary=$(echo "$result" | sed -n '/<fix-summary>/,/<\/fix-summary>/p' | sed 's/<[^>]*>//g' | tr '\n' ' ')
+    echo -e "${GREEN}✓ IVV fixes applied successfully${NC}"
+    echo "- **IVV Fix Result:** SUCCESS" >> "$FIX_LOG"
+    echo "- **Fix Summary:** $fix_summary" >> "$FIX_LOG"
+    return 0
+  elif echo "$result" | grep -q "<fix-result>PARTIAL</fix-result>"; then
+    local fix_summary=$(echo "$result" | sed -n '/<fix-summary>/,/<\/fix-summary>/p' | sed 's/<[^>]*>//g' | tr '\n' ' ')
+    echo -e "${YELLOW}⚠ IVV fixes partially applied${NC}"
+    echo "- **IVV Fix Result:** PARTIAL" >> "$FIX_LOG"
+    echo "- **Fix Summary:** $fix_summary" >> "$FIX_LOG"
+    return 0
+  else
+    echo -e "${RED}IVV fix agent did not produce clear result${NC}"
+    echo "- **IVV Fix Result:** UNCERTAIN" >> "$FIX_LOG"
+    return 1
+  fi
+}
+
+# =============================================================================
 # MAIN SUPERVISOR LOOP
 # =============================================================================
 
@@ -622,11 +748,119 @@ while true; do
   if [ $EXIT_CODE -eq 0 ]; then
     echo ""
     echo -e "${GREEN}╔═══════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║              RALPH COMPLETED SUCCESSFULLY                     ║${NC}"
+    echo -e "${GREEN}║       ALL STORIES COMPLETE — Starting IVV Audit              ║${NC}"
     echo -e "${GREEN}╚═══════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
 
-    notify_success "All stories complete for $SPEC_NAME!"
-    exit 0
+    # =========================================================================
+    # IVV LOOP - Independent Verification & Validation
+    # Only after IVV certifies 100% is the project truly done.
+    # =========================================================================
+    SPEC_FILE="$SPEC_DIR/spec.md"
+
+    if [ ! -f "$SPEC_FILE" ]; then
+      echo -e "${YELLOW}No spec.md found — skipping IVV audit${NC}"
+      notify_success "All stories complete for $SPEC_NAME! (IVV skipped - no spec.md)"
+      exit 0
+    fi
+
+    echo "" >> "$FIX_LOG"
+    echo "---" >> "$FIX_LOG"
+    echo "" >> "$FIX_LOG"
+    echo "# IVV Audit Phase" >> "$FIX_LOG"
+    echo "" >> "$FIX_LOG"
+
+    IVV_ITERATION=0
+    IVV_CERTIFIED=false
+
+    while [ $IVV_ITERATION -lt $MAX_IVV_ITERATIONS ]; do
+      IVV_ITERATION=$((IVV_ITERATION + 1))
+
+      echo ""
+      echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+      echo -e "  ${BOLD}IVV Audit — Iteration $IVV_ITERATION of $MAX_IVV_ITERATIONS${NC}"
+      echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+      echo ""
+
+      echo "" >> "$FIX_LOG"
+      echo "## IVV Iteration $IVV_ITERATION - $(date)" >> "$FIX_LOG"
+      echo "" >> "$FIX_LOG"
+
+      IVV_OUTPUT=$(mktemp)
+
+      if ! run_ivv_agent "$SPEC_FILE" "$IVV_OUTPUT"; then
+        echo -e "${RED}IVV agent failed or timed out${NC}"
+        echo "- **IVV Status:** Agent failed/timed out" >> "$FIX_LOG"
+        rm -f "$IVV_OUTPUT"
+        if [ $IVV_ITERATION -ge $MAX_IVV_ITERATIONS ]; then
+          break
+        fi
+        sleep 5
+        continue
+      fi
+
+      # Check IVV result
+      if grep -q "<ivv-result>ALL_CERTIFIED</ivv-result>" "$IVV_OUTPUT" 2>/dev/null; then
+        echo ""
+        echo -e "${GREEN}╔═══════════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${GREEN}║              IVV AUDIT: 100% CERTIFIED                       ║${NC}"
+        echo -e "${GREEN}╚═══════════════════════════════════════════════════════════════╝${NC}"
+        echo "- **IVV Status:** ALL CERTIFIED ✓" >> "$FIX_LOG"
+        IVV_CERTIFIED=true
+        rm -f "$IVV_OUTPUT"
+        break
+      fi
+
+      # IVV found issues — apply fixes
+      echo ""
+      echo -e "${YELLOW}IVV found issues — applying fixes (iteration $IVV_ITERATION)...${NC}"
+      echo "- **IVV Status:** NOT CERTIFIED — applying fixes" >> "$FIX_LOG"
+
+      if ! apply_ivv_fixes "$IVV_OUTPUT"; then
+        echo -e "${RED}IVV fix agent failed${NC}"
+        echo "- **Fix Status:** FAILED" >> "$FIX_LOG"
+      fi
+
+      rm -f "$IVV_OUTPUT"
+
+      echo ""
+      echo -e "${GREEN}Fixes applied. Re-running IVV audit in 5 seconds...${NC}"
+      sleep 5
+    done
+
+    if [ "$IVV_CERTIFIED" = true ]; then
+      echo ""
+      echo -e "${GREEN}╔═══════════════════════════════════════════════════════════════╗${NC}"
+      echo -e "${GREEN}║          PROJECT COMPLETE — IVV CERTIFIED                    ║${NC}"
+      echo -e "${GREEN}╠═══════════════════════════════════════════════════════════════╣${NC}"
+      echo -e "${GREEN}║${NC}  All stories implemented, QA verified, and IVV certified."
+      echo -e "${GREEN}║${NC}"
+      echo -e "${GREEN}║${NC}  ${BOLD}Ready to commit.${NC} Review changes with: git status"
+      echo -e "${GREEN}║${NC}  Commit when ready with: git add -A && git commit"
+      echo -e "${GREEN}╚═══════════════════════════════════════════════════════════════╝${NC}"
+
+      notify_success "All stories complete AND IVV certified for $SPEC_NAME!"
+      exit 0
+    else
+      echo ""
+      echo -e "${RED}╔═══════════════════════════════════════════════════════════════╗${NC}"
+      echo -e "${RED}║       IVV AUDIT FAILED — Max iterations reached              ║${NC}"
+      echo -e "${RED}╠═══════════════════════════════════════════════════════════════╣${NC}"
+      echo -e "${RED}║${NC}  IVV could not certify after $MAX_IVV_ITERATIONS iterations."
+      echo -e "${RED}║${NC}  Check the fix log for details."
+      echo -e "${RED}║${NC}"
+      echo -e "${RED}║${NC}  Fix log: $FIX_LOG"
+      echo -e "${RED}║${NC}  📧 Email sent to alan@roccoriley.com"
+      echo -e "${RED}╚═══════════════════════════════════════════════════════════════╝${NC}"
+
+      echo "" >> "$FIX_LOG"
+      echo "## IVV BLOCKED — Max Iterations Reached" >> "$FIX_LOG"
+      echo "- IVV could not certify after $MAX_IVV_ITERATIONS iterations" >> "$FIX_LOG"
+      echo "- Human intervention required" >> "$FIX_LOG"
+
+      notify_human "Ralph Supervisor" "IVV audit could not certify $SPEC_NAME after $MAX_IVV_ITERATIONS iterations"
+      exit 1
+    fi
   fi
 
   # Ralph failed - check if we have failure details
