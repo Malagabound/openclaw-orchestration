@@ -5,6 +5,9 @@
 
 set -e
 
+# Allow nested Claude invocations when running inside Claude Code
+unset CLAUDECODE 2>/dev/null || true
+
 # =============================================================================
 # PROGRESS MONITOR - Background process showing real-time status
 # =============================================================================
@@ -531,10 +534,14 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Supports: "2026-01-16-review-notes-system" OR "agent-os/specs/2026-01-16-review-notes-system"
 SPEC_NAME="${SPEC_NAME#agent-os/specs/}"
 
-SPEC_DIR="$SCRIPT_DIR/specs/$SPEC_NAME"
+SPEC_DIR="$PROJECT_ROOT/agent-os/specs/$SPEC_NAME"
 PRD_FILE="$SPEC_DIR/prd.json"
 PROGRESS_FILE="$SPEC_DIR/progress.txt"
-PROMPT_FILE="$SCRIPT_DIR/prompt.md"
+if [ -f "$SPEC_DIR/prompt.md" ]; then
+  PROMPT_FILE="$SPEC_DIR/prompt.md"
+else
+  PROMPT_FILE="$SCRIPT_DIR/prompt.md"
+fi
 
 # Temp file for capturing Claude output
 CLAUDE_OUTPUT_FILE=$(mktemp)
@@ -544,8 +551,8 @@ if [ ! -d "$SPEC_DIR" ]; then
   echo "Error: Spec folder not found: $SPEC_DIR"
   echo ""
   echo "Available specs (including nested):"
-  find "$SCRIPT_DIR/specs" -name "prd.json" -type f 2>/dev/null | while read prd_file; do
-    spec_path=$(dirname "$prd_file" | sed "s|^$SCRIPT_DIR/specs/||")
+  find "$PROJECT_ROOT/agent-os/specs" -name "prd.json" -type f 2>/dev/null | while read prd_file; do
+    spec_path=$(dirname "$prd_file" | sed "s|^$PROJECT_ROOT/agent-os/specs/||")
     # NOTE: Use .passes != true (NOT .passes == false) to handle null values
     remaining=$(jq '[.userStories[] | select(.passes != true)] | length' "$prd_file" 2>/dev/null || echo "?")
     total=$(jq '.userStories | length' "$prd_file" 2>/dev/null || echo "?")
@@ -835,7 +842,7 @@ $(cat "$PROMPT_FILE")"
     cd "$PROJECT_ROOT"
     # Export the prompt for the inner bash to access
     export FULL_PROMPT
-    run_with_timeout ${CLAUDE_TIMEOUT_SECONDS} 'echo "$FULL_PROMPT" | claude --print --dangerously-skip-permissions --chrome 2>&1'
+    run_with_timeout ${CLAUDE_TIMEOUT_SECONDS} 'echo "$FULL_PROMPT" | claude --print --dangerously-skip-permissions 2>&1'
   ) | tee "$CLAUDE_OUTPUT_FILE"
   CLAUDE_EXIT_CODE=${PIPESTATUS[0]}
 

@@ -1,0 +1,46 @@
+name: shell_exec
+description: Execute a shell command and return its stdout, stderr, and exit code.
+version: "1.0.0"
+
+parameters:
+  command:
+    type: string
+    description: The shell command to execute
+    required: true
+  cwd:
+    type: string
+    description: Working directory for command execution
+    required: false
+  timeout:
+    type: integer
+    description: Maximum execution time in seconds
+    required: false
+    default: 300
+
+returns:
+  stdout:
+    type: string
+    description: Standard output from the command
+  stderr:
+    type: string
+    description: Standard error output from the command
+  exit_code:
+    type: integer
+    description: Process exit code (0 typically indicates success)
+
+execution:
+  type: python
+  module: tools.executors.shell_exec
+  function: execute
+
+idempotent: false
+destructive: false
+timeout_seconds: 300
+
+test:
+  input:
+    command: "echo hello"
+    timeout: 10
+  expected:
+    stdout: "hello\n"
+    exit_code: 0

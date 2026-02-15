@@ -8,6 +8,7 @@ McPorter Adapter for Self-Evolving Skill
 import json
 import sys
 import os
+from typing import Dict
 
 # 添加核心模块路径
 CORE_DIR = os.path.join(os.path.dirname(__file__), 'core')
@@ -20,7 +21,7 @@ def call_skill_create(args: Dict) -> str:
     # 导入并执行
     os.environ["MCP_STORAGE_DIR"] = os.environ.get(
         "MCP_STORAGE_DIR", 
-        "os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")"
+        os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")
     )
     
     from core.skill_schema import SelfEvolvingSkill, create_simple_policy
@@ -57,7 +58,7 @@ def call_skill_list(args: Dict) -> str:
     """列出Skill"""
     os.environ["MCP_STORAGE_DIR"] = os.environ.get(
         "MCP_STORAGE_DIR",
-        "os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")"
+        os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")
     )
     
     from core.storage import SkillStorage
@@ -76,7 +77,7 @@ def call_skill_stats(args: Dict) -> str:
     """获取统计"""
     os.environ["MCP_STORAGE_DIR"] = os.environ.get(
         "MCP_STORAGE_DIR",
-        "os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")"
+        os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")
     )
     
     from core.storage import SkillStorage
@@ -140,7 +141,7 @@ def call_skill_save(args: Dict) -> str:
     """保存Skill"""
     os.environ["MCP_STORAGE_DIR"] = os.environ.get(
         "MCP_STORAGE_DIR",
-        "os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")"
+        os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")
     )
     
     from core.storage import SkillStorage
@@ -179,7 +180,7 @@ def call_skill_load(args: Dict) -> str:
     """加载Skill"""
     os.environ["MCP_STORAGE_DIR"] = os.environ.get(
         "MCP_STORAGE_DIR",
-        "os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")"
+        os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")
     )
     
     from core.storage import SkillStorage

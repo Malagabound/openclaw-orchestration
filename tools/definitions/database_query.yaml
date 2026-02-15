@@ -1,0 +1,40 @@
+name: database_query
+description: Execute a read-only SQL query against the coordination database and return the result rows and column names.
+version: "1.0.0"
+
+parameters:
+  query:
+    type: string
+    description: The SQL SELECT query to execute
+    required: true
+  params:
+    type: array
+    description: Parameterized query values to substitute for ? placeholders
+    required: false
+    default: []
+
+returns:
+  rows:
+    type: array
+    description: List of result rows, each row as a list of values
+  columns:
+    type: array
+    description: List of column names in the result set
+
+execution:
+  type: python
+  module: tools.executors.database_query
+  function: execute
+
+idempotent: true
+destructive: false
+timeout_seconds: 60
+
+test:
+  input:
+    query: "SELECT 1 AS test_col"
+    params: []
+  expected:
+    rows_count_gte: 1
+    columns:
+      - test_col

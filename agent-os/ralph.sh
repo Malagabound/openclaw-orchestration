@@ -5,6 +5,9 @@
 
 set -e
 
+# Allow nested Claude invocations when running inside Claude Code
+unset CLAUDECODE 2>/dev/null || true
+
 # =============================================================================
 # PROGRESS MONITOR - Background process showing real-time status
 # =============================================================================
@@ -366,10 +369,14 @@ MAX_ITERATIONS=${2:-10}
 # Resolve paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-SPEC_DIR="$SCRIPT_DIR/specs/$SPEC_NAME"
+SPEC_DIR="$PROJECT_ROOT/agent-os/specs/$SPEC_NAME"
 PRD_FILE="$SPEC_DIR/prd.json"
 PROGRESS_FILE="$SPEC_DIR/progress.txt"
-PROMPT_FILE="$SCRIPT_DIR/prompt.md"
+if [ -f "$SPEC_DIR/prompt.md" ]; then
+  PROMPT_FILE="$SPEC_DIR/prompt.md"
+else
+  PROMPT_FILE="$SCRIPT_DIR/prompt.md"
+fi
 
 # Worktree configuration
 WORKTREES_DIR="$PROJECT_ROOT/.trees"
@@ -386,8 +393,8 @@ if [ ! -d "$SPEC_DIR" ]; then
   echo "Error: Spec folder not found: $SPEC_DIR"
   echo ""
   echo "Available specs (including nested):"
-  find "$SCRIPT_DIR/specs" -name "prd.json" -type f 2>/dev/null | while read prd_file; do
-    spec_path=$(dirname "$prd_file" | sed "s|^$SCRIPT_DIR/specs/||")
+  find "$PROJECT_ROOT/agent-os/specs" -name "prd.json" -type f 2>/dev/null | while read prd_file; do
+    spec_path=$(dirname "$prd_file" | sed "s|^$PROJECT_ROOT/agent-os/specs/||")
     remaining=$(jq '[.userStories[] | select(.passes == false)] | length' "$prd_file" 2>/dev/null || echo "?")
     total=$(jq '.userStories | length' "$prd_file" 2>/dev/null || echo "?")
     echo "  $spec_path ($remaining/$total remaining)"

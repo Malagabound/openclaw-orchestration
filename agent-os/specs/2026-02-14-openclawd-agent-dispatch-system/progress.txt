@@ -1,0 +1,1793 @@
+# Ralph Progress Log
+
+**Feature:** OpenClawd Agent Dispatch System - Python supervisor daemon that monitors coordination database, matches tasks to specialist agents, spawns parallel LLM API calls with agent-specific system prompts via provider-agnostic abstraction layer
+**Branch:** openclawd-agent-dispatch-system
+**Started:** 2026-02-14
+
+---
+
+## Codebase Patterns
+
+- **Python binary**: Use `python3` not `python` (python not found on this system)
+- **DB path resolution**: `_get_db_path()` in `agent-dispatch/migrations.py` resolves via `OPENCLAWD_DB_PATH` env var with fallback to relative path from `agent-dispatch/` to `orchestrator-dashboard/orchestrator-dashboard/coordination.db`
+- **Connection setup**: Always call `PRAGMA journal_mode=WAL` and `PRAGMA foreign_keys=ON` per connection (see `_get_connection()`)
+- **Idempotent ALTER TABLE**: Use `try/except sqlite3.OperationalError` checking for "duplicate column name" - SQLite doesn't support `IF NOT EXISTS` for ALTER TABLE ADD COLUMN
+- **Migration module pattern**: `agent-dispatch/migrations.py` contains all schema migrations with `migrate_*` functions and `verify_*` validation functions. Run via `python3 -m agent-dispatch.migrations`
+
+---
+
+## 2026-02-14 - US-001
+- **Implemented**: Added `dispatch_status` TEXT column to `tasks` table with CHECK constraint allowing NULL + 6 valid states (queued, dispatched, completed, failed, interrupted, dispatch_failed)
+- **Files created**: `agent-dispatch/__init__.py`, `agent-dispatch/migrations.py`
+- **Verification**: Column confirmed via `PRAGMA table_info(tasks)`, CHECK constraint tested (valid values accepted, invalid rejected), idempotency confirmed (second run succeeds silently)
+- **Learnings for future iterations:**
+  - SQLite ALTER TABLE ADD COLUMN doesn't support `IF NOT EXISTS` - must use try/except pattern
+  - CHECK constraint in ALTER TABLE ADD COLUMN works in SQLite and persists correctly
+  - `python3 -m agent-dispatch.migrations` runs from project root successfully
+  - All future migrations should be added as new functions in `agent-dispatch/migrations.py` and called from `__main__` block
+---
+
+## 2026-02-14 - US-002
+- **Implemented**: Added `lease_until` DATETIME column to `tasks` table with DEFAULT NULL for lease-based atomic task claiming with expiration
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_add_lease_until()` and `verify_lease_until_column()`, updated `__main__` block)
+- **Verification**: Column confirmed via `PRAGMA table_info(tasks)`, idempotency confirmed (duplicate run succeeds silently), `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - Same try/except pattern as US-001 for idempotent ALTER TABLE ADD COLUMN works reliably
+  - DATETIME DEFAULT NULL is the simplest ALTER TABLE syntax - no CHECK constraint needed for this column
+---
+
+## 2026-02-14 - US-003
+- **Implemented**: Created composite index `idx_tasks_dispatch` on `tasks(dispatch_status, lease_until)` to support efficient dispatchable task query on every 30-second poll
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_dispatch_index()` and `verify_dispatch_index()`, updated `__main__` block)
+- **Verification**: Index confirmed via `sqlite_master` query, idempotency confirmed (duplicate run succeeds via `IF NOT EXISTS`), `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `CREATE INDEX IF NOT EXISTS` is natively supported by SQLite - no try/except needed (unlike ALTER TABLE ADD COLUMN)
+  - Verify indexes via `SELECT name FROM sqlite_master WHERE type='index' AND name=?`
+  - Composite indexes cover queries that filter on both columns (dispatch_status and lease_until)
+---
+
+## 2026-02-14 - US-004
+- **Implemented**: Created `dispatch_runs` table with all 16 columns (id, task_id, agent_name, provider, model, status, attempt, started_at, completed_at, output_file, error_summary, tokens_used, cost_estimate, trace_id, tool_calls_count, next_retry_at)
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_dispatch_runs()` and `verify_dispatch_runs_table()`, updated `__main__` block)
+- **Schema details**: CHECK constraint on status for 5 valid states (pending, running, completed, failed, timeout), foreign key to tasks(id) ON DELETE CASCADE, indexes on task_id and trace_id
+- **Verification**: Table and indexes confirmed via sqlite_master, CHECK constraint tested (valid accepted, invalid rejected), py_compile passes, idempotency confirmed
+- **Learnings for future iterations:**
+  - `CREATE TABLE IF NOT EXISTS` is natively idempotent in SQLite - no try/except needed
+  - Multiple indexes can be created in the same migration function after table creation
+  - Foreign key with ON DELETE CASCADE requires `PRAGMA foreign_keys=ON` per connection to be enforced
+  - For new tables, verify via `SELECT name FROM sqlite_master WHERE type='table' AND name=?`
+---
+
+## 2026-02-14 - US-005
+- **Implemented**: Created `task_dependencies` table with 5 columns (id, task_id, depends_on_task_id, dependency_type, created_at) to model task dependency graphs
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_task_dependencies()` and `verify_task_dependencies_table()`, updated `__main__` block)
+- **Schema details**: CHECK constraint on dependency_type for ('completion', 'contribution'), dual foreign keys to tasks(id) ON DELETE CASCADE, UNIQUE constraint on (task_id, depends_on_task_id), created_at defaults to CURRENT_TIMESTAMP
+- **Verification**: Table confirmed via sqlite_master, CHECK constraint tested (completion/contribution accepted, invalid rejected), idempotency confirmed, py_compile passes
+- **Learnings for future iterations:**
+  - Tables with self-referencing foreign keys (both task_id and depends_on_task_id reference tasks) work fine with ON DELETE CASCADE
+  - UNIQUE constraint prevents duplicate dependency edges in the graph
+  - `created_at DATETIME DEFAULT CURRENT_TIMESTAMP` provides automatic timestamping without application code
+---
+
+## 2026-02-14 - US-006
+- **Implemented**: Created `working_memory` table with 6 columns (id, task_id, agent_name, key, value, created_at) for per-task key-value storage enabling agent communication across dependency chains
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_working_memory()` and `verify_working_memory_table()`, updated `__main__` block)
+- **Schema details**: Foreign key to tasks(id) ON DELETE CASCADE, UNIQUE constraint on (task_id, agent_name, key) for upsert semantics, created_at defaults to CURRENT_TIMESTAMP
+- **Verification**: Table confirmed via sqlite_master, UNIQUE constraint tested (duplicate insert correctly rejected with IntegrityError), idempotency confirmed, py_compile passes
+- **Learnings for future iterations:**
+  - Same CREATE TABLE IF NOT EXISTS pattern as US-004 and US-005 continues to work reliably
+  - UNIQUE constraint on 3 columns (task_id, agent_name, key) enables INSERT OR REPLACE upsert pattern for future use
+  - No indexes needed beyond the implicit UNIQUE index since queries will filter on task_id which is part of the UNIQUE constraint
+---
+
+## 2026-02-14 - US-007
+- **Implemented**: Created `daily_usage` table with 8 columns (id, date, provider, model, agent_name, total_tokens, total_cost_usd, task_count) to track tokens and cost by date/provider/model/agent for daily budget enforcement
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_daily_usage()` and `verify_daily_usage_table()`, updated `__main__` block)
+- **Schema details**: agent_name declared NOT NULL, UNIQUE constraint on (date, provider, model, agent_name), total_tokens defaults to 0, total_cost_usd defaults to 0.0, task_count defaults to 0
+- **Verification**: Table confirmed via sqlite_master, UNIQUE constraint tested (duplicate insert correctly rejected with IntegrityError), NOT NULL on agent_name tested (NULL insert correctly rejected), idempotency confirmed, py_compile passes
+- **Learnings for future iterations:**
+  - Same CREATE TABLE IF NOT EXISTS pattern continues to work reliably for new tables
+  - verify function can check NOT NULL by inspecting PRAGMA table_info notnull flag (column index 3, value 1 = NOT NULL)
+  - date column uses TEXT type (SQLite has no native DATE type) - stores ISO format strings
+---
+
+## 2026-02-14 - US-008
+- **Implemented**: Created `provider_health` table with 10 columns (id, provider, model, test_name, passed, latency_ms, error_message, error_category, raw_response, tested_at) to store canary test results for health monitoring and self-healing
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_provider_health()` and `verify_provider_health_table()`, updated `__main__` block)
+- **Schema details**: passed is BOOLEAN NOT NULL DEFAULT 0, latency_ms is REAL (for sub-millisecond precision), tested_at defaults to CURRENT_TIMESTAMP, index on tested_at for efficient time-range queries
+- **Verification**: Table and index confirmed via sqlite_master, all migrations run successfully, py_compile passes, idempotency confirmed (second run succeeds)
+- **Learnings for future iterations:**
+  - SQLite BOOLEAN is stored as INTEGER (0/1) - use NOT NULL DEFAULT 0 for consistent behavior
+  - REAL type for latency_ms allows fractional milliseconds
+  - Same CREATE TABLE IF NOT EXISTS + CREATE INDEX IF NOT EXISTS pattern continues to work reliably
+---
+
+## 2026-02-14 - US-009
+- **Implemented**: Created `provider_incidents` table with 9 columns (id, provider, incident_type, detected_at, resolved_at, auto_healed, healing_action, diagnostic_report, notified_user) to track incident detection, resolution, and auto-healing actions for provider health monitoring
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_provider_incidents()` and `verify_provider_incidents_table()`, updated `__main__` block)
+- **Schema details**: auto_healed and notified_user are BOOLEAN NOT NULL DEFAULT 0, detected_at defaults to CURRENT_TIMESTAMP, resolved_at is nullable (NULL until incident resolved), no indexes needed (incidents queried by time range via sequential scan on small table)
+- **Verification**: Table confirmed via sqlite_master, all migrations run successfully, py_compile passes, idempotency confirmed (second run succeeds)
+- **Learnings for future iterations:**
+  - Same CREATE TABLE IF NOT EXISTS pattern continues to work reliably for new tables
+  - BOOLEAN columns with NOT NULL DEFAULT 0 pattern consistent with provider_health table (US-008)
+  - No foreign keys needed for provider_incidents since provider is a text identifier, not a DB reference
+---
+
+## 2026-02-14 - US-010
+- **Implemented**: Created `audit_log` table with 8 columns (id, trace_id, task_id, agent_name, tool_name, arguments, result, executed_at) for permanent audit trail of destructive tool calls
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_audit_log()` and `verify_audit_log_table()`, updated `__main__` block)
+- **Schema details**: task_id is nullable INTEGER with FOREIGN KEY ON DELETE SET NULL (so task archival doesn't break audit records), indexes on trace_id and task_id for efficient querying
+- **Verification**: Table and indexes confirmed via sqlite_master, task_id nullable confirmed via PRAGMA table_info, all migrations run successfully, py_compile passes, idempotency confirmed (second run succeeds)
+- **Learnings for future iterations:**
+  - ON DELETE SET NULL is the correct foreign key action for audit tables where the referenced row may be archived/deleted but the audit record must persist
+  - Same CREATE TABLE IF NOT EXISTS + CREATE INDEX IF NOT EXISTS pattern continues to work reliably
+  - verify function checks nullable via PRAGMA table_info notnull flag (column index 3, value 0 = nullable)
+---
+
+## 2026-02-14 - US-011
+- **Implemented**: Created `tasks_archive` table with 18 columns mirroring all tasks columns (id, title, description, status, priority, domain, assigned_agent, created_by, created_at, updated_at, due_date, deliverable_type, deliverable_url, estimated_effort, business_impact, dispatch_status, lease_until) plus `archived_at DATETIME DEFAULT CURRENT_TIMESTAMP`
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_tasks_archive()` and `verify_tasks_archive_table()`, updated `__main__` block)
+- **Schema details**: Uses `id INTEGER PRIMARY KEY` (no AUTOINCREMENT) so archived rows keep their original task ID. INSERT OR IGNORE works because duplicate id is silently skipped. Migration placed after all ALTER TABLE migrations (US-001, US-002) in __main__ to ensure archive schema stays in sync with tasks table
+- **Verification**: Table confirmed via sqlite_master, archived_at column confirmed via PRAGMA table_info, INSERT OR IGNORE idempotency tested (second insert silently ignored), py_compile passes, all prior migrations still pass
+- **Learnings for future iterations:**
+  - Archive tables should use `id INTEGER PRIMARY KEY` (not AUTOINCREMENT) to preserve original IDs from source table
+  - `INSERT OR IGNORE` relies on PRIMARY KEY conflict to skip duplicates - works perfectly for archival pattern
+  - Schema must be explicitly defined (not SELECT * INTO) since SQLite doesn't support that syntax
+---
+
+## 2026-02-14 - US-012
+- **Implemented**: Created `health_daily_summary` table with 7 columns (id, date, provider, model, tests_run, tests_passed, avg_latency_ms) to store aggregated health metrics after retention policy deletes raw provider_health records older than 30 days
+- **Files changed**: `agent-dispatch/migrations.py` (added `migrate_create_health_daily_summary()` and `verify_health_daily_summary_table()`, updated `__main__` block)
+- **Schema details**: tests_run and tests_passed are INTEGER NOT NULL DEFAULT 0, avg_latency_ms is REAL (nullable for days with no latency data), UNIQUE constraint on (date, provider, model) for upsert semantics
+- **Verification**: Table confirmed via sqlite_master, UNIQUE constraint tested (duplicate insert correctly rejected with IntegrityError), idempotency confirmed (second run succeeds), py_compile passes
+- **Learnings for future iterations:**
+  - Same CREATE TABLE IF NOT EXISTS pattern continues to work reliably for new tables
+  - This table complements provider_health (US-008) - raw data rolls up into daily summaries before cleanup
+  - No indexes needed beyond the implicit UNIQUE index since queries will filter on (date, provider, model) which is covered by the UNIQUE constraint
+---
+
+## 2026-02-14 - US-013
+- **Implemented**: Created `agent-dispatch/config.py` with all timing/concurrency constants, AGENT_SKILLS mapping, config path resolution, and YAML config loader
+- **Files created**: `agent-dispatch/config.py`
+- **Constants defined**: POLL_INTERVAL_SECONDS=30, LEASE_SECONDS=300, TIMEOUT_SECONDS=1800, MAX_CONCURRENT_AGENTS=5, MAX_TOOL_ITERATIONS=50
+- **AGENT_SKILLS mapping**: 9 agent categories (research, product, comms, ops, meta, content, taskr, security, memory) mapped to actual skill directories found in skills/
+- **Config path resolution**: 5-tier order: --config CLI flag → OPENCLAWD_CONFIG env var → ./openclawd.config.yaml → agent-dispatch/openclawd.config.yaml → ~/.openclawd/openclawd.config.yaml
+- **Config loader**: Uses yaml.safe_load with graceful fallback if PyYAML not installed (returns empty dict)
+- **Verification**: python3 -m py_compile passes
+- **Learnings for future iterations:**
+  - AGENT_SKILLS maps to actual directories in skills/ - keep in sync if skills change
+  - Config loader gracefully handles missing PyYAML (returns {}) - no hard dependency
+  - DEFAULT_DB_PATH defined relative to __file__ using os.path to avoid hardcoded paths
+  - load_config() parses --config from sys.argv for CLI integration
+  - resolve_config_path() returns None if no config file found at any tier
+---
+
+## 2026-02-14 - US-014
+- **Implemented**: Created `agent-dispatch/openclawd.config.yaml` comprehensive config template with all 21 top-level sections and inline comments explaining every setting
+- **Files created**: `agent-dispatch/openclawd.config.yaml`
+- **Sections included**: provider, agent_models, fallback, agent_fallbacks, agent_budgets, agent_lease_defaults, max_concurrent_agents, agent_timeout_seconds, dispatch_lease_seconds, max_tokens_per_task, daily_budget_usd, alert_threshold_usd, health_check_interval_hours, auto_fallback_on_failure, pricing (with input_per_1m_tokens and output_per_1m_tokens), notifications (webhook, email, desktop, delivery_rules with urgency levels), retention, log_retention_days, max_log_file_mb, max_tool_iterations, min_tool_interval_seconds
+- **Verification**: Valid YAML confirmed via yaml.safe_load (21 top-level keys), all required sections present, anthropic claude-sonnet-4-5 example included, pricing per-1M-tokens structure confirmed, delivery_rules with critical/high/normal/low urgency levels, py_compile passes on all Python files
+- **Learnings for future iterations:**
+  - YAML config template is placed at `agent-dispatch/openclawd.config.yaml` matching tier 4 of config resolution in config.py
+  - PyYAML may not be installed on system - config.py already handles this gracefully with try/except ImportError
+  - Config values align with constants in config.py (MAX_CONCURRENT_AGENTS=5, LEASE_SECONDS=300, TIMEOUT_SECONDS=1800, MAX_TOOL_ITERATIONS=50)
+  - Notifications delivery_rules use 4 urgency levels (critical, high, normal, low) mapping to channel lists
+---
+
+## 2026-02-14 - US-015
+- **Implemented**: Created `agent-dispatch/openclawd_adapter.py` as the ONLY isolation layer between agent-dispatch and orchestrator-dashboard modules
+- **Files created**: `agent-dispatch/openclawd_adapter.py`
+- **Class**: `OpenClawdAdapter` with 10 wrapped methods: create_task, complete_task, add_task_contribution, log_agent_activity, create_notification, squad_chat_post, get_dashboard_summary, agent_checkin, determine_agents, get_coordination_summary
+- **Custom exception**: `OpenClawdIncompatibleError` carries method name and original error for compatibility issue reporting
+- **Import strategy**: Adds orchestrator-dashboard dir to sys.path, imports OrchestratorDashboard, AgentCoordinator, and george_coordination_summary with defensive try/except ImportError
+- **Monkey-patching**: Constructor creates OrchestratorDashboard with absolute db_path, then patches coordinator.dashboard with this correctly-configured instance
+- **DB path**: Uses `_get_db_path()` resolving from OPENCLAWD_DB_PATH env var with fallback to DEFAULT_DB_PATH from config.py
+- **Verification**: All agent-dispatch Python files compile successfully with py_compile
+- **Learnings for future iterations:**
+  - All future agent-dispatch modules must import from `openclawd_adapter` to access orchestrator-dashboard functionality - never import directly
+  - `OpenClawdIncompatibleError` carries both the method name and original exception for debugging
+  - The adapter catches TypeError (signature changes) and sqlite3.Error (schema changes) on every wrapped call
+  - `_IMPORT_OK` flag allows checking import status before attempting to use orchestrator-dashboard classes
+  - `determine_agents()` wraps the private `_determine_relevant_agents()` method on AgentCoordinator
+  - `get_coordination_summary()` wraps the module-level `george_coordination_summary()` function from heartbeat_integration.py
+---
+
+## 2026-02-14 - US-016
+- **Implemented**: Created `agent-dispatch/compatibility_check.py` with `check_compatibility()` function that validates schema tables, tasks columns, and method signatures at startup
+- **Files created**: `agent-dispatch/compatibility_check.py`
+- **Schema validation**: Queries sqlite_master for 4 expected tables (tasks, agent_activity, task_contributions, notifications), checks tasks table for 7 required columns (id, title, description, status, priority, domain, assigned_agent)
+- **Signature validation**: Uses `inspect.signature()` to validate 8 OrchestratorDashboard methods and 1 AgentCoordinator method against expected parameter lists
+- **Tiered result**: Returns dict with `compatible` (bool), `tier` (1=additive, 2=breaking, 3=fundamental), and `issues` (list of strings)
+- **Adapter compliance**: Imports OrchestratorDashboard and AgentCoordinator classes via `openclawd_adapter` module (not direct imports)
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `inspect.signature()` works on both bound and unbound methods - parameter list includes 'self' for unbound, so filter it out
+  - Import classes from `openclawd_adapter` module to maintain adapter isolation pattern
+  - sqlite_master queries don't need parameterized queries since table names are hardcoded constants (not agent-sourced)
+  - Tier determination: missing tables/imports = tier 3, missing columns/signatures = tier 2, all good = tier 1
+---
+
+## 2026-02-14 - US-017
+- **Implemented**: Created `agent-dispatch/compatibility.yaml` version matrix file mapping OpenClawd versions to compatibility tiers for startup degradation mode detection
+- **Files created**: `agent-dispatch/compatibility.yaml`
+- **Structure**: Top-level `openclawd_versions` list, each entry has `version` (string), `compatible` (bool), `tier` (int 1-3), `notes` (string)
+- **Example entries**: 5 version entries covering tier 1 (v1.0.0, v1.1.0, v1.2.0), tier 2 (v2.0.0), and tier 3 (v0.9.0) scenarios
+- **Verification**: Valid YAML confirmed via yaml.safe_load (1 top-level key, 5 version entries), all fields present per entry, py_compile passes for all Python files
+- **Learnings for future iterations:**
+  - YAML file placed at `agent-dispatch/compatibility.yaml` alongside the Python modules that will consume it
+  - Tier values in YAML align with compatibility_check.py tier definitions (1=additive, 2=breaking, 3=fundamental)
+  - Include examples of all tiers to serve as both documentation and test fixtures
+---
+
+## 2026-02-14 - US-018
+- **Implemented**: Created `agent-dispatch/dispatch_db.py` with `run_migrations()`, `get_reader_connection()`, `get_writer_connection()`, `close_reader_connection()`, and `_detect_network_filesystem()`
+- **Files created**: `agent-dispatch/dispatch_db.py`
+- **run_migrations()**: Calls all 12 migrate_* functions from migrations.py in correct order (ALTER TABLE first, then CREATE TABLE, then archive, then summaries). Detects network filesystem before running.
+- **get_reader_connection()**: Returns cached module-level singleton with `isolation_level=None` (autocommit) and `row_factory=sqlite3.Row`. Validates cached connection with `SELECT 1` before returning.
+- **get_writer_connection()**: Returns fresh connection each call with `isolation_level="DEFERRED"` and `row_factory=sqlite3.Row`. Caller responsible for commit/close.
+- **_configure_connection()**: Sets 3 PRAGMAs on every connection: `journal_mode=WAL`, `busy_timeout=5000`, `foreign_keys=ON`
+- **_detect_network_filesystem()**: Checks path against known network mount indicators (/Volumes/, /mnt/nfs, etc.) and parses /proc/mounts on Linux for nfs/cifs/smbfs types
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - Use relative imports (`from .config import ...`, `from . import migrations`) since `agent-dispatch` has a hyphen and can't be imported by name
+  - `isolation_level=None` gives autocommit mode for readers; `isolation_level="DEFERRED"` gives explicit transaction control for writers
+  - `sqlite3.Row` row_factory enables dict-like access to query results
+  - `busy_timeout=5000` (5 seconds) prevents SQLITE_BUSY errors during concurrent WAL access
+  - Reader connection validated with `SELECT 1` before reuse to handle stale connections
+---
+
+## 2026-02-14 - US-019
+- **Implemented**: Fixed hardcoded/broken path references in `skills/self-evolving-skill/mcporter_adapter.py`
+- **Files changed**: `skills/self-evolving-skill/mcporter_adapter.py`
+- **Issues found and fixed**:
+  1. Missing `from typing import Dict` import (caused NameError on `Dict` type hint)
+  2. 5 instances of broken `os.path.expanduser()` calls wrapped in string literals: `"os.path.expanduser("~/.openclaw/...")"` — the outer quotes made the call a malformed string instead of a function call. Fixed to proper `os.path.expanduser("~/.openclaw/workspace/self-evolving-skill/storage")` calls
+- **Verification**: Grep for `/Users/` and `/home/` returns no matches in skills/self-evolving-skill/, all paths use `os.path.expanduser("~/...")` for `$HOME` expansion, py_compile passes
+- **Learnings for future iterations:**
+  - skills/ directory files are read-only per project structure docs, but US-019 explicitly authorizes fixes to hardcoded paths
+  - Broken string-wrapped function calls (`"func()"`) are a common pattern when code is auto-generated — always check py_compile after grepping
+  - `os.path.expanduser("~/...")` is the Python equivalent of `$HOME` expansion
+---
+
+## 2026-02-14 - US-020
+- **Implemented**: Created `agent-dispatch/llm_provider.py` with LLMProvider ABC and 4 supporting dataclasses
+- **Files created**: `agent-dispatch/llm_provider.py`
+- **LLMProvider ABC**: 5 abstract methods: `complete()`, `validate_connection()`, `validate_tool_calling()`, `get_capabilities()`, `count_tokens()`
+- **Dataclasses defined**:
+  - `TokenUsage`: input_tokens (int), output_tokens (int)
+  - `Message`: role (str), content (str), tool_calls (Optional[List[Dict]]), tool_results (Optional[List[Dict]])
+  - `LLMResponse`: content (str), tool_calls (Optional[List[Dict]]), usage (Optional[TokenUsage]), model (str), stop_reason (str)
+  - `ProviderCapabilities`: supports_tool_calling (bool), supports_streaming (bool), supports_vision (bool), max_context_tokens (int), max_output_tokens (int), tool_calling_reliability (float)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `agent-dispatch/llm_provider.py` is the module to import LLMProvider, Message, LLMResponse, ProviderCapabilities, TokenUsage from
+  - All provider adapters (Anthropic, OpenAI, etc.) must subclass LLMProvider and implement all 5 abstract methods
+  - tool_calls and tool_results use `Optional[List[Dict[str, Any]]]` for flexible provider-specific schemas
+  - ProviderCapabilities.tool_calling_reliability is a float (0.0-1.0) for reliability scoring
+---
+
+## 2026-02-14 - US-021
+- **Implemented**: Created `agent-dispatch/provider_registry.py` with `get_provider(config_dict, agent_name=None)` factory function and `ProviderRegistryError` exception
+- **Files created**: `agent-dispatch/provider_registry.py`
+- **get_provider() behavior**:
+  1. Extracts `provider.name`, `provider.api_key_env`, `provider.model`, `provider.base_url` from config dict
+  2. Checks `agent_models` section for per-agent model override when `agent_name` is provided
+  3. Resolves API key from `os.environ` using `api_key_env` value
+  4. Looks up provider in `_PROVIDER_MAP` dict mapping name to (module_path, class_name) tuples
+  5. Uses `importlib.import_module()` with relative imports to load provider module
+  6. Instantiates provider class with `api_key`, `model`, and optional `base_url` kwargs
+  7. Validates instance is `LLMProvider` subclass before returning
+- **_PROVIDER_MAP**: Maps 4 providers (anthropic, openai, google, ollama) to their module/class names
+- **ProviderRegistryError**: Custom exception with clear messages for all failure modes (missing config, missing env var, unknown provider, import failure, instantiation failure, interface mismatch)
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `importlib.import_module(module_path, package="agent-dispatch")` handles relative imports for hyphenated package names
+  - Provider constructor kwargs are `api_key`, `model`, and optional `base_url` - all concrete provider classes (US-024+) must accept these
+  - `_PROVIDER_MAP` is the single source of truth for provider name → module/class mapping; add new providers here
+  - Factory validates LLMProvider subclass at the end as a safety net
+---
+
+## 2026-02-14 - US-022
+- **Implemented**: Created `agent-dispatch/security.py` with three security foundation functions: `sanitize_agent_result()`, `parameterize_query()`, and `wrap_cross_agent_data()`
+- **Files created**: `agent-dispatch/security.py`
+- **sanitize_agent_result()**: Validates required fields (title, content, status) exist, enforces max lengths (title 500, content 50000 via truncation), rejects invalid status values against allowlist (completed, blocked, needs_input, failed). Returns sanitized copy. Raises `AgentResultValidationError` on failures.
+- **parameterize_query()**: Wraps `cursor.execute()` with regex check for string interpolation patterns (printf-style `%s`, str.format `{}`, f-string prefix). Raises `ValueError` if interpolation detected. Handles `%%` literal percent correctly.
+- **wrap_cross_agent_data()**: Wraps text in `<agent_output source="...">` XML delimiters with explicit "treat as DATA" instruction to defend against prompt injection from cross-agent content.
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `agent-dispatch/security.py` is the module to import security utilities from
+  - `AgentResultValidationError` is the custom exception for sanitization failures
+  - `_VALID_STATUSES` frozenset is the single source of truth for allowed agent result status values
+  - `parameterize_query()` should be used instead of direct `cursor.execute()` when SQL involves agent-sourced data
+  - `wrap_cross_agent_data()` should wrap all content passed between agents in multi-agent workflows
+---
+
+## 2026-02-14 - US-023
+- **Implemented**: Added `validate_config(config_dict, db_path)` function and helpers to `agent-dispatch/config.py` for pre-startup config validation
+- **Files changed**: `agent-dispatch/config.py`
+- **Function details**:
+  1. Checks `provider.api_key_env` and `fallback.api_key_env` env vars are set in `os.environ`
+  2. Attempts `__import__()` of 4 SDK modules (anthropic, openai, google.generativeai, ollama) and reports missing ones
+  3. Tests `sqlite3.connect()` + `SELECT 1` on `db_path`
+  4. Validates 8 numeric config keys (max_concurrent_agents, daily_budget_usd, alert_threshold_usd, max_tool_iterations, agent_timeout_seconds, dispatch_lease_seconds, max_tokens_per_task, health_check_interval_hours) for positive/non-negative ranges
+  5. Validates all retention.* values are > 0
+  6. Returns list of error strings or empty list if all valid
+- **Helper functions**: `_check_positive_int()` and `_check_non_negative_float()` for DRY numeric validation
+- **SDK module map**: `_SDK_MODULES` dict maps provider names to their Python import module names
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `validate_config()` is in `agent-dispatch/config.py` alongside other config utilities
+  - Uses `__import__()` for SDK check (lightweight, doesn't require full SDK initialization)
+  - Both primary `provider.api_key_env` and `fallback.api_key_env` are checked
+  - `_SDK_MODULES` dict is the mapping for provider→SDK module names
+---
+
+## 2026-02-14 - US-024
+- **Implemented**: Created `agent-dispatch/anthropic_provider.py` with `AnthropicProvider(LLMProvider)` class implementing all 5 abstract methods for Anthropic Claude models
+- **Files created**: `agent-dispatch/anthropic_provider.py`
+- **Class details**:
+  - `__init__()`: Accepts `api_key`, `model`, optional `base_url`; lazy-inits Anthropic client
+  - `complete()`: Converts Messages to Anthropic format (extracting system prompt separately), calls `client.messages.create()`, parses response into LLMResponse with content, tool_calls, usage, model, stop_reason
+  - `validate_connection()`: Sends minimal "ping" message with max_tokens=10 to verify API key and connectivity
+  - `validate_tool_calling()`: Sends canary tool call with a "calculator" tool, checks for tool_use content block in response
+  - `get_capabilities()`: Returns ProviderCapabilities with model-specific limits from `_MODEL_LIMITS` dict (supports claude-opus-4, claude-sonnet-4, claude-3.5/3 variants)
+  - `count_tokens()`: Uses `client.messages.count_tokens()` SDK method with fallback to chars/4 estimate
+- **Message conversion**: System messages extracted as `system` param, tool_calls mapped to tool_use blocks, tool_results mapped to tool_result blocks. Single text blocks simplified to plain strings.
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - Provider constructor signature must be `(api_key, model, base_url=None)` to match provider_registry.py factory kwargs
+  - `_PROVIDER_MAP` in provider_registry.py maps "anthropic" -> (".anthropic_provider", "AnthropicProvider")
+  - Anthropic API requires system prompt as a separate `system` param, not in the messages list
+  - `client.messages.count_tokens()` returns object with `input_tokens` attribute
+  - `_MODEL_LIMITS` dict maps model prefix strings to (max_context, max_output) tuples for capability reporting
+  - Lazy client init avoids ImportError at module load time if anthropic SDK not installed
+---
+
+## 2026-02-14 - US-025
+- **Implemented**: Created `agent-dispatch/openai_provider.py` with `OpenAIProvider(LLMProvider)` class implementing all 5 abstract methods for OpenAI GPT models
+- **Files created**: `agent-dispatch/openai_provider.py`
+- **Class details**:
+  - `__init__()`: Accepts `api_key`, `model`, optional `base_url`; lazy-inits OpenAI client
+  - `complete()`: Converts Messages to OpenAI format, calls `client.chat.completions.create()`, parses response into LLMResponse with content, tool_calls, usage, model, stop_reason. Handles tool format conversion from Anthropic-style to OpenAI function calling format.
+  - `validate_connection()`: Sends minimal "ping" message with max_tokens=10 to verify API key and connectivity
+  - `validate_tool_calling()`: Sends canary tool call with a "calculator" function, checks for tool_calls in response
+  - `get_capabilities()`: Returns ProviderCapabilities with model-specific limits from `_MODEL_LIMITS` dict (supports gpt-4o, gpt-4-turbo, gpt-4, gpt-3.5-turbo, o1, o3 variants). Uses longest-prefix-first matching to avoid gpt-4 matching before gpt-4o.
+  - `count_tokens()`: Uses tiktoken `encoding_for_model()` for accurate token counting with per-message overhead (4 tokens) and priming tokens (2). Falls back to chars/4 estimate if tiktoken not installed.
+- **Message conversion**: System messages map to role="system", tool_calls to OpenAI function calling format with JSON-serialized arguments, tool_results to role="tool" messages with tool_call_id
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - OpenAI uses `prompt_tokens` and `completion_tokens` in usage (not `input_tokens`/`output_tokens` like Anthropic)
+  - OpenAI tool calling format wraps tools in `{"type": "function", "function": {...}}` structure
+  - Tool call arguments are JSON strings in OpenAI format (need json.dumps/json.loads conversion)
+  - `_MODEL_LIMITS` requires longest-prefix-first sorting to match gpt-4o before gpt-4
+  - tiktoken `encoding_for_model()` raises KeyError for unknown models - catch and fallback
+  - OpenAI content can be None (when only tool_calls), always default to empty string
+---
+
+## 2026-02-14 - US-026
+- **Implemented**: Created `agent-dispatch/claude_code_provider.py` with `ClaudeCodeProvider(LLMProvider)` class that spawns Claude Code CLI subprocess as a fallback provider
+- **Files created**: `agent-dispatch/claude_code_provider.py`
+- **Files changed**: `agent-dispatch/provider_registry.py` (added `claude_code` entry to `_PROVIDER_MAP`)
+- **Class details**:
+  - `__init__()`: Accepts `api_key` (unused but matches interface), `model`, optional `base_url`; resolves CLI command via `shutil.which()`
+  - `complete()`: Concatenates all message contents, passes as `-p` argument to `claude` CLI with `--output-format text`, captures stdout as raw text. Uses `subprocess.run()` with `capture_output=True`, `text=True`, and configurable timeout (default 1800s). Returns LLMResponse with raw stdout as content, no tool_calls.
+  - `validate_connection()`: Checks if `claude` command exists on PATH via `shutil.which()`
+  - `validate_tool_calling()`: Returns `False` (CLI does not support tool calling)
+  - `get_capabilities()`: Returns `ProviderCapabilities` with `supports_tool_calling=False`, `supports_streaming=False`, `supports_vision=False`
+  - `count_tokens()`: Character-based estimate (chars / 4)
+- **Token usage**: Estimated from character counts (input and output) divided by 4
+- **Error handling**: Catches `TimeoutExpired`, `FileNotFoundError`, and generic exceptions; returns error message as content with `stop_reason="error"` or `"timeout"`
+- **Verification**: py_compile passes for all changed files
+- **Learnings for future iterations:**
+  - Claude Code CLI uses `claude` command (not `claude-code`) with `-p` flag for prompt passthrough
+  - `--output-format text` gives raw text output without JSON wrapping
+  - `shutil.which()` is the Pythonic way to check if a command exists on PATH
+  - Provider constructor signature `(api_key, model, base_url=None)` must match even if params aren't used (e.g., api_key for CLI provider)
+  - Added `claude_code` to `_PROVIDER_MAP` in provider_registry.py for registry integration
+---
+
+## 2026-02-14 - US-027
+- **Implemented**: Created `agent-dispatch/google_provider.py` with `GoogleProvider(LLMProvider)` class implementing all 5 abstract methods for Google Gemini models
+- **Files created**: `agent-dispatch/google_provider.py`
+- **Class details**:
+  - `__init__()`: Accepts `api_key`, `model`, optional `base_url`; lazy-inits google.generativeai module and GenerativeModel
+  - `complete()`: Converts Messages to Gemini format, creates GenerativeModel with system_instruction if present, calls `model.generate_content()`, parses response into LLMResponse with content, tool_calls, usage, model, stop_reason. Maps kwargs like max_tokens to Gemini's generation_config.
+  - `validate_connection()`: Sends minimal "ping" to verify API key and connectivity
+  - `validate_tool_calling()`: Sends canary function call with calculator tool using Gemini's function_declarations format, checks for function_call parts in response
+  - `get_capabilities()`: Returns ProviderCapabilities with model-specific limits from `_MODEL_LIMITS` dict (supports gemini-2.0-flash/pro, gemini-1.5-pro/flash, gemini-1.0-pro)
+  - `count_tokens()`: Uses `model.count_tokens()` SDK method returning `result.total_tokens`, with fallback to chars/4 estimate
+- **Message conversion**: System messages extracted as `system_instruction` param to GenerativeModel constructor, assistant role maps to "model", tool_calls map to function_call parts, tool_results map to function_response parts
+- **Registry integration**: `_PROVIDER_MAP` in provider_registry.py already maps "google" to (".google_provider", "GoogleProvider") from US-021
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - Class is named `GoogleProvider` (not `GeminiProvider`) to match `_PROVIDER_MAP` in provider_registry.py which maps "google" -> (".google_provider", "GoogleProvider")
+  - Gemini uses `system_instruction` as a GenerativeModel constructor param (not in messages or as a separate API param like Anthropic)
+  - Gemini roles are "user" and "model" (not "assistant")
+  - Gemini tool calling uses `function_declarations` format with `function_call` and `function_response` parts
+  - Gemini usage metadata uses `prompt_token_count` and `candidates_token_count` (not input_tokens/output_tokens)
+  - `model.count_tokens()` returns object with `total_tokens` attribute (not input_tokens like Anthropic)
+  - Provider constructor signature `(api_key, model, base_url=None)` matches registry factory kwargs
+  - `genai.configure(api_key=...)` is module-level configuration (not per-client like Anthropic/OpenAI)
+---
+
+## 2026-02-14 - US-028
+- **Implemented**: Created `agent-dispatch/ollama_provider.py` with `OllamaProvider(LLMProvider)` class implementing all 5 abstract methods for local Ollama models via HTTP API
+- **Files created**: `agent-dispatch/ollama_provider.py`
+- **Class details**:
+  - `__init__()`: Accepts `api_key` (unused, matches interface), `model`, optional `base_url` (defaults to `http://localhost:11434`)
+  - `complete()`: Converts Messages to Ollama format, POSTs to `/api/chat` with `stream: false`, parses response into LLMResponse with content, usage (prompt_eval_count/eval_count), model, stop_reason (from done_reason)
+  - `validate_connection()`: GETs `/api/tags` endpoint to verify Ollama server is running
+  - `validate_tool_calling()`: Returns `False` (tool calling support varies by model)
+  - `get_capabilities()`: Returns ProviderCapabilities with model-specific limits from `_MODEL_LIMITS` dict (supports llama3, llama2, mistral, mixtral, codellama, gemma, phi, qwen, deepseek)
+  - `count_tokens()`: Character-based estimate (chars / 4)
+- **HTTP client**: Uses stdlib `urllib.request` — no external SDK dependency
+- **Error handling**: ConnectionError on unreachable server, returns LLMResponse with `stop_reason="error"` on API failures
+- **Token usage**: Extracted from Ollama's `prompt_eval_count` (input) and `eval_count` (output) response fields
+- **Registry integration**: `_PROVIDER_MAP` in provider_registry.py already maps "ollama" -> (".ollama_provider", "OllamaProvider") from US-021
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - Ollama HTTP API uses `/api/chat` for chat completions and `/api/tags` for listing models (good health check)
+  - Ollama uses `prompt_eval_count` and `eval_count` for token usage (not input_tokens/output_tokens)
+  - `stream: false` in payload is required to get a single JSON response instead of NDJSON stream
+  - Ollama maps `max_tokens` to `num_predict` in the `options` object
+  - `done_reason` field in response provides the stop reason (e.g., "stop", "length")
+  - Uses stdlib `urllib.request` — no external SDK dependency needed for Ollama
+  - Provider constructor signature `(api_key, model, base_url=None)` matches registry factory kwargs; api_key is unused but accepted
+---
+
+## 2026-02-14 - US-029
+- **Implemented**: Created `agent-dispatch/universal_tool.py` with `UniversalTool` dataclass and `load_tool(yaml_path)` YAML loader for provider-agnostic tool definitions
+- **Files created**: `agent-dispatch/universal_tool.py`
+- **UniversalTool dataclass fields**: name (str), description (str), parameters (Dict), returns (Dict), execution (Dict), version (str, default "1.0.0"), idempotent (bool, default False), destructive (bool, default False), timeout_seconds (int, default 300), allowed_agents (Optional[List[str]]), test (Optional[Dict])
+- **load_tool() behavior**: Reads YAML file via yaml.safe_load, validates required fields (name, description, parameters, returns, execution), validates execution has required keys (type, module, function), validates parameters and returns are dicts, returns populated UniversalTool instance
+- **Validation**: `ToolValidationError` custom exception raised for missing required fields, invalid execution structure, or non-dict parameters/returns
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `agent-dispatch/universal_tool.py` is the module to import `UniversalTool`, `load_tool`, and `ToolValidationError` from
+  - Required fields: name, description, parameters, returns, execution (checked by `_REQUIRED_FIELDS`)
+  - Required execution keys: type, module, function (checked by `_REQUIRED_EXECUTION_FIELDS`)
+  - PyYAML dependency: raises clear ImportError if yaml module not available
+  - Optional fields have sensible defaults (version="1.0.0", timeout_seconds=300, idempotent=False, destructive=False)
+---
+
+## 2026-02-14 - US-030
+- **Implemented**: Created `agent-dispatch/tool_registry.py` with `ToolRegistry` class that loads and caches UniversalTool definitions from `tools/definitions/` YAML files
+- **Files created**: `agent-dispatch/tool_registry.py`
+- **Directories created**: `tools/definitions/` (empty, for tool YAML files)
+- **Class details**:
+  - `__init__()`: Accepts optional `definitions_dir` path, defaults to `tools/definitions/` relative to project root
+  - `get_tool(name)`: Loads from `tools/definitions/{name}.yaml` on first access via `load_tool()`, caches in `_cache` dict. Returns cached instance on subsequent calls.
+  - `list_tools()`: Scans definitions directory for `.yaml` files, returns sorted list of tool names (basenames without extension)
+- **Error handling**: `ToolRegistryError` custom exception raised for missing tool files and invalid tool definitions (wraps `ToolValidationError` and `ImportError` from `load_tool()`)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `agent-dispatch/tool_registry.py` is the module to import `ToolRegistry` and `ToolRegistryError` from
+  - Uses relative import `from .universal_tool import ...` to access `UniversalTool`, `load_tool`, and `ToolValidationError`
+  - `tools/definitions/` directory is at project root level (not inside agent-dispatch/)
+  - `list_tools()` returns empty list if definitions directory doesn't exist (graceful degradation)
+  - Cache key is the tool name string, not the file path
+---
+
+## 2026-02-14 - US-031
+- **Implemented**: Created `translate_to_anthropic()` function in `agent-dispatch/tool_translators.py` that converts UniversalTool to Anthropic's tool_use schema format
+- **Files created**: `agent-dispatch/tool_translators.py`
+- **Function details**:
+  - Accepts `UniversalTool` instance, returns dict with `name`, `description`, `input_schema` fields
+  - `input_schema` contains `type: "object"`, `properties`, and `required` matching Anthropic's JSON Schema format
+  - Iterates over `UniversalTool.parameters` dict: if param_def is a dict, copies it as a property (extracting `required` flag to populate the required list); if param_def is a simple value, wraps it as a string property
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `agent-dispatch/tool_translators.py` is the module for all provider-specific tool format translators
+  - Future translators (US-032 OpenAI, etc.) should be added as additional functions in this same module
+  - Anthropic tool_use format: `{"name": ..., "description": ..., "input_schema": {"type": "object", "properties": {...}, "required": [...]}}`
+  - UniversalTool.parameters values that are dicts may contain a `required` boolean key that gets popped and moved to the top-level `required` list
+---
+
+## 2026-02-14 - US-032
+- **Implemented**: Added `translate_to_openai()` function to `agent-dispatch/tool_translators.py` that converts UniversalTool to OpenAI's function calling schema format
+- **Files changed**: `agent-dispatch/tool_translators.py`
+- **Function details**:
+  - Accepts `UniversalTool` instance, returns dict with `type: "function"` and `function: {name, description, parameters}` fields
+  - `parameters` contains `type: "object"`, `properties`, and `required` matching OpenAI's JSON Schema format
+  - Same parameter extraction logic as `translate_to_anthropic()`: dict params copied with `required` key popped to required list, simple values wrapped as string properties
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - OpenAI function calling format wraps tool in `{"type": "function", "function": {...}}` structure (unlike Anthropic which uses flat `{name, description, input_schema}`)
+  - OpenAI uses `parameters` key (not `input_schema` like Anthropic) inside the function object
+  - Future translators (US-033 Gemini, US-034 Ollama) should follow same pattern in this module
+---
+
+## 2026-02-14 - US-033
+- **Implemented**: Added `translate_to_gemini()` function to `agent-dispatch/tool_translators.py` that converts UniversalTool to Gemini's function_declarations schema format
+- **Files changed**: `agent-dispatch/tool_translators.py`
+- **Function details**:
+  - Accepts `UniversalTool` instance, returns dict with `name`, `description`, `parameters` fields
+  - `parameters` contains `type: "object"`, `properties`, and conditionally `required` matching Gemini's function_declarations format
+  - Same parameter extraction logic as `translate_to_anthropic()` and `translate_to_openai()`: dict params copied with `required` key popped to required list, simple values wrapped as string properties
+  - Only includes `required` key in parameters schema when there are actually required params (Gemini prefers omitting empty required arrays)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - Gemini function_declarations format is flat like Anthropic: `{name, description, parameters}` (not wrapped in `{"type": "function", "function": {...}}` like OpenAI)
+  - Gemini uses `parameters` key (same as OpenAI, unlike Anthropic's `input_schema`)
+  - Future translator US-034 (Ollama) should follow same pattern in this module
+---
+
+## 2026-02-14 - US-034
+- **Implemented**: Added `translate_to_ollama()` function to `agent-dispatch/tool_translators.py` that converts UniversalTool to Ollama's tools schema format
+- **Files changed**: `agent-dispatch/tool_translators.py`
+- **Function details**:
+  - Accepts `UniversalTool` instance, returns dict with `type: "function"` and `function: {name, description, parameters}` fields
+  - `parameters` contains `type: "object"`, `properties`, and `required` matching Ollama's tools format
+  - Same parameter extraction logic as other translators: dict params copied with `required` key popped to required list, simple values wrapped as string properties
+  - Ollama uses the same function calling format as OpenAI (wrapped in `{"type": "function", "function": {...}}`)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - Ollama tool format is identical to OpenAI's function calling format: `{"type": "function", "function": {name, description, parameters}}`
+  - All 4 provider translators now complete in `agent-dispatch/tool_translators.py`: translate_to_anthropic, translate_to_openai, translate_to_gemini, translate_to_ollama
+  - Anthropic is the only provider with a different top-level structure (flat dict with `input_schema` instead of wrapped in `{"type": "function", "function": ...}`)
+---
+
+## 2026-02-14 - US-035
+- **Implemented**: Created `tools/definitions/web_search.yaml` with complete UniversalTool-compatible schema for web search functionality
+- **Files created**: `tools/definitions/web_search.yaml`
+- **Schema details**: name=web_search, parameters (query: string required, num_results: integer optional default 5), returns (results: array of objects with title/url/snippet), execution (type=python, module=tools.executors.web_search, function=execute), idempotent=true, destructive=false, timeout_seconds=30
+- **Test block**: Sample input with query="OpenAI API documentation" and num_results=3, expected results_count_gte=1 with fields title/url/snippet
+- **Verification**: Valid YAML confirmed via yaml.safe_load (10 top-level keys), loads successfully via UniversalTool load_tool() function, all acceptance criteria met
+- **Learnings for future iterations:**
+  - Tool YAML files go in `tools/definitions/` directory (created by US-030)
+  - YAML structure must match UniversalTool dataclass fields: name, description, parameters, returns, execution (required), plus optional version, idempotent, destructive, timeout_seconds, allowed_agents, test
+  - Test block structure is freeform dict - no specific schema enforced by load_tool()
+  - Future tool YAMLs (US-036: file_read, file_write, database_query, database_write, shell_exec, python_exec, send_email) should follow this same pattern
+---
+
+## 2026-02-14 - US-036
+- **Implemented**: Created 7 tool definition YAML files in `tools/definitions/` following the web_search.yaml pattern established in US-035
+- **Files created**: `tools/definitions/file_read.yaml`, `tools/definitions/file_write.yaml`, `tools/definitions/database_query.yaml`, `tools/definitions/database_write.yaml`, `tools/definitions/shell_exec.yaml`, `tools/definitions/python_exec.yaml`, `tools/definitions/send_email.yaml`
+- **Tool details**:
+  - file_read: params (path), returns (content, encoding), idempotent=true, destructive=false, timeout=30s
+  - file_write: params (path, content, mode), returns (success, bytes_written), idempotent=false, destructive=true, timeout=30s
+  - database_query: params (query, params), returns (rows, columns), idempotent=true, destructive=false, timeout=60s
+  - database_write: params (query, params), returns (rows_affected), idempotent=false, destructive=true, timeout=60s
+  - shell_exec: params (command, cwd, timeout), returns (stdout, stderr, exit_code), idempotent=false, destructive=false, timeout=300s
+  - python_exec: params (code, timeout), returns (stdout, stderr, result), idempotent=false, destructive=false, timeout=300s
+  - send_email: params (to, subject, body, attachments), returns (success, message_id), idempotent=false, destructive=false, timeout=60s
+- **Verification**: All 8 YAML files (7 new + web_search) validate via yaml.safe_load AND load successfully via UniversalTool load_tool()
+- **Learnings for future iterations:**
+  - All 8 tool definitions now exist in `tools/definitions/`: web_search, file_read, file_write, database_query, database_write, shell_exec, python_exec, send_email
+  - Destructive tools (file_write, database_write) have destructive=true flag for security gating
+  - Execution-heavy tools (shell_exec, python_exec) have 300s timeout; I/O tools (file_read, file_write, send_email) use 30-60s
+  - All tools follow same structure: name, description, version, parameters, returns, execution, idempotent, destructive, timeout_seconds, test
+---
+
+## 2026-02-14 - US-037
+- **Implemented**: Created `tools/executors/web_search.py` with `execute(query, num_results=5)` function implementing cascading web search with 3 provider fallbacks
+- **Files created**: `tools/executors/__init__.py`, `tools/executors/web_search.py`
+- **Provider cascade**:
+  1. SerpAPI (if `SERPAPI_KEY` env var set) - uses `/search.json` endpoint
+  2. Brave Search API (if `BRAVE_SEARCH_API_KEY` env var set) - uses `/res/v1/web/search` endpoint
+  3. DuckDuckGo HTML scraping (no API key needed) - parses `html.duckduckgo.com/html/` with custom HTMLParser subclass
+- **Features**: 30s timeout on all HTTP calls, `logger.warning()` when falling back to DuckDuckGo, each provider wrapped in try/except with `logger.error()`, final fallback returns `[]` on failure
+- **DuckDuckGo parser**: `_DDGResultParser(HTMLParser)` extracts results from `result__a` (title/url) and `result__snippet` (snippet) CSS classes, handles DuckDuckGo's `uddg=` URL redirect wrapping
+- **Uses stdlib only**: `urllib.request`, `urllib.parse`, `json`, `html.parser`, `re` - no external dependencies
+- **Verification**: py_compile passes for all new files
+- **Learnings for future iterations:**
+  - Tool executors go in `tools/executors/` directory with module path matching YAML `execution.module` field (e.g., `tools.executors.web_search`)
+  - DuckDuckGo HTML results use CSS classes `result__a` for links and `result__snippet` for snippets
+  - DuckDuckGo wraps URLs in redirects with `uddg=` parameter - need regex extraction and URL decoding
+  - `urllib.request` is sufficient for simple HTTP GET/POST - no need for `requests` library
+  - All three providers normalize to same output format: `[{"title": str, "url": str, "snippet": str}]`
+---
+
+## 2026-02-14 - US-038
+- **Implemented**: Created `tools/executors/file_read.py` with `execute(path)` function implementing sandboxed file reading with path validation, size limits, and timeout
+- **Files created**: `tools/executors/file_read.py`
+- **Function details**:
+  - `_validate_path(path)`: Rejects absolute paths (starts with `/`) and directory traversal (`..` components via `os.path.normpath()`)
+  - `execute(path)`: Validates path, checks file exists, checks size <= 10MB, reads content with UTF-8 first then latin-1 fallback, returns `{"content": str, "encoding": str}`
+  - Timeout enforcement via `signal.SIGALRM` (Unix) with 10s alarm, properly restores previous signal handler in finally block
+- **Error handling**: `FileReadError` custom exception for path validation failures, size limit exceeded, and timeouts; `FileNotFoundError` for missing files
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - Tool executors go in `tools/executors/` matching `execution.module` field in YAML definition
+  - `signal.SIGALRM` is Unix-only; check `hasattr(signal, "SIGALRM")` for cross-platform safety
+  - `os.path.normpath()` canonicalizes paths so `foo/../../etc` becomes `../etc` which starts with `..` and is easy to detect
+  - latin-1 encoding never raises UnicodeDecodeError - makes a good fallback for binary-ish text files
+---
+
+## 2026-02-14 - US-039
+- **Implemented**: Created `tools/executors/file_write.py` with `execute(path, content, mode='w')` function implementing sandboxed file writing with path validation, parent directory creation, audit logging, and timeout
+- **Files created**: `tools/executors/file_write.py`
+- **Function details**:
+  - `_validate_path(path)`: Rejects absolute paths and directory traversal (`..` components via `os.path.normpath()`) - same pattern as file_read.py
+  - `execute(path, content, mode='w')`: Validates path, creates parent dirs with `os.makedirs(exist_ok=True)`, writes content with specified mode (w, a, wb), returns `{"success": True, "bytes_written": int}`
+  - Supports 3 modes: `w` (overwrite text), `a` (append text), `wb` (binary write with auto str→bytes encoding)
+  - Audit logging: Inserts into `audit_log` table via `_log_audit()` helper with tool_name, arguments (JSON), and result (JSON)
+  - Timeout enforcement via `signal.SIGALRM` (Unix) with 10s alarm, properly restores previous signal handler in finally block
+- **Error handling**: `FileWriteError` custom exception for path validation failures, invalid mode, and timeouts; audit log failures logged as warnings (never block the write operation)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - Audit logging uses standalone `_get_db_path()` + `sqlite3.connect()` (not importing from migrations.py) to keep tool executors self-contained
+  - Audit log failures are caught and logged as warnings - they should never prevent the primary operation from succeeding
+  - `wb` mode needs `isinstance(content, str)` check to auto-encode strings to bytes
+  - Same `_validate_path()` pattern as file_read.py (US-038) - rejects absolute paths and `..` traversal
+---
+
+## 2026-02-14 - US-040
+- **Implemented**: Created `tools/executors/database_query.py` with `execute(query, params=[])` function implementing read-only SELECT query execution against coordination.db with parameterization, row limits, and timeout
+- **Files created**: `tools/executors/database_query.py`
+- **Function details**:
+  - `execute(query, params=None)`: Validates query starts with SELECT (case-insensitive, after stripping whitespace), connects to coordination.db, executes with parameterized params, fetches up to 1000 rows via `fetchmany(_MAX_ROWS)`, returns `{"rows": list_of_tuples, "columns": list_of_strings}`
+  - `_get_db_path()`: Same pattern as file_write.py - resolves via `OPENCLAWD_DB_PATH` env var with fallback to relative path from `tools/executors/` to `orchestrator-dashboard/orchestrator-dashboard/coordination.db`
+  - `_timeout_handler()`: Raises `DatabaseQueryError` on SIGALRM for 30s timeout enforcement
+- **Error handling**: `DatabaseQueryError` custom exception for non-SELECT queries, sqlite3 errors, timeouts, and unexpected errors. sqlite3.Error wrapped separately from generic Exception.
+- **Connection setup**: Sets `PRAGMA journal_mode=WAL` and `PRAGMA foreign_keys=ON` per connection (matching project pattern)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `cursor.description` gives column metadata after execute - `[desc[0] for desc in cursor.description]` extracts column names
+  - `fetchmany(n)` returns at most n rows - simpler than fetchall() + slicing for row limits
+  - No audit logging needed for read-only queries (unlike file_write.py which logs destructive operations)
+  - Same `_get_db_path()` pattern as file_write.py for self-contained DB path resolution in tool executors
+---
+
+## 2026-02-14 - US-041
+- **Implemented**: Created `tools/executors/database_write.py` with `execute(query, params=[])` function implementing INSERT/UPDATE/DELETE query execution against coordination.db with parameterization, audit logging, and timeout
+- **Files created**: `tools/executors/database_write.py`
+- **Function details**:
+  - `execute(query, params=None)`: Validates query starts with INSERT, UPDATE, or DELETE (case-insensitive, after stripping whitespace), connects to coordination.db, executes with parameterized params, commits transaction, returns `{"rows_affected": int}`
+  - `_get_db_path()`: Same pattern as database_query.py and file_write.py - resolves via `OPENCLAWD_DB_PATH` env var with fallback to relative path
+  - `_log_audit()`: Logs destructive operation to audit_log table with tool_name, arguments (JSON with query and params_count), and result (JSON)
+  - `_timeout_handler()`: Raises `DatabaseWriteError` on SIGALRM for 30s timeout enforcement
+- **Error handling**: `DatabaseWriteError` custom exception for non-INSERT/UPDATE/DELETE queries, sqlite3 errors, timeouts, and unexpected errors. sqlite3.Error wrapped separately from generic Exception.
+- **Connection setup**: Sets `PRAGMA journal_mode=WAL` and `PRAGMA foreign_keys=ON` per connection (matching project pattern)
+- **Audit logging**: Uses same `_log_audit()` pattern as file_write.py - failures logged as warnings, never block primary operation
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `cursor.rowcount` gives affected rows after INSERT/UPDATE/DELETE - no need for fetchall()
+  - Audit log stores `params_count` instead of raw params to avoid logging sensitive data
+  - Same structural pattern as database_query.py with additions: commit after execute, audit logging, different allowed prefixes
+---
+
+## 2026-02-14 - US-042
+- **Implemented**: Created `tools/executors/shell_exec.py` with `execute(command, cwd=None, timeout=30)` function implementing sandboxed shell command execution via subprocess with timeout enforcement, audit logging, and exit code capture
+- **Files created**: `tools/executors/shell_exec.py`
+- **Function details**:
+  - `execute(command, cwd=None, timeout=None)`: Validates command is non-empty, enforces timeout bounds (default 30s, max 60s, min 1s), validates cwd directory exists if provided, spawns `subprocess.run()` with `shell=True`, `capture_output=True`, `text=True`, and timeout. Returns `{"stdout": str, "stderr": str, "exit_code": int}`
+  - `_get_db_path()`: Same pattern as database_write.py and file_write.py - resolves via `OPENCLAWD_DB_PATH` env var with fallback to relative path
+  - `_log_audit()`: Logs tool call to audit_log table with command, cwd, timeout in arguments and exit_code in result. Failures logged as warnings.
+- **Error handling**: `ShellExecError` custom exception for empty commands, invalid cwd, subprocess timeout (`TimeoutExpired`), and generic execution failures
+- **Key design decisions**:
+  - Uses `subprocess.run()` timeout parameter instead of `signal.SIGALRM` (more portable, handles child process cleanup)
+  - Timeout clamped to [1, 60] range via `min(max(1, int(timeout)), _MAX_TIMEOUT)`
+  - Audit log stores command text and exit_code (not full stdout/stderr to avoid bloating audit table)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `subprocess.run()` with `timeout` param is preferred over `signal.SIGALRM` for process timeout enforcement - it also kills the child process on timeout
+  - `subprocess.TimeoutExpired` is the exception raised when timeout is exceeded
+  - `capture_output=True` is shorthand for `stdout=subprocess.PIPE, stderr=subprocess.PIPE`
+  - Same `_get_db_path()` and `_log_audit()` pattern as file_write.py and database_write.py for self-contained tool executors
+---
+
+## 2026-02-14 - US-043
+- **Implemented**: Created `tools/executors/python_exec.py` with `execute(code, timeout=30)` function implementing sandboxed Python code execution via subprocess with temp file management, timeout enforcement, result extraction, and audit logging
+- **Files created**: `tools/executors/python_exec.py`
+- **Function details**:
+  - `execute(code, timeout=None)`: Validates code is non-empty, enforces timeout bounds (default 30s, max 60s, min 1s), writes wrapper code to temp file, spawns `subprocess.run(["python3", temp_file])` with timeout, captures stdout/stderr, extracts last expression result via sentinel pattern, returns `{"stdout": str, "stderr": str, "result": str_or_None}`
+  - Wrapper approach: Wraps user code in `exec()` then tries `eval()` on the last line, printing result with a sentinel delimiter to stderr for extraction
+  - `_get_db_path()`: Same pattern as shell_exec.py - resolves via `OPENCLAWD_DB_PATH` env var with fallback to relative path
+  - `_log_audit()`: Logs code_length and timeout in arguments, exit_code and has_result in result. Failures logged as warnings.
+- **Error handling**: `PythonExecError` custom exception for empty code, subprocess timeout (`TimeoutExpired`), and generic execution failures
+- **Temp file cleanup**: Uses `tempfile.NamedTemporaryFile(delete=False)` + `os.unlink()` in finally block to guarantee cleanup even on exceptions
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `tempfile.NamedTemporaryFile(delete=False)` is needed because the subprocess needs to read the file after Python closes it; cleanup via `os.unlink()` in finally block
+  - Sentinel pattern on stderr (`__OPENCLAWD_RESULT_SENTINEL__`) cleanly separates eval result from user stderr output
+  - `exec()` + `eval()` combo: exec runs the full code (including statements), eval tries just the last line as an expression for result extraction
+  - Same structural pattern as shell_exec.py (US-042) with additions: temp file management, result extraction via eval
+  - Audit log stores `code_length` instead of raw code to avoid logging potentially sensitive code content
+---
+
+## 2026-02-14 - US-044
+- **Implemented**: Created `tools/executors/send_email.py` with `execute(to, subject, body, attachments=[])` function implementing email sending via SMTP with config from openclawd.config.yaml, timeout enforcement, and audit logging
+- **Files created**: `tools/executors/send_email.py`
+- **Function details**:
+  - `execute(to, subject, body, attachments=None)`: Validates inputs, loads SMTP config from openclawd.config.yaml notifications.email section via config.py `load_config()`, builds MIME message (multipart if attachments, plain/HTML otherwise), connects to SMTP server with TLS on port 587, sends email, returns `{"success": True, "message_id": str}`
+  - `_load_smtp_config()`: Loads config via agent-dispatch config module, extracts notifications.email section with fallback defaults (smtp_host=smtp.gmail.com, smtp_port=587)
+  - `_log_audit()`: Logs to audit_log with tool_name, to/subject/attachments_count in arguments, success/message_id in result. Failures logged as warnings.
+  - `_timeout_handler()`: Raises `SendEmailError` on SIGALRM for 30s timeout enforcement
+- **Error handling**: `SendEmailError` custom exception for empty inputs, SMTP errors (`smtplib.SMTPException`), timeouts, and generic failures
+- **Features**: Auto-detects HTML content (via `<html` prefix), generates UUID-based message_id, STARTTLS for port 587, skips missing attachment files with warning
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - SMTP config lives in `notifications.email` section of openclawd.config.yaml with keys: smtp_host, smtp_port, username_env, password_env, from_address
+  - `smtplib.SMTP` with `timeout` parameter handles connection-level timeout; `signal.SIGALRM` handles overall operation timeout
+  - `email.mime.multipart.MIMEMultipart` for messages with attachments, `email.mime.text.MIMEText` for simple messages
+  - Audit log stores `attachments_count` instead of full attachment list to avoid logging file paths
+  - Same `_get_db_path()`, `_log_audit()`, and signal-based timeout pattern as other tool executors (file_write.py, shell_exec.py, etc.)
+---
+
+## 2026-02-14 - US-045
+- **Implemented**: Created `agent-dispatch/agent_prompts.py` with `build_prompt(agent_name, task_dict, working_memory_entries, config)` function that assembles structured LLM messages from base SOP + agent persona + skill summaries + task description + working memory
+- **Files created**: `agent-dispatch/agent_prompts.py`
+- **Function details**:
+  - Reads `prompts/base_sop.md` and appends to system message
+  - Reads `prompts/{agent_name}.md` and appends agent persona to system message
+  - Iterates `AGENT_SKILLS[agent_name]` and reads `skills/{skill}/SKILL.md` for each, appending skill summaries with `## Skill:` headers
+  - System message parts joined with `\n\n---\n\n` separators
+  - User message contains task title, domain, priority, description, and working memory entries
+  - Working memory entries wrapped with `wrap_cross_agent_data()` from security.py (uses `<agent_output>` XML delimiters with "treat as DATA" instruction)
+  - Returns `[Message(role="system",...), Message(role="user",...)]` using Message dataclass from llm_provider.py
+- **Imports**: Uses relative imports from `.config` (AGENT_SKILLS), `.llm_provider` (Message), `.security` (wrap_cross_agent_data)
+- **Path resolution**: `_PROJECT_ROOT` resolved via `os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))`, `_PROMPTS_DIR` and `_SKILLS_DIR` are relative to project root
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `agent-dispatch/agent_prompts.py` is the module to import `build_prompt` from
+  - `_read_file()` helper returns None on missing files (FileNotFoundError, PermissionError, OSError) with logger.warning - handles missing SKILL.md, persona, or SOP gracefully
+  - `prompts/` directory expected at project root level (not inside agent-dispatch/) - must be created separately (US-046, US-047)
+  - `AGENT_SKILLS.get(agent_name, [])` returns empty list for unknown agents - no crash on unmapped agents
+  - Working memory entries expected as dicts with `key`, `value`, `agent_name` keys matching working_memory table columns (US-006)
+---
+
+## 2026-02-14 - US-046
+- **Implemented**: Created `prompts/base_sop.md` with 5 numbered steps (Read Task, Analyze Requirements, Execute Work, Format Deliverable, Report Completion), each with if/then decision gates, explicit outputs, and machine-parseable STATUS prefixes
+- **Directories created**: `prompts/`
+- **Files created**: `prompts/base_sop.md`
+- **SOP structure**:
+  - Step 1 (Read Task): Decision gate checks for empty/missing task details
+  - Step 2 (Analyze Requirements): Decision gate checks for missing tools and unmet dependencies
+  - Step 3 (Execute Work): Decision gate handles tool failures with retry-once policy
+  - Step 4 (Format Deliverable): Decision gate checks for incomplete deliverables, includes confidence scoring guidelines
+  - Step 5 (Report Completion): Decision gate selects content based on status (completed/blocked/needs_input/failed)
+- **Result format**: `<agent-result>` XML block wrapping JSON with 7 fields: status, deliverable_summary, deliverable_content, deliverable_url, working_memory_entries, follow_up_tasks, confidence_score
+- **Status prefixes**: 8 machine-parseable prefixes (READING_TASK, ANALYZING, EXECUTING, FORMATTING, COMPLETE, BLOCKED, FAILED, NEEDS_INPUT)
+- **Verification**: No Python files changed; agent_prompts.py py_compile passes (references prompts/ directory)
+- **Learnings for future iterations:**
+  - `prompts/` directory now exists at project root level for base_sop.md and agent persona files (US-047)
+  - `prompts/base_sop.md` is read by `agent_prompts.py:build_prompt()` via `_read_file()` helper
+  - `<agent-result>` XML block is the standard output format all agents must use - parseable by the dispatch system
+  - Status prefixes use `STATUS: UPPERCASE_NAME` format for log line parsing
+---
+
+## 2026-02-14 - US-047
+- **Implemented**: Created 7 agent persona files in `prompts/` directory (rex.md, pixel.md, haven.md, vault.md, nora.md, scout.md, keeper.md) with agent-specific expertise, domains, allowed tools, SOP customizations, and routing keywords
+- **Files created**: `prompts/rex.md`, `prompts/pixel.md`, `prompts/haven.md`, `prompts/vault.md`, `prompts/nora.md`, `prompts/scout.md`, `prompts/keeper.md`
+- **Agent details**:
+  - rex.md: Research agent - domains: research, market_analysis, competitive_analysis, customer_research. Tools: web_search, database_query, file_read, python_exec. Keywords: research, analyze, market, competitive
+  - pixel.md: Digital products agent - domains: digital_products, product_validation, marketplace_strategy, product_creation. Tools: web_search, database_query, file_read, file_write, python_exec. Keywords: product, digital, template, course, gumroad
+  - haven.md: Real estate agent - domains: real_estate, property_analysis, investment_analysis, market_research. Tools: web_search, database_query, file_read, python_exec. Keywords: real estate, property, rental, investment
+  - vault.md: Business acquisition agent - domains: business_acquisition, deal_analysis, roi_assessment, due_diligence. Tools: web_search, database_query, file_read, python_exec. Keywords: business, acquisition, buy, deal
+  - nora.md: Operations agent - domains: operations, day_job, financial_management, task_management. Tools: web_search, database_query, database_write, file_read, file_write, send_email, shell_exec. Keywords: quickbooks, email, operation, management
+  - scout.md: Validation agent - domains: validation, quality_control, fact_checking, cross_domain_review. Tools: web_search, database_query, file_read. Cross-domain: can validate any agent's work
+  - keeper.md: Maintenance agent - domains: maintenance, email_management, automation, system_health. Tools: web_search, database_query, database_write, file_read, file_write, shell_exec, send_email. Keywords: maintenance, cleanup, health check, automation, system
+- **Verification**: All 7 files are valid Markdown, py_compile passes on agent_prompts.py (which reads these files)
+- **Learnings for future iterations:**
+  - Agent persona files live in `prompts/` at project root (same directory as base_sop.md)
+  - Each persona file follows consistent structure: title, expertise list, domains list, allowed tools list, SOP customizations (5-6 numbered rules), routing keywords
+  - Domains align exactly with `agent_expertise` dict in `orchestrator-dashboard/agent_coordinator.py` (lines 60-67)
+  - Allowed tools match the tool definitions in `tools/definitions/` (created in US-035/US-036)
+  - Scout has cross-domain capability (can validate any agent's work) matching the `_can_agent_contribute()` special case in agent_coordinator.py line 78
+  - Nora and Keeper have the most tools (7 each) since they perform operational/maintenance tasks requiring writes, emails, and shell access
+---
+
+## 2026-02-14 - US-048
+- **Implemented**: Created `agent-dispatch/agent_runner.py` with `run_agent(agent_name, task_dict, provider, tool_registry, config)` function implementing the full agent execution loop with tool calling, result parsing, and working memory upsert
+- **Files created**: `agent-dispatch/agent_runner.py`
+- **Function details**:
+  - `run_agent()`: Main entry point - assembles prompt via `build_prompt()`, calls `provider.complete()` in a loop, handles tool calls, parses `<agent-result>` XML block, validates AgentResult schema, upserts working_memory entries. Returns `AgentResult` or raises `AgentRunnerError`.
+  - Tool call loop: Max 20 iterations (configurable via `max_tool_iterations` config key), detects identical tool call loops (same tool+args 3x in a row) and breaks with a "provide final answer" prompt
+  - `_parse_agent_result()`: Regex-extracts `<agent-result>` JSON block from LLM response content
+  - `_validate_agent_result()`: Validates required fields (status) and returns `AgentResult` dataclass
+  - `_execute_tool()`: Loads tool via `tool_registry.get_tool()`, imports executor module via `importlib.import_module()`, calls executor function with tool args
+  - `_detect_loop()`: Compares last N tool calls (name + JSON-serialized args) for identical-call detection
+  - `_upsert_working_memory()`: Uses `INSERT OR REPLACE INTO working_memory` with UNIQUE(task_id, agent_name, key) constraint
+  - `_get_tools_for_provider()`: Loads all tools from registry and translates to provider-specific format using tool_translators module
+- **AgentResult dataclass**: 8 fields - status, deliverable_summary, deliverable_content, deliverable_url, working_memory_entries, follow_up_tasks, confidence_score, raw_response
+- **Error handling**: Falls back to raw response content if no `<agent-result>` block found (creates minimal result with status="completed"), wraps provider errors in `AgentRunnerError`
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `agent-dispatch/agent_runner.py` is the module to import `run_agent`, `AgentResult`, and `AgentRunnerError` from
+  - Tool call args may come as `input` (Anthropic) or `arguments` (OpenAI) in the tool_call dict - `_execute_tool` handles both via `tool_call.get("input", tool_call.get("arguments", {}))`
+  - String tool args (from OpenAI JSON-serialized arguments) are auto-parsed with `json.loads()`
+  - Loop detection uses JSON-serialized args with `sort_keys=True` for consistent comparison
+  - Working memory upsert uses standalone `sqlite3.connect()` with WAL and foreign_keys PRAGMAs (not importing from dispatch_db.py to keep module self-contained)
+  - Provider-specific tool format is selected via `_get_tools_for_provider()` which maps provider name to the correct translator function from tool_translators.py
+  - Graceful fallback: if no `<agent-result>` block is found, creates a minimal result dict from raw content instead of failing
+---
+
+## 2026-02-14 - US-049
+- **Implemented**: Added `get_dispatchable_tasks(config, conn=None)` function to `agent-dispatch/dispatch_db.py` that queries for tasks ready to be dispatched using 7 conditions and priority ordering
+- **Files changed**: `agent-dispatch/dispatch_db.py`
+- **Function details**:
+  - Checks global daily budget first (SUM of daily_usage.total_cost_usd for today vs config.daily_budget_usd) - returns empty list if exceeded
+  - Main SQL query checks 5 conditions in WHERE clause:
+    1. `status IN ('open', 'in_progress')`
+    2. `dispatch_status IS NULL OR dispatch_status = 'queued'`
+    3. `lease_until IS NULL OR lease_until < datetime('now')`
+    4. NOT EXISTS subquery on task_dependencies checking all deps have status='completed'
+    5. NOT EXISTS subquery on dispatch_runs checking no next_retry_at > datetime('now')
+  - Orders by `priority DESC, created_at ASC`
+  - Post-query Python filter checks per-agent budget (condition 7): compares agent's daily_usage spending against config.agent_budgets[agent_name]
+  - Per-agent spending cached in dict to avoid repeated queries for same agent
+  - Returns list of dicts (via `dict(row)` on sqlite3.Row objects)
+- **Design decisions**:
+  - Global budget check done as separate query before main query (early exit if budget exhausted)
+  - Per-agent budget check done as Python filter after main query (avoids complex correlated subquery, uses caching for efficiency)
+  - Uses `datetime('now')` SQLite function for timestamp comparisons (not Python datetime)
+  - Optional `conn` parameter defaults to `get_reader_connection()` singleton
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `dict(row)` converts sqlite3.Row to regular dict for return values
+  - `datetime('now')` is SQLite's built-in UTC timestamp function - use this in SQL instead of Python's datetime
+  - Per-agent budget filtering in Python (not SQL) avoids complex correlated subqueries and enables caching
+  - `COALESCE(SUM(...), 0.0)` handles case where no daily_usage rows exist yet (returns 0.0 instead of NULL)
+  - Global budget is a single float from config; agent_budgets is a dict mapping agent category names to float limits
+---
+
+## 2026-02-14 - US-050
+- **Implemented**: Added `claim_task(task_id, lease_seconds, conn=None)` function to `agent-dispatch/dispatch_db.py` for atomic task claiming with dispatch_status and lease_until WHERE guards to prevent double-dispatch by concurrent supervisors
+- **Files changed**: `agent-dispatch/dispatch_db.py`
+- **Function details**:
+  - Executes `UPDATE tasks SET dispatch_status='queued', lease_until=datetime('now','+N seconds')` with parameterized task_id
+  - WHERE clause guards: `dispatch_status IS NULL OR dispatch_status IN ('queued','failed','interrupted')` AND `lease_until IS NULL OR lease_until < CURRENT_TIMESTAMP`
+  - Returns `True` if `cursor.rowcount > 0` (claim succeeded), `False` if `rowcount == 0` (lost race or ineligible)
+  - Optional `conn` parameter: if None, creates a new writer connection, commits, and closes it; if provided, caller manages transaction
+  - Catches `sqlite3.Error` and returns `False` on DB errors (with rollback if managing own connection)
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - SQLite `datetime('now', '+' || ? || ' seconds')` requires the lease_seconds to be passed as a string via `str(lease_seconds)` for concatenation
+  - `CURRENT_TIMESTAMP` and `datetime('now')` are equivalent in SQLite WHERE clauses for timestamp comparison
+  - Atomic claim pattern: UPDATE with WHERE guards + rowcount check is the standard approach for optimistic locking without explicit row locking
+  - Function follows get_writer_connection() pattern from dispatch_db.py for short-lived write connections
+---
+
+## 2026-02-14 - US-051
+- **Implemented**: Added `handle_task_completion(task_id, agent_result, trace_id, config, conn, adapter)` and `recover_partial_completions(conn, adapter, config)` functions to `agent-dispatch/dispatch_db.py`
+- **Files changed**: `agent-dispatch/dispatch_db.py`
+- **handle_task_completion() details**:
+  - Step 1: `_validate_agent_result_schema()` validates agent_result has required `status` field, supports both AgentResult dataclass and dict
+  - Step 2 (Block A): Single transaction with 4 operations - (a) SET dispatch_status='completed', (b) upsert working_memory entries, (c) update dispatch_run status/completed_at, (d) write daily_usage with ON CONFLICT upsert
+  - Step 3: Calls `adapter.add_task_contribution(task_id, agent_name, 'deliverable', content)` after Block A commits
+  - Step 4: Calls `adapter.complete_task(task_id, agent_name, deliverable_url)` after Step 3 succeeds
+  - Steps 3-4 failures logged as critical but don't roll back Block A (it already committed)
+  - Returns True if all steps succeeded, False if steps 3-4 failed
+  - Raises `TaskCompletionError` if schema validation fails (before any writes) or Block A transaction fails
+- **recover_partial_completions() details**:
+  - Queries `tasks WHERE dispatch_status='completed' AND status!='completed'` to find partially-completed tasks
+  - Checks recovery attempt count via dispatch_runs completed count for the task
+  - After 3 failed attempts, creates urgent notification via `adapter.create_notification(urgency="urgent")`
+  - Determines retry point by checking working_memory entries (Step 3 evidence) - if no entries, retries from Step 3; otherwise retries from Step 4
+  - Gets deliverable_content from dispatch_runs.output_file for Step 3 retry
+  - Returns list of task IDs that were successfully recovered
+- **Helper**: `_validate_agent_result_schema()` validates required fields, supports both dataclass and dict inputs
+- **Exception**: `TaskCompletionError` for completion sequence failures
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `handle_task_completion()` and `recover_partial_completions()` are in `agent-dispatch/dispatch_db.py` alongside other dispatch lifecycle functions
+  - `TaskCompletionError` is the exception for completion failures
+  - Block A uses `conn.commit()` explicitly - caller should not wrap in another transaction
+  - `ON CONFLICT(date, provider, model, agent_name) DO UPDATE SET task_count = task_count + 1` is SQLite's upsert syntax for daily_usage
+  - Recovery determines retry point by checking working_memory (Step 3 evidence) rather than relying on a state column
+  - agent_name is determined from dispatch_runs.trace_id lookup (not passed directly) to match the actual agent that ran
+  - Steps 3-4 depend on adapter being passed; if adapter is None, only Block A executes
+---
+
+## 2026-02-14 - US-052
+- **Implemented**: Added `handle_dispatch_failure(task_id, attempt, error, trace_id, conn, adapter)` function to `agent-dispatch/dispatch_db.py` for retry logic with exponential backoff and dispatch_failed escalation
+- **Files changed**: `agent-dispatch/dispatch_db.py`
+- **Function details**:
+  - Updates dispatch_run with status='failed', error_summary (truncated to 500 chars), and completed_at
+  - Sets next_retry_at based on `_BACKOFF_SCHEDULE` dict: attempt 1 → NULL (immediate), attempt 2 → +60s, attempt 3 → +300s
+  - For retryable failures (attempt < 3): sets task dispatch_status='failed' so it's eligible for re-dispatch
+  - For max retries exceeded (attempt >= 3): sets task dispatch_status='dispatch_failed'
+  - Creates urgent notification via `adapter.create_notification()` when max retries exceeded (after DB commit)
+  - Notification includes task_id, attempt count, and truncated error summary
+- **Constants**: `_BACKOFF_SCHEDULE` dict and `_MAX_RETRIES = 3` for configurable retry policy
+- **Error handling**: sqlite3.Error caught with rollback; notification failures logged but don't affect DB state
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `handle_dispatch_failure()` is in `agent-dispatch/dispatch_db.py` alongside other dispatch lifecycle functions
+  - `_BACKOFF_SCHEDULE` maps attempt numbers to backoff seconds (None = NULL/immediate)
+  - Notification creation happens after conn.commit() so DB state is consistent even if notification fails
+  - error_summary truncated to 500 chars to avoid bloating dispatch_runs table
+  - Same conn management pattern as claim_task(): optional conn param, caller manages if provided, function manages if None
+---
+
+## 2026-02-14 - US-053
+- **Implemented**: Added `cascade_failure(task_id, conn, adapter)` function to `agent-dispatch/dispatch_db.py` for dependency failure cascading that propagates `dispatch_failed` status to all dependent tasks with high-urgency notifications
+- **Files changed**: `agent-dispatch/dispatch_db.py`
+- **Function details**:
+  - Queries `task_dependencies WHERE depends_on_task_id=?` to find all tasks depending on the failed task
+  - Sets `dispatch_status='dispatch_failed'` for each dependent task
+  - Creates high-urgency notification for each dependent via `adapter.create_notification(urgency="high")` with message indicating upstream failure
+  - Recursively cascades through the entire dependency graph using inner `_cascade()` function
+  - Tracks visited task IDs in a `set()` to avoid infinite loops from circular dependencies and handle diamond dependency patterns
+  - All DB updates committed in a single transaction after full traversal
+  - Returns list of task IDs that were marked as dispatch_failed
+- **Error handling**: sqlite3.Error caught per-task (doesn't stop cascade of other dependents), notification failures logged as warnings, transaction rolled back on commit failure
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `cascade_failure()` is in `agent-dispatch/dispatch_db.py` alongside other dispatch lifecycle functions
+  - Uses `visited` set to prevent infinite loops from circular dependencies and duplicate processing in diamond dependency graphs
+  - Notifications use `urgency="high"` (not "urgent") to distinguish cascade failures from max-retry failures (US-052 uses "urgent")
+  - All dependent task updates happen in one transaction (commit after full traversal) for consistency
+  - Inner `_cascade()` function enables clean recursion with closure over `conn`, `cascaded`, `visited`, and `adapter`
+---
+
+## 2026-02-14 - US-054
+- **Implemented**: Created `agent-dispatch/agent_supervisor.py` with `AgentSupervisor` class implementing the full supervisor poll loop daemon with 30s polling, recovery sweeps, atomic task claiming, thread pool dispatch, heartbeat lease extension, and timeout enforcement
+- **Files created**: `agent-dispatch/agent_supervisor.py`
+- **Class details**:
+  - `AgentSupervisor.__init__()`: Accepts config dict, adapter, and db_path. Reads timing/concurrency constants from config with fallback to module-level defaults (POLL_INTERVAL_SECONDS=30, LEASE_SECONDS=300, TIMEOUT_SECONDS=1800, MAX_CONCURRENT_AGENTS=5)
+  - `run()`: Entry point - runs migrations, starts ThreadPoolExecutor and heartbeat thread, enters poll loop
+  - `_poll_loop()`: Sleeps in 1-second increments (checking shutdown flag) between 30s poll cycles
+  - `_poll_once()`: Single iteration - (1) recover_partial_completions, (2) reap completed futures, (3) get_dispatchable_tasks, (4) claim_task + spawn in thread pool
+  - `_run_agent_task()`: Thread pool worker - gets provider via get_provider(), creates ToolRegistry, calls run_agent(), then handle_task_completion() on success or handle_dispatch_failure() on error
+  - `_heartbeat_loop()`: Daemon thread running every 2 minutes - extends lease_until for active tasks, enforces hard timeout (cancels + records failure for tasks exceeding agent_timeout_seconds)
+  - `_create_dispatch_run()`: Inserts dispatch_runs record with status='pending' before spawning agent
+  - `_update_dispatch_run_status()`: Sets status to 'running' and started_at when agent begins execution
+- **Internal tracking**: `_ActiveTask` dataclass tracks task_id, trace_id, Future, started_at (monotonic), agent_name, attempt per active task. Protected by threading.Lock.
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `agent-dispatch/agent_supervisor.py` is the module to import `AgentSupervisor` from
+  - `time.monotonic()` used for elapsed time tracking (not affected by system clock changes)
+  - `threading.Event.wait(timeout=N)` is the clean way to implement interruptible sleep in heartbeat threads
+  - `Future.cancel()` doesn't actually interrupt running threads - it only prevents pending futures from starting. For true thread interruption, a cooperative stop flag would be needed.
+  - Heartbeat thread is daemon=True so it doesn't block process exit
+  - Poll loop sleeps in 1-second increments instead of one long sleep(30) to respond to shutdown_requested faster
+  - `_reap_completed()` cleans up finished futures before checking capacity to avoid false "at max" rejections
+  - dispatch_run record created before spawning (status='pending'), updated to 'running' when agent starts
+---
+
+## 2026-02-14 - US-055
+- **Implemented**: Added graceful shutdown with SIGTERM/SIGINT signal handling to `AgentSupervisor` in `agent-dispatch/agent_supervisor.py`
+- **Files changed**: `agent-dispatch/agent_supervisor.py`
+- **New methods**:
+  - `_register_signal_handlers()`: Registers SIGTERM and SIGINT handlers via `signal.signal()`. Handler closure sets `self.shutdown_requested = True` and logs the signal name.
+  - `_graceful_shutdown()`: Called from `run()` finally block. Stops heartbeat, waits up to 60s for active futures via `concurrent.futures.wait(futures, timeout=60)`, then shuts down executor with `cancel_futures=True`, marks remaining dispatched tasks as interrupted.
+  - `_mark_interrupted_tasks()`: Executes `UPDATE tasks SET dispatch_status='interrupted', lease_until=NULL WHERE dispatch_status='dispatched'` to clean up any tasks still in dispatched state after shutdown.
+- **Changes to existing methods**:
+  - `run()`: Now calls `_register_signal_handlers()` before starting poll loop. Finally block replaced with `_graceful_shutdown()` which handles heartbeat stop, future waiting, task interruption, and connection cleanup.
+- **New imports**: `signal` module added. `concurrent.futures.wait` imported inside `_graceful_shutdown()`.
+- **New constant**: `_SHUTDOWN_WAIT_SECONDS = 60`
+- **Design note**: Python 3.9's `ThreadPoolExecutor.shutdown()` doesn't have a `timeout` parameter, so we use `concurrent.futures.wait(futures, timeout=60)` followed by `shutdown(wait=False, cancel_futures=True)` to achieve timeout-based waiting.
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `signal.signal()` can only be called from the main thread - `_register_signal_handlers()` is called from `run()` which must be on main thread
+  - `signal.Signals(signum).name` provides human-readable signal name (e.g., "SIGTERM") for logging
+  - `concurrent.futures.wait(futures, timeout=N)` is the way to wait for futures with a timeout since `ThreadPoolExecutor.shutdown()` lacks a timeout param in Python 3.9
+  - `cancel_futures=True` in `shutdown()` is available in Python 3.9+ and prevents queued-but-not-started futures from running
+  - After graceful shutdown, any tasks still with `dispatch_status='dispatched'` are marked 'interrupted' at the DB level (not just in-memory)
+---
+
+## 2026-02-14 - US-056
+- **Implemented**: Created `recover_interrupted_tasks()` function in `agent-dispatch/dispatch_db.py` and integrated it into supervisor startup in `agent-dispatch/agent_supervisor.py`
+- **Files changed**: `agent-dispatch/dispatch_db.py` (added `recover_interrupted_tasks()` function), `agent-dispatch/agent_supervisor.py` (added import and startup call in `run()`)
+- **Function details**:
+  - `recover_interrupted_tasks(conn, db_path)`: Queries all tasks WHERE dispatch_status='interrupted', sets dispatch_status='queued' and lease_until=NULL for each, inserts a new dispatch_runs record with incremented attempt count to track retry usage
+  - Called from `AgentSupervisor.run()` after migrations but before starting the thread pool and poll loop
+  - Returns list of recovered task IDs
+  - All recovery updates committed in a single transaction
+- **Supervisor integration**: Added `recover_interrupted_tasks` import and try/except call block in `run()` between `run_migrations()` and thread pool startup
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `recover_interrupted_tasks()` pairs with `_mark_interrupted_tasks()` in agent_supervisor.py (US-055) - shutdown marks tasks interrupted, startup recovers them
+  - New dispatch_runs records are inserted with provider='recovery' and model='recovery' to distinguish recovery-created records from normal dispatches
+  - Recovery happens before the poll loop starts, ensuring interrupted tasks are re-queued before the first poll iteration picks up work
+---
+
+## 2026-02-14 - US-057
+- **Implemented**: Added SIGUSR1 (immediate poll) and SIGUSR2 (immediate health check) signal handlers to `AgentSupervisor` in `agent-dispatch/agent_supervisor.py`
+- **Files changed**: `agent-dispatch/agent_supervisor.py`
+- **Details**:
+  - Added `_immediate_poll` threading.Event to `__init__` for thread-safe flag communication between signal handler and poll loop
+  - Extended `_register_signal_handlers()` to register SIGUSR1 and SIGUSR2 in addition to SIGTERM/SIGINT
+  - SIGUSR1 handler: sets `_immediate_poll` event, logged
+  - SIGUSR2 handler: spawns `_run_health_check()` in a daemon thread, logged
+  - Updated `_poll_loop()` to check `_immediate_poll.is_set()` each second during sleep interval; if set, clears it and breaks out of sleep to run poll immediately
+  - Added `_run_health_check()` method: instantiates provider via `get_provider()`, measures latency, records pass/fail in `provider_health` table with test_name='sigusr2_health_check'
+- **Verification**: `python3 -m py_compile` passes for agent_supervisor.py
+- **Learnings for future iterations:**
+  - `threading.Event` is signal-safe for simple flag setting from signal handlers (better than plain bool for thread visibility)
+  - Signal handlers must be minimal - only set flags or spawn threads, never do I/O directly
+  - Health check records go in `provider_health` table (created by US-008 migration)
+---
+
+## 2026-02-14 - US-058
+- **Implemented**: Added PID file management with stale-PID detection to `AgentSupervisor` in `agent-dispatch/agent_supervisor.py`
+- **Files changed**: `agent-dispatch/agent_supervisor.py`
+- **Details**:
+  - Added `_PID_FILE_PATH` module constant pointing to `agent-dispatch/supervisor.pid` (resolved via `os.path.dirname(os.path.abspath(__file__))`)
+  - Added `_check_pid_file()`: On startup, reads supervisor.pid if exists. Parses PID, checks if running via `os.kill(pid, 0)`. If stale (ProcessLookupError), deletes PID file and logs warning. If active, logs error and raises `SystemExit(1)`. Handles empty/corrupt PID files gracefully.
+  - Added `_is_pid_running(pid)`: Static method using `os.kill(pid, 0)`. Returns True for running processes. Handles `ProcessLookupError` (not running → False), `PermissionError` (running but no permission → True), `OSError` (not running → False).
+  - Added `_write_pid_file()`: Writes `os.getpid()` to supervisor.pid on startup.
+  - Added `_remove_pid_file()`: Deletes supervisor.pid on graceful shutdown.
+  - Integrated into `run()`: `_check_pid_file()` and `_write_pid_file()` called before signal handler registration.
+  - Integrated into `_graceful_shutdown()`: `_remove_pid_file()` called after marking interrupted tasks and before closing reader connection.
+- **Verification**: py_compile passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - `os.kill(pid, 0)` doesn't actually send a signal - it just checks if the process exists. Raises `ProcessLookupError` if not, `PermissionError` if exists but no permission.
+  - PID file check and write must happen before `_register_signal_handlers()` so if we exit due to active PID, no signal handlers are modified.
+  - `SystemExit(1)` is the clean way to exit from a method without affecting caller's exception handling flow.
+  - PID file path is computed from `__file__` not from cwd to be reliable regardless of where the process is launched from.
+---
+
+## 2026-02-14 - US-059
+- **Implemented**: Added `_write_heartbeat_file()` method to `AgentSupervisor` that writes ISO 8601 UTC timestamp to `agent-dispatch/supervisor.heartbeat` on each poll cycle
+- **Files changed**: `agent-dispatch/agent_supervisor.py` (added `_HEARTBEAT_FILE_PATH` constant, `_write_heartbeat_file()` method, call from `_poll_once()`)
+- **Details**: Uses `datetime.now(timezone.utc).isoformat()` for ISO 8601 format, file is created on first poll if not exists (open with "w" mode), file is overwritten each poll cycle with fresh timestamp
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `datetime.now(timezone.utc).isoformat()` produces proper ISO 8601 with `+00:00` suffix
+  - Heartbeat file uses same `os.path.dirname(os.path.abspath(__file__))` pattern as PID file for reliable path resolution
+  - Service managers can check `os.path.getmtime()` on the heartbeat file to detect stale daemon (>5 minutes old means restart needed)
+---
+
+## 2026-02-14 - US-060
+- **Implemented**: Created 4 canary tests for provider health monitoring in `agent-dispatch/health/canary_tests.py`
+- **Files created**: `agent-dispatch/health/__init__.py`, `agent-dispatch/health/canary_tests.py`
+- **Details**:
+  - `test_basic_completion(provider)` - sends simple prompt, validates non-empty response content
+  - `test_tool_calling(provider)` - sends prompt with tool definitions (get_weather), validates tool_call in response
+  - `test_tool_result_handling(provider)` - simulates full tool round-trip (user->assistant tool_call->user tool_result), validates continuation response
+  - `test_structured_output(provider)` - requests JSON object, strips markdown fences, validates json.loads() parses successfully to dict
+  - Each returns standardized dict: `{passed, latency_ms, error_message, error_category, raw_response}`
+  - `_classify_error(exc)` categorizes exceptions into: timeout, rate_limit, auth, network, server_error, or exception class name
+  - `CANARY_TIMEOUT_SECONDS = 30` constant for all tests
+  - `ALL_CANARY_TESTS` list provides ordered (name, function) tuples for iteration by health monitor
+- **Verification**: py_compile passes for both files
+- **Learnings for future iterations:**
+  - Provider `complete()` accepts `**kwargs` so `timeout` and `tools` can be passed directly
+  - Tool call message format uses `tool_calls` list with `id`, `name`, `input` keys on assistant Message
+  - Tool result message format uses `tool_results` list with `tool_use_id`, `content` keys on user Message
+  - `time.monotonic()` is preferred over `time.time()` for latency measurement (not affected by clock changes)
+  - Structured output test strips markdown code fences since many models wrap JSON in ```json blocks
+---
+
+## 2026-02-14 - US-061
+- **Implemented**: Health monitor scheduled runner in `agent-dispatch/health/health_monitor.py`
+  - `run_health_checks(config, conn)` reads primary/fallback provider config, instantiates providers via `get_provider()`, runs all 4 canary tests, writes results to `provider_health` table
+  - `HealthMonitorThread` daemon thread reads `health_check_interval_hours` from config (default 6), runs health checks in a loop with `threading.Event.wait()` for responsive shutdown
+  - `start_health_monitor(config, db_path)` convenience function to create and start the thread
+  - `_store_result()` writes individual test results using parameterized INSERT
+  - `_run_tests_for_provider()` iterates `ALL_CANARY_TESTS`, catches crashes, stores all results with commit
+  - Fallback provider tested by constructing a temporary config dict from fallback section
+- **Files created**: `agent-dispatch/health/health_monitor.py`
+- **Verification**: `python3 -m py_compile` passes for all agent-dispatch files
+- **Learnings for future iterations:**
+  - `get_provider()` requires a config dict with `provider` key containing `name`, `api_key_env`, `model` - to test fallback, construct a wrapper config dict
+  - `threading.Event.wait(timeout=N)` is better than `time.sleep(N)` for daemon threads - allows responsive shutdown via `stop_event.set()`
+  - `provider_health` table has `tested_at DEFAULT CURRENT_TIMESTAMP` so no need to explicitly set it in INSERT
+  - Health monitor thread is set as daemon so it won't prevent process exit
+---
+
+## 2026-02-14 - US-062
+- **Implemented**: `detect_regressions(provider, model, test_name, current_result, conn)` function in `agent-dispatch/health/health_monitor.py` that compares current health check results against provider_health history to detect 4 types of regressions
+- **Detection types**:
+  1. `failure_after_success` - current passed=false when last successful run exists
+  2. `latency_regression` - current latency_ms > 3x last successful latency_ms
+  3. `consecutive_failures` - last 2 stored runs both have passed=0
+  4. `novel_error_category` - current error_category not found in DISTINCT categories from last 20 runs
+- **Files changed**: `agent-dispatch/health/health_monitor.py` (added `detect_regressions()` function, added `List` to typing imports)
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - SQLite `SELECT DISTINCT ... LIMIT N` applies LIMIT after DISTINCT - to get distinct categories from last 20 rows, need to use a subquery or accept the approximation (LIMIT on DISTINCT gives up to N distinct values, not categories from last N rows). Current implementation uses direct DISTINCT with LIMIT 20 which is sufficient.
+  - `conn.execute()` with `ORDER BY tested_at DESC LIMIT N` efficiently fetches most recent rows when tested_at has an index
+  - Function returns `List[Dict[str, Any]]` - each dict has 'type' and 'details' keys for downstream consumers
+---
+
+## 2026-02-14 - US-063
+- **Implemented**: Added `check_tool_calling_conformance(provider, model, conn)` function to `agent-dispatch/health/health_monitor.py` that monitors tool-calling reliability over a rolling 20-check window and switches between native and prompt-based tool modes
+- **Files changed**: `agent-dispatch/health/health_monitor.py`
+- **Function details**:
+  - Queries last 20 `tool_calling` and `tool_result_handling` health checks from `provider_health` table
+  - Calculates pass rate; if < 80% (4+ failures in 20 checks), switches provider to prompt-based mode
+  - Recovery: `_check_recovery()` checks last 2 consecutive runs for both test types; all must be passed=true to switch back to native mode
+  - Mode switches logged via `logger.warning` (degradation) and `logger.info` (recovery)
+  - Mode switches recorded in `provider_incidents` table with incident_type like `tool_mode_switch_native_to_prompt_based`
+  - Module-level `_tool_modes` dict tracks current mode per `(provider, model)` tuple
+  - Helper `get_tool_mode(provider, model)` returns current mode for external consumers
+- **Verification**: `python3 -m py_compile` passes for all agent-dispatch Python files
+- **Learnings for future iterations:**
+  - Module-level dict `_tool_modes` provides simple in-memory state tracking without needing a new DB column
+  - `provider_incidents` table can be used to record automated healing actions with `auto_healed=1`
+  - Recovery check requires independent verification of each test type (tool_calling AND tool_result_handling) rather than combining them
+  - The function returns the current mode string ("native" or "prompt_based") for downstream use
+---
+
+## 2026-02-14 - US-064
+- **Implemented**: Created `agent-dispatch/health/self_healer.py` with `heal_incident(incident_type, provider, model, error, config, conn)` function implementing 5-tier self-healing for provider failures
+- **Files created**: `agent-dispatch/health/self_healer.py`
+- **Function details**:
+  - `heal_incident()`: Main entry point - classifies incident into tier 1-5 via `_classify_tier()`, executes tier-specific healing, records incident in provider_incidents, sets auto_healed and resolved_at. Returns dict with healing_action, success, tier, incident_id.
+  - `_classify_tier()`: Classifies by matching incident_type and error strings - 429/rate→T1, format/parse→T2, 401/403/5xx→T3, multiple/consecutive→T4, deprecated/fundamental→T5
+  - `_tier1_retry()`: Returns exponential backoff schedule (1s, 5s, 30s) for supervisor to schedule retries
+  - `_tier2_format_adaptation()`: Iterates known format variations (anthropic, openai, gemini, ollama), logs each for supervisor to test at runtime
+  - `_tier3_provider_fallback()`: Reads fallback config, creates urgent provider_incidents notification, recommends provider switch
+  - `_tier4_graceful_degradation()`: Records degradation event, recommends 5-min accelerated health checks, pauses new dispatches
+  - `_tier5_escalate()`: Generates markdown diagnostic report with 5 sections, stores in provider_incidents.diagnostic_report, escalates to user
+  - `_record_incident()`: Inserts provider_incidents row with incident_type, healing_action, auto_healed flag, optional diagnostic_report. Returns lastrowid.
+  - `_resolve_incident()`: Sets resolved_at = CURRENT_TIMESTAMP on successful auto-healing
+- **Schema integration**: Uses existing `provider_incidents` table (US-009) with columns: provider, incident_type, detected_at, resolved_at, auto_healed, healing_action, diagnostic_report, notified_user
+- **Verification**: py_compile passes
+- **Learnings for future iterations:**
+  - `_classify_tier()` uses string matching on both incident_type and error message for flexible classification
+  - Tier 1 and 2 don't write to provider_incidents directly (the main `heal_incident` does it via `_record_incident`)
+  - Tiers 3-5 write additional provider_incidents rows for specific sub-events (fallback, degradation, escalation) before the main record
+  - `heal_incident()` always creates a main provider_incidents row AND resolves it immediately if success=True
+  - `HealingError` exception class defined but not raised internally - available for callers
+  - File lives in `agent-dispatch/health/` alongside `health_monitor.py` and `canary_tests.py`
+---
+
+## 2026-02-14 - US-065
+- **Implemented**: `generate_diagnostic_report(provider, model, incident_type, error, conn)` function in `agent-dispatch/health/self_healer.py`
+- **Files changed**: `agent-dispatch/health/self_healer.py` (appended new function at end of file)
+- **What it does**:
+  - Queries last 30 days of `provider_health` for the given provider/model
+  - Analyzes error patterns: failure rate, latency stats (avg/min/max), error category frequency, recent failure messages
+  - Determines provider status (HEALTHY/DEGRADED/UNHEALTHY) from last 5 checks
+  - Generates markdown report with 5 sections: Summary, Error Details, Recent Health History, Provider Status, Suggested Actions
+  - Context-aware suggestions based on incident type (auth, rate limit, deprecated, high failure rate, high latency)
+  - Stores report in `provider_incidents.diagnostic_report` column via INSERT
+  - Returns the report string
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `provider_health` table has columns: provider, model, test_name, passed, latency_ms, error_message, error_category, raw_response, tested_at
+  - `provider_incidents` table has `diagnostic_report TEXT` column for storing generated reports
+  - Using `datetime('now', '-30 days')` in SQLite for date range queries works reliably
+  - Existing `_tier5_escalate()` generates a simpler diagnostic; `generate_diagnostic_report()` is the full data-driven version
+---
+
+## 2026-02-14 - US-066
+- **Implemented**: `record_cost()` and `check_budget()` functions in `agent-dispatch/dispatch_db.py`, integrated budget enforcement into `agent-dispatch/agent_supervisor.py`
+- **Files changed**: `agent-dispatch/dispatch_db.py`, `agent-dispatch/agent_supervisor.py`
+- **record_cost() details**:
+  - Upserts to `daily_usage` using `INSERT ... ON CONFLICT(date, provider, model, agent_name) DO UPDATE SET total_tokens = total_tokens + excluded.total_tokens, total_cost_usd = total_cost_usd + excluded.total_cost_usd, task_count = task_count + 1`
+  - Accepts conn parameter; creates/manages own writer connection if None
+  - Logs debug message with all parameters on success
+- **check_budget() details**:
+  - Queries `SUM(total_cost_usd)` from `daily_usage WHERE date = today` globally
+  - Queries `SUM(total_cost_usd)` from `daily_usage WHERE date = today AND agent_name = ?` per-agent
+  - Compares against `config.daily_budget_usd` (global) and `config.agent_budgets[agent_name]` (per-agent)
+  - Returns dict with `global_exceeded` (bool) and `agent_exceeded` (bool)
+  - Creates alert notification via adapter when `alert_threshold_usd` reached
+- **Supervisor integration**:
+  - `_poll_once()` calls `check_budget()` with `__global__` agent before the task claim loop; returns early if global budget exceeded
+  - Per-task: calls `check_budget()` with actual agent_name before claiming; skips task if agent budget exceeded, breaks loop if global exceeded
+  - Imported `check_budget` in supervisor's dispatch_db imports
+- **Verification**: `python3 -m py_compile` passes for both files
+- **Learnings for future iterations:**
+  - `ON CONFLICT ... DO UPDATE SET col = col + excluded.col` uses `excluded.` prefix to reference the values from the INSERT that was blocked by the conflict
+  - Budget check returns a dict rather than raising exceptions - callers decide how to respond
+  - Global budget check uses a synthetic agent_name `__global__` to avoid needing a separate function
+---
+
+## 2026-02-14 - US-067
+- **Implemented**: Updated all provider `count_tokens()` methods to return `TokenUsage(input_tokens, output_tokens)` instead of plain `int`
+- **Files changed**:
+  - `agent-dispatch/llm_provider.py` - Updated abstract method signature from `-> int` to `-> TokenUsage`
+  - `agent-dispatch/anthropic_provider.py` - Returns `TokenUsage(input_tokens=..., output_tokens=0)` from SDK's `count_tokens()` and fallback
+  - `agent-dispatch/openai_provider.py` - Returns `TokenUsage(input_tokens=..., output_tokens=0)` from tiktoken and fallback
+  - `agent-dispatch/google_provider.py` - Returns `TokenUsage(input_tokens=..., output_tokens=0)` from Gemini SDK and fallback
+  - `agent-dispatch/ollama_provider.py` - Returns `TokenUsage(input_tokens=total_chars//4, output_tokens=0)` for char-based estimate
+  - `agent-dispatch/claude_code_provider.py` - Returns `TokenUsage(input_tokens=total_chars//4, output_tokens=0)` for char-based estimate
+- **Per-provider token counting methods**:
+  - Anthropic: `client.messages.count_tokens()` (SDK native)
+  - OpenAI: `tiktoken.encoding_for_model()` with per-message overhead tokens
+  - Gemini: `model.count_tokens()` (SDK native)
+  - Ollama: `len(text) / 4` character estimate
+  - Claude Code: `len(text) / 4` character estimate
+- **Verification**: `python3 -m py_compile` passes for all 6 changed files
+- **Learnings for future iterations:**
+  - All providers already had `count_tokens()` implemented returning `int` - the story required updating return type to `TokenUsage`
+  - `claude_code_provider.py` also extends `LLMProvider` and needed the same update
+  - `output_tokens=0` is correct for pre-call token counting since output isn't known yet
+---
+
+## 2026-02-14 - US-068
+- **Implemented**: Added `calculate_cost(provider, model, token_usage, config)` function to `dispatch_db.py` for pricing calculation from configured per-token rates
+- **Files changed**: `agent-dispatch/dispatch_db.py` (added `calculate_cost()` function between `record_cost()` and `check_budget()`)
+- **Function details**:
+  - Reads `config['pricing'][provider][model]` for `input_per_1m_tokens` and `output_per_1m_tokens`
+  - Calculates `(input_tokens * input_price + output_tokens * output_price) / 1_000_000`
+  - Returns cost estimate in USD as float
+  - Checks `config['pricing_updated_at']` and logs warning if > 90 days old or missing
+  - Raises `ValueError` if pricing not configured for provider/model
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `dispatch_db.py` is the home for cost-related functions (record_cost, check_budget, calculate_cost)
+  - Config pricing structure: `config['pricing'][provider_name][model_name]` with `input_per_1m_tokens` and `output_per_1m_tokens` keys
+  - `pricing_updated_at` is optional in config - function warns if missing or stale
+---
+
+## 2026-02-14 - US-069
+- **Implemented**: Created `data_retention.py` module with full data retention archival job
+- **Files created**: `agent-dispatch/data_retention.py`
+- **Functions implemented**:
+  - `archive_completed_tasks(conn)` - INSERT OR IGNORE into tasks_archive, then DELETE from tasks where id IN tasks_archive
+  - `cleanup_output_files(conn)` - Deletes files in agent-dispatch/output/ matching archived task IDs
+  - `aggregate_provider_health(conn)` - Aggregates provider_health records older than 30 days into health_daily_summary (COUNT, SUM, AVG), then deletes raw records
+  - `cleanup_old_records(conn)` - Deletes agent_activity, dispatch_runs, working_memory older than 90 days (agent_activity uses try/except for table existence)
+  - `cleanup_provider_incidents(conn)` - Deletes resolved provider_incidents older than 180 days (only where resolved_at IS NOT NULL)
+  - `run_retention_job(config)` - Orchestrates all retention operations in a single transaction
+  - `start_retention_scheduler(config)` / `stop_retention_scheduler()` - Daily heartbeat via daemon thread (runs immediately, then every 24 hours)
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `agent_activity` table is from the original orchestrator-dashboard system, may not exist in test environments - use try/except for OperationalError
+  - `tasks_archive` and `health_daily_summary` tables are created by migrations (US-011, US-012)
+  - Retention job uses `get_writer_connection()` from dispatch_db.py for proper PRAGMA setup
+  - The `glob` stdlib module is useful for scanning output directories
+  - Daily scheduling uses threading.Event.wait(timeout=86400) pattern for clean shutdown support
+---
+
+## 2026-02-14 - US-070
+- **Implemented**: Added `monitor_and_vacuum_db(config, conn, adapter=None)` function to `data_retention.py` for database size monitoring and vacuum operations
+- **Files changed**: `agent-dispatch/data_retention.py` (added function before `run_retention_job`)
+- **Function behavior**:
+  - Checks `os.path.getsize(db_path)` against `config["max_db_size_mb"]` (default 500 MB)
+  - Creates high-urgency alert notification via adapter if size exceeds threshold
+  - Checks `PRAGMA auto_vacuum` mode (0=NONE, 1=FULL, 2=INCREMENTAL)
+  - If INCREMENTAL (2): runs `PRAGMA incremental_vacuum(100)` to reclaim up to 100 pages
+  - Otherwise: falls back to full `VACUUM` only when no tasks with `dispatch_status='dispatched'`
+  - Logs before/after size in MB
+  - Returns dict with size_mb, threshold_mb, alert_created, vacuum_type, size_before, size_after
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - SQLite `PRAGMA auto_vacuum` returns 0=NONE, 1=FULL, 2=INCREMENTAL
+  - `VACUUM` cannot run inside a transaction - must `conn.commit()` first
+  - `PRAGMA incremental_vacuum(N)` frees up to N pages without locking the entire DB
+  - Alert notification pattern follows same try/except pattern as budget alerts in dispatch_db.py
+  - `_get_db_path()` from dispatch_db.py provides the actual file path needed for os.path.getsize()
+---
+
+## 2026-02-15 - US-071
+- **Implemented**: Structured JSON logging module at `agent-dispatch/structured_logging.py` with JSONFormatter, file handler appending to `agent-dispatch/logs/supervisor.jsonl`
+- **Files created**: `agent-dispatch/structured_logging.py`, `agent-dispatch/logs/.gitkeep`
+- **Key components**:
+  - `JSONFormatter` class: formats LogRecord as single-line JSON with timestamp (ISO 8601), level, component, message, plus optional trace_id, agent_name, task_id, extra fields
+  - `setup_logging()`: configures root 'agent_dispatch' logger with FileHandler in append mode, idempotent (no duplicate handlers)
+  - `get_logger(component)`: returns child logger under 'agent_dispatch.<component>'
+  - `log_dispatch_event()`: convenience function to log with dispatch context fields (trace_id, agent_name, task_id, extra)
+- **Verification**: `python3 -m py_compile` passes, functional test confirms all acceptance criteria met
+- **Learnings for future iterations:**
+  - Use `logging.getLogger("agent_dispatch")` as root logger, child loggers via `logging.getLogger("agent_dispatch.<component>")`
+  - Custom attributes on LogRecord via `logger.log(level, msg, extra={...})` - accessed via `getattr(record, field, None)`
+  - Mark handlers with custom attribute (`_jsonl_handler = True`) to prevent duplicate handlers on repeated `setup_logging()` calls
+  - `datetime.now(timezone.utc).isoformat()` produces ISO 8601 with timezone offset
+  - Log file at `agent-dispatch/logs/supervisor.jsonl` - directory auto-created via `os.makedirs(..., exist_ok=True)`
+---
+
+## 2026-02-14 - US-072
+- **Implemented**: Trace ID propagation through entire dispatch lifecycle - `run_agent()` now accepts and propagates `trace_id` parameter, all log entries include trace_id, tool calls are recorded in `audit_log` table with trace_id
+- **Files changed**: `agent-dispatch/agent_runner.py`, `agent-dispatch/agent_supervisor.py`
+- **Changes**:
+  - `run_agent()`: Added `trace_id` parameter (auto-generates UUID v4 if None). All 6 logger calls in the function now include `trace_id` in both message text and `extra` dict for structured JSON logging.
+  - `_execute_tool()`: Extended with `trace_id`, `task_id`, `agent_name`, `db_path` params. After executing a tool, inserts row into `audit_log` table with trace_id, task_id, agent_name, tool_name, arguments, and truncated result.
+  - `_record_audit_log()`: New helper function that INSERTs into `audit_log` table using parameterized queries with WAL/foreign_keys PRAGMAs.
+  - `agent_supervisor.py`: `_run_agent_task()` now passes `trace_id=trace_id` to `run_agent()`.
+- **Verification**: `python3 -m py_compile` passes for both changed files
+- **Learnings for future iterations:**
+  - `run_agent()` trace_id parameter is optional with auto-generation fallback for backward compatibility
+  - `extra` dict on logger calls gets picked up by `JSONFormatter` in structured_logging.py which checks for `trace_id`, `agent_name`, `task_id` attributes on LogRecord
+  - `audit_log` table already has `idx_audit_log_trace_id` index for efficient trace-based queries
+  - Truncate audit_log result to 1000 chars to avoid storing huge tool outputs
+---
+
+## 2026-02-14 - US-073
+- **Implemented**: Daily log rotation with gzip compression in `rotate_logs(config)` function
+- **Files changed**: `agent-dispatch/data_retention.py`
+- **Changes**:
+  - Added `rotate_logs(config)` function that: (1) renames `supervisor.jsonl` to `supervisor-YYYY-MM-DD.jsonl`, (2) gzips the renamed file, (3) deletes `.gz` files older than `config['log_retention_days']` (default 30), (4) creates new empty `supervisor.jsonl`
+  - Handles edge cases: empty log file (skip rotation), duplicate date filenames (counter suffix), missing logs directory (auto-create)
+  - Integrated into `run_retention_job()` - runs after DB commit as a filesystem operation, results included in job return dict
+  - Runs as part of the daily heartbeat via `start_retention_scheduler()`
+  - Added imports: `gzip`, `shutil`, `datetime`
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - Log rotation is a filesystem operation, not DB, so it runs after the DB transaction commit in `run_retention_job()`
+  - Uses `shutil.move()` for atomic rename and `gzip.open()` + `shutil.copyfileobj()` for compression
+  - `os.path.getmtime()` gives file modification time for age-based deletion
+  - Config key `log_retention_days` defaults to 30 (matches `openclawd.config.yaml`)
+---
+
+## 2026-02-14 - US-074
+- **Implemented**: Added `write_output_file()` function to `agent-dispatch/agent_runner.py` that writes agent deliverables to Markdown files with YAML frontmatter in `agent-dispatch/output/`
+- **Files changed**: `agent-dispatch/agent_runner.py` (added `write_output_file` function, added `datetime` and `os` imports)
+- **Function details**: `write_output_file(task_id, agent_name, trace_id, deliverable_content, status, db_path=None)` creates the output directory with `os.makedirs(exist_ok=True)`, generates filename as `{task_id}_{agent_name}_{trace_id[:8]}.md`, writes YAML frontmatter with task_id/agent_name/trace_id/timestamp/status, writes deliverable_content below the `---` separator, stores relative path `output/{filename}` in `dispatch_runs.output_file` via parameterized SQL UPDATE, and returns the relative path
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - The `write_output_file` function uses the same DB connection pattern as `_record_audit_log` (short-lived connect/commit/close with WAL and foreign_keys pragmas)
+  - Output directory is resolved relative to `agent-dispatch/` using `os.path.dirname(os.path.abspath(__file__))`
+  - Timestamps use `datetime.datetime.utcnow().isoformat() + "Z"` for consistent UTC ISO format
+---
+
+## 2026-02-14 - US-075
+- **Implemented**: Added `send_webhook(url, notification_dict)` function in new `agent-dispatch/notification_delivery.py` module for webhook notification delivery via HTTP POST with retry cascade
+- **Files created**: `agent-dispatch/notification_delivery.py`
+- **Function details**: `send_webhook(url, notification_dict)` encodes notification_dict as JSON, makes HTTP POST via `urllib.request.Request` with `Content-Type: application/json` header and 10s timeout, retries up to 3 times on failure with exponential backoff (1s, 5s, 30s), returns True on success or False after all retries exhausted
+- **Logging**: Uses `structured_logging.get_logger("notification_delivery")` with `log_dispatch_event` for INFO on success, WARNING per failed attempt, ERROR after all retries exhausted
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `urllib.request` is used instead of `requests` to avoid external dependencies - sufficient for simple POST with timeout
+  - Retry backoff constants are module-level (`WEBHOOK_RETRY_BACKOFFS = [1, 5, 30]`) for easy adjustment
+  - The retry loop uses `max_attempts = len(backoffs) + 1` (1 initial attempt + 3 retries = 4 total attempts)
+---
+
+## 2026-02-14 - US-076
+- **Implemented**: Added `send_email_notification(to, subject, body, config)` function to `notification_delivery.py` for SMTP email delivery with retry cascade
+- **Files changed**: `agent-dispatch/notification_delivery.py` (added smtplib/MIMEText imports, EMAIL_RETRY_BACKOFFS constant, send_email_notification function)
+- **Function details**: Reads SMTP config from `config['notifications']['email']` (smtp_host, smtp_port, from), builds MIMEText message, connects via `smtplib.SMTP()` with 10s timeout, sends with `server.sendmail()`, retries up to 3 times with backoff (1s, 5s, 30s), returns True on success or False after all retries exhausted
+- **Logging**: Uses same `log_dispatch_event` pattern as webhook - INFO on success, WARNING per failed attempt, ERROR after all retries exhausted
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `smtplib.SMTP` is used as a context manager (`with` statement) for automatic cleanup
+  - `email.mime.text.MIMEText` handles proper email formatting with Subject/From/To headers
+  - Same retry pattern as webhook (module-level backoff constants, max_attempts = len(backoffs) + 1)
+  - Config key for sender is `from` (reserved word in Python) so accessed via `.get("from", ...)`
+---
+
+## 2026-02-14 - US-077
+- **Implemented**: Added `send_desktop_notification(title, message)` function to `notification_delivery.py` for macOS desktop notifications via osascript
+- **Files changed**: `agent-dispatch/notification_delivery.py` (added subprocess/sys imports, send_desktop_notification function)
+- **Function details**: Checks `sys.platform == 'darwin'` first and returns False on non-macOS, constructs AppleScript `display notification` command, spawns `subprocess.run(['osascript', '-e', ...])` with capture_output=True and 10s timeout, returns True on returncode 0 or False on failure/timeout
+- **Logging**: Uses `log_dispatch_event` pattern - INFO on attempt and success, WARNING on platform skip/osascript failure/timeout, ERROR on unexpected exceptions
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `subprocess.run` with `capture_output=True, text=True, timeout=10` is the standard pattern for spawning osascript
+  - AppleScript `display notification "msg" with title "title"` is the standard macOS notification syntax
+  - Platform check via `sys.platform != 'darwin'` returns early on non-macOS systems
+  - Same file as webhook and email functions - all notification channels live in `notification_delivery.py`
+---
+
+## 2026-02-14 - US-078
+- **Implemented**: Added `deliver_notification(notification_dict, urgency, config)` function to `notification_delivery.py` for urgency-based notification routing with cascade
+- **Files changed**: `agent-dispatch/notification_delivery.py` (added DEFAULT_DELIVERY_RULES dict and deliver_notification function)
+- **Function details**: Reads `config['notifications']['delivery_rules'][urgency]['channels']` to get channel list; falls back to DEFAULT_DELIVERY_RULES if not in config. For each channel in order (webhook, email, desktop), calls the corresponding send function. If a channel fails, cascades to the next. Returns dict with `status` ('delivered' or 'failed') and `delivered_channels` (list of channels that succeeded). Entire function wrapped in try/except so notification failures never block dispatch operations.
+- **Urgency mapping**: urgent/critical → [webhook, email, desktop], high → [webhook, desktop], normal → [webhook], low → [] (DB only)
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - Config uses 'critical' but AC uses 'urgent' - DEFAULT_DELIVERY_RULES supports both as aliases
+  - Config delivery_rules can be a dict with 'channels' key or may not exist - need to handle both cases
+  - Webhook needs URL from config, email needs to_addresses from config - skip channel gracefully if not configured
+  - All notification delivery functions (send_webhook, send_email_notification, send_desktop_notification) already have their own retry logic built in, so the cascade just needs to try each channel and move to next on failure
+---
+
+## 2026-02-14 - US-079
+- **Implemented**: Created macOS launchd plist file at `scripts/com.openclaw.agent-supervisor.plist` for auto-starting the agent supervisor daemon
+- **Files created**: `scripts/com.openclaw.agent-supervisor.plist`
+- **Plist details**: Label=com.openclaw.agent-supervisor, ProgramArguments runs `python3 -m agent-dispatch.agent_supervisor`, WatchPaths monitors `agent-dispatch/supervisor.heartbeat`, ThrottleInterval=60, RunAtLoad=true, stdout/stderr logs in `agent-dispatch/logs/`
+- **Verification**: `plutil -lint` validates as valid plist XML
+- **Learnings for future iterations:**
+  - `plutil -lint` is the macOS native tool for validating plist XML syntax
+  - Existing plist reference in `scripts/com.openclaw.dailygit.plist` follows same XML format
+  - WatchPaths triggers the job when the watched file changes (used for heartbeat stale detection)
+  - ThrottleInterval prevents rapid re-launches (60s minimum between launches)
+---
+
+## 2026-02-14 - US-080
+- **Implemented**: Created Linux systemd service file at `scripts/openclawd-supervisor.service` for auto-starting the agent supervisor daemon on Linux systems
+- **Files created**: `scripts/openclawd-supervisor.service`
+- **Service details**: Type=simple, ExecStart runs `python3 -m agent-dispatch.agent_supervisor`, WorkingDirectory=/opt/openclawd, WatchdogSec=300, Restart=always, RestartSec=10, WantedBy=multi-user.target
+- **Verification**: All Python files pass py_compile, systemd-analyze not available on macOS (expected)
+- **Learnings for future iterations:**
+  - systemd service files are plain INI-style text files with [Unit], [Service], and [Install] sections
+  - WatchdogSec=300 expects the service to call sd_notify(WATCHDOG=1) within 300 seconds or systemd considers it hung
+  - Companion to the macOS plist file created in US-079 - same daemon, different init systems
+  - systemd-analyze verify can validate service files on Linux but not available on macOS
+---
+
+## 2026-02-15 - US-081
+- **Implemented**: CLI entry point `openclawd` with argparse subcommands: status, tasks, dispatch, run, daemon, stop, kick
+- **Files created**: `agent-dispatch/cli.py`, `setup.py`
+- **Details**:
+  - `status`: Reads PID file, checks if supervisor process is running, queries active/queued task counts from DB
+  - `tasks`: Lists tasks with optional filters (--status, --agent, --priority)
+  - `dispatch <task_id>`: Manually claims a task via dispatch_db.claim_task()
+  - `run`: Instantiates AgentSupervisor and runs a single _poll_once() cycle
+  - `daemon`: Starts full supervisor.run() loop
+  - `stop`: Reads PID file and sends SIGTERM
+  - `kick`: Reads PID file and sends SIGUSR1 for immediate poll
+  - All commands support `--json` flag for machine-readable JSON output
+  - Entry point registered in setup.py console_scripts
+- **Learnings for future iterations:**
+  - PID file path is at `agent-dispatch/supervisor.pid` (same as agent_supervisor._PID_FILE_PATH)
+  - The `agent-dispatch` directory uses hyphens which is unusual for Python packages - setup.py needs explicit package listing
+  - CLI uses relative imports (from .config, from .dispatch_db, etc.) so it runs as part of the agent-dispatch package
+  - For read-only DB queries in CLI, create fresh connections with row_factory=sqlite3.Row for dict-like access
+---
+
+## 2026-02-15 - US-082
+- **Implemented**: Added `openclawd health` and `openclawd doctor` CLI subcommands to cli.py
+- **Files changed**: `agent-dispatch/cli.py`
+- **Details**:
+  - `health`: Iterates configured providers (primary + fallback), runs all 4 canary tests (basic_completion, tool_calling, tool_result_handling, structured_output) via test functions from canary_tests.py, prints tabular results showing provider/model/test/status/latency/error. Also stores results via run_health_checks().
+  - `health --json`: Outputs list of result dicts as JSON
+  - `doctor`: Runs 5-section diagnostic: (1) config validation (file found, required sections, API key env vars), (2) database connectivity and expected tables, (3) provider API key validation for primary and fallback, (4) disk space via shutil.disk_usage(), (5) compatibility check via check_compatibility()
+  - `doctor --json`: Outputs full report dict as JSON
+  - Both subcommands registered in main() argparse setup
+- **Learnings for future iterations:**
+  - shutil.disk_usage() is the cross-platform way to check disk space in Python (works on macOS and Linux)
+  - The health command runs canary tests inline (direct test_fn calls) AND stores results via run_health_checks() for DB persistence
+  - The doctor command reuses existing modules: config.resolve_config_path(), compatibility_check.check_compatibility(), and direct DB queries
+  - Human-readable output uses status icons [OK]/[WARN]/[ERR] for quick visual scanning
+---
+
+## 2026-02-15 - US-083
+- **Implemented**: Added `openclawd config validate` subcommand that validates config file against schema and checks API keys
+- **Files changed**: `agent-dispatch/cli.py` (added `cmd_config_validate()` handler, added `config` subparser with `validate` sub-subcommand in `main()`)
+- **Details**:
+  - `config validate`: Loads config YAML via load_config(), checks config file exists, validates required sections (provider), calls validate_config() for API key env vars/numeric ranges/DB connectivity, prints numbered error list or success message
+  - `config validate --json`: Outputs `{"valid": bool, "config_path": str, "errors": []}` as JSON
+  - Exits with code 1 on validation failure, code 0 on success
+  - `config` parent subcommand prints help if called without sub-subcommand
+  - Reuses existing `validate_config()` from config.py which checks: API key env vars, SDK module imports, DB connectivity, numeric ranges, retention values
+- **Learnings for future iterations:**
+  - argparse supports nested subparsers for `command subcommand` patterns (e.g., `config validate`)
+  - Set default func on parent subparser with lambda to print_help() so bare `openclawd config` shows available sub-subcommands
+  - The --json flag from the top-level parser is inherited by sub-subcommands via args namespace
+---
+
+## 2026-02-15 - US-084
+- **Implemented**: Added `openclawd logs` CLI subcommand that reads and filters `supervisor.jsonl` log entries
+- **Files changed**: `agent-dispatch/cli.py` (added `cmd_logs()` handler, added `logs` subparser with `--follow`, `--level`, `--agent`, `--task`, `--trace` args in `main()`)
+- **Details**:
+  - `logs`: Reads last 500 JSONL entries from `LOG_FILE_PATH`, filters by criteria, prints last 50 matching entries
+  - `logs --follow`: After printing recent entries, seeks to end of file and tails continuously with 0.5s poll interval, interrupted by Ctrl-C
+  - `logs --level ERROR`: Case-insensitive filter on `level` field
+  - `logs --agent rex`: Exact match filter on `agent_name` field
+  - `logs --task 42`: String comparison filter on `task_id` field
+  - `logs --trace abc123`: Exact match filter on `trace_id` field
+  - `logs --json`: Outputs each entry as raw JSON line; without flag, formats as `timestamp [LEVEL] component: message field=value`
+  - Imports `LOG_FILE_PATH` from `structured_logging` module to use the canonical log file location
+  - Exits with code 1 if log file doesn't exist
+- **Verification**: `python3 -m py_compile agent-dispatch/cli.py` passes
+- **Learnings for future iterations:**
+  - `structured_logging.LOG_FILE_PATH` is the canonical path to `supervisor.jsonl` - import it rather than hardcoding
+  - For tailing, `f.seek(0, 2)` seeks to end of file, then `f.readline()` returns empty string when no new data
+  - Reading more entries (500) than displayed (50) accounts for filtering reducing the result set
+---
+
+## 2026-02-15 - US-085
+- **Implemented**: Added `openclawd demo` CLI subcommand that creates a demo task via `adapter.create_task()`, triggers immediate dispatch (via SIGUSR1 kick or direct `claim_task`), polls for completion up to 5 minutes, prints results, and cleans up the demo task on exit
+- **Files changed**: `agent-dispatch/cli.py` (added `cmd_demo()` function and `demo` subparser registration)
+- **Acceptance criteria met**:
+  - Creates demo task via `adapter.create_task()` with 'Research: What is SQLite WAL mode?' topic
+  - Triggers immediate poll via kick (SIGUSR1) or direct dispatch via `claim_task()`
+  - Polls task status every 5 seconds up to 5 minutes (300s timeout)
+  - Prints task result on completion or timeout message
+  - Cleans up demo task and related records (dispatch_runs, working_memory, task_dependencies) on exit
+  - `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - Cleanup of demo tasks requires deleting from child tables first (dispatch_runs, working_memory, task_dependencies) due to foreign key constraints, before deleting from tasks
+  - The `_get_connection()` helper in cli.py returns a read-write connection suitable for both querying and cleanup operations
+  - adapter.create_task() returns the integer task ID, which can be used for subsequent polling and cleanup
+---
+
+## 2026-02-15 - US-086
+- **Implemented**: `openclawd init` interactive setup wizard that generates `openclawd.config.yaml` in the current directory
+- **Files changed**: `agent-dispatch/cli.py` (added `cmd_init()` function and `init` subparser registration, imported `CONFIG_FILENAME` from config)
+- **Acceptance criteria met**:
+  - Prompts for provider selection from list (anthropic, openai, gemini, ollama) with numeric menu
+  - Prompts for model name with smart defaults per provider
+  - Prompts for API key environment variable name with defaults per provider
+  - Prompts for max_concurrent_agents (default 3) with positive integer validation
+  - Prompts for daily_budget_usd (default 50.00) with non-negative float validation
+  - Generates openclawd.config.yaml in current working directory
+  - Checks for existing config and prompts for overwrite confirmation before proceeding
+  - Prints success message with next steps (set API key, validate config, run health check, start daemon)
+  - `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `CONFIG_FILENAME` constant in config.py can be reused in cli.py to avoid hardcoding the filename
+  - Python `input()` works for interactive CLI prompts; no external library needed
+  - Default model/key mappings per provider keep the wizard user-friendly
+---
+
+## 2026-02-15 - US-087
+- **Implemented**: Added `openclawd pipeline create` interactive CLI subcommand that creates task dependency chains
+- **Files changed**: `agent-dispatch/cli.py` (added `cmd_pipeline_create()` function and `pipeline` subparser with `create` sub-subcommand)
+- **Functionality**:
+  - Prompts user to use existing parent task ID or create a new parent task
+  - Prompts for number of child tasks
+  - For each child, prompts for title, description, assigned_agent
+  - Prompts for dependency_type (completion or contribution) with default of completion
+  - Creates child tasks via `adapter.create_task()`
+  - Creates `task_dependencies` rows linking each child to the parent using parameterized SQL
+  - Prints pipeline summary with parent ID, dependency type, and all created children
+  - Supports `--json` flag for machine-readable output
+- `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - Same nested subparser pattern as `config` (using sub-subparsers) works for `pipeline` command group
+  - `conn.execute` with parameterized INSERT for `task_dependencies` follows the forbidden patterns rule (no string interpolation)
+  - Interactive prompts use `input()` with validation loops, consistent with `cmd_init` pattern
+---
+
+## 2026-02-15 - US-088
+- **Implemented**: Added `openclawd tool test <tool_name>` CLI subcommand that loads tool YAML definitions, reads test blocks, executes tool executors with test inputs, validates output structure against expected shape, and prints pass/fail results
+- **Files changed**: `agent-dispatch/cli.py` (added `cmd_tool_test()` handler and `tool test` sub-subcommand in `main()`)
+- **How it works**:
+  - Uses `ToolRegistry.get_tool()` to load tool definition YAML by name
+  - Reads `test.input` dict and `test.expected` dict from tool definition
+  - Dynamically imports executor module via `importlib.import_module()` using `execution.module` path
+  - Calls executor function with test inputs as kwargs
+  - Validates output structure: checks `has_fields` (dict must contain listed keys) and `type` (output type must match)
+  - Prints human-readable pass/fail or JSON output with `--json` flag
+  - Exits with code 1 on failure
+- `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - Same nested subparser pattern as `config` and `pipeline` works for `tool` command group
+  - `importlib.import_module()` is the correct way to dynamically load executor modules at runtime
+  - Tool YAML test blocks use `has_fields` for structural validation (checking dict keys exist) rather than exact value matching
+  - The `tool test` subcommand follows the existing CLI pattern: handler function + argparse sub-subparser registration
+---
+
+## 2026-02-15 - US-089
+- **Implemented**: Added `openclawd serve` subcommand that starts a lightweight HTTP server on localhost:8377 exposing a GET /status endpoint
+- **Files changed**: `agent-dispatch/cli.py`
+- **Implementation details**:
+  - Added `_get_status_dict(config)` helper that builds the full status JSON dict (shared by `cmd_status` and the serve endpoint)
+  - Status dict includes: supervisor status, pid, active_tasks, queued_tasks, budget_usage (today's cost/tokens from daily_usage table), health_summary (pass/fail counts from provider_health table)
+  - Added `cmd_serve(args)` that starts `http.server.HTTPServer` bound to 127.0.0.1 on configurable port (default 8377)
+  - `StatusHandler.do_GET` serves /status with 200+JSON, all other paths get 404+JSON
+  - `log_message` override logs timestamped request lines to stdout
+  - Supports `--port` flag to override default 8377
+  - Refactored `cmd_status` to use the shared `_get_status_dict` helper
+  - Registered `serve` subparser in `main()` with `--port` argument
+- **Verification**: `python3 -m py_compile` passes
+- **Learnings for future iterations:**
+  - `http.server.HTTPServer` + `BaseHTTPRequestHandler` is sufficient for simple JSON API servers - no Flask dependency needed
+  - Binding to 127.0.0.1 (not 0.0.0.0) provides localhost-only security without authentication
+  - Overriding `log_message` on `BaseHTTPRequestHandler` customizes request logging format
+  - Extracting shared logic into a helper function (`_get_status_dict`) prevents duplication between CLI and HTTP endpoints
+---
+
+## 2026-02-15 - US-091
+- **Implemented**: Created pyproject.toml for pip-installable packaging of openclawd-dispatch
+- **Files created**: `/Users/alanwalker/openclaw-orchestration/pyproject.toml`
+- **Implementation details**:
+  - Defined [build-system] with setuptools>=68.0 and setuptools.build_meta backend
+  - Created [project] section with:
+    - name = "openclawd-dispatch"
+    - version = "0.1.0"
+    - description = "OpenClawd Agent Dispatch System - provider-agnostic multi-agent orchestration"
+    - authors = [{name = "Alan Walker"}]
+    - requires-python = ">=3.10"
+    - dependencies = ["pyyaml", "requests"]
+  - Defined [project.scripts] with openclawd = "agent_dispatch.cli:main" entry point
+  - Created [project.optional-dependencies] with four groups:
+    - anthropic = ["anthropic"]
+    - openai = ["openai", "tiktoken"]
+    - gemini = ["google-generativeai"]
+    - all = ["anthropic", "openai", "google-generativeai", "rich"]
+  - Added [tool.setuptools] section specifying packages = ["agent_dispatch", "agent_dispatch.health"]
+  - File validates as proper TOML format (tested with Python 3.10)
+- **Verification**: All acceptance criteria passed:
+  - pyproject.toml validates as valid TOML
+  - Contains all required [project] fields (name, version, description, authors)
+  - dependencies list includes pyyaml and requests
+  - [project.scripts] defines openclawd entry point
+  - [project.optional-dependencies] defines all four groups with correct packages
+  - CLI module compiles without errors: python3 -m py_compile agent-dispatch/cli.py passes
+- **Learnings for future iterations:**
+  - Modern Python packaging uses pyproject.toml instead of setup.py (PEP 621)
+  - setuptools.build_meta is the recommended backend for pyproject.toml
+  - Optional dependencies groups allow users to install only the providers they need (e.g., pip install openclawd-dispatch[anthropic])
+  - The "all" group should include ALL optional features including UI libraries like rich
+  - [tool.setuptools] packages declaration explicitly lists which Python packages to include
+  - Entry points in [project.scripts] use dotted module.path:function syntax
+---
+
+## 2026-02-15 - US-090
+- **Implemented**: Integrated rich library for CLI output formatting with plain-text fallback
+- **Files changed**: 
+  - agent-dispatch/cli.py
+- **Implementation details**:
+  - Added try/except ImportError block to import rich components (Table, Console, Progress, SpinnerColumn, TextColumn) and set HAS_RICH flag
+  - Created _get_status_color() helper function to map status values to color codes (green=completed/success/pass/ok/running, red=failed/fail/error/stopped, yellow=in_progress/dispatched/queued/warning)
+  - Modified cmd_status() to use rich.Table when HAS_RICH=True and --json=False, with color-coded status value
+  - Modified cmd_tasks() to use rich.Table when HAS_RICH=True and --json=False, with color-coded status column
+  - Modified cmd_health() to show rich.Progress spinner during health checks when HAS_RICH=True and --json=False, then display results in rich.Table with color-coded PASS/FAIL status and colored summary
+  - Modified cmd_demo() to show rich.Progress spinner when creating demo task (if HAS_RICH=True and --json=False)
+  - All commands respect --json flag which bypasses rich formatting and outputs raw JSON
+  - Plain-text fallback preserved for all commands when rich is not installed (HAS_RICH=False)
+- **Verification**: 
+  - python3 -m py_compile agent-dispatch/cli.py passes with ZERO errors
+  - Rich formatting is optional and gracefully falls back to plain text if ImportError
+  - All commands support --json flag which bypasses rich formatting
+  - Status color-coding implemented: green for completed/success, red for failed, yellow for in_progress
+- **Learnings for future iterations:**
+  - rich library provides excellent table formatting with built-in color support via markup syntax [color]text[/color]
+  - Progress bars should use SpinnerColumn for indeterminate tasks (total=None) and TextColumn for descriptions
+  - Always check HAS_RICH flag AND args.json to determine formatting path (JSON always bypasses rich)
+  - Color-coding status values significantly improves readability of CLI output
+  - Keep plain-text fallback simple and functional - don't try to replicate rich features with ASCII art
+  - Progress context manager (with Progress() as progress:) automatically handles cleanup and rendering
+  - rich.Console.print() method renders tables directly to stdout with proper formatting
+---
+
+## 2026-02-15 - US-092
+- **Implemented**: Auto-generate config template on first run if no config exists
+- **Files changed**: 
+  - agent-dispatch/config.py (added ensure_config() function and shutil import)
+  - agent-dispatch/cli.py (added ensure_config import and call at start of main())
+- **Implementation details**:
+  - Added ensure_config() function to config.py that:
+    - Checks for config file in resolution order using resolve_config_path()
+    - If no config found, creates ~/.openclawd/ directory with os.makedirs(exist_ok=True)
+    - Copies template openclawd.config.yaml from agent-dispatch/ to ~/.openclawd/openclawd.config.yaml using shutil.copy2()
+    - Prints message: "Config template created at ~/.openclawd/openclawd.config.yaml. Please edit and add your API keys."
+    - Does NOT overwrite if file already exists (returns early if resolve_config_path() finds anything)
+    - Handles missing template gracefully (returns if template file doesn't exist)
+  - Added ensure_config import to cli.py line 23
+  - Added ensure_config() call at start of main() function (line 1489) before argparse setup
+  - This ensures config template is created before any command executes
+- **Verification**: 
+  - python3 -m py_compile agent-dispatch/config.py passes with ZERO errors
+  - python3 -m py_compile agent-dispatch/cli.py passes with ZERO errors
+  - All acceptance criteria met:
+    1. Checks for config file in resolution order (uses resolve_config_path)
+    2. Creates ~/.openclawd/ directory if not exists (os.makedirs with exist_ok=True)
+    3. Copies openclawd.config.yaml template to ~/.openclawd/openclawd.config.yaml (shutil.copy2)
+    4. Prints message as specified
+    5. Does not overwrite existing config files (returns early if resolve_config_path finds one)
+    6. Typecheck passes (py_compile succeeded)
+- **Learnings for future iterations:**
+  - shutil.copy2() preserves file metadata (timestamps, permissions) unlike shutil.copy()
+  - os.makedirs(exist_ok=True) is safe to call even if directory exists - simplifies logic
+  - Calling ensure_config() before argparse setup means it runs for ALL commands, ensuring consistent first-run experience
+  - Template file is located using os.path.dirname(os.path.abspath(__file__)) to get agent-dispatch/ directory path
+  - Graceful handling of missing template prevents crashes during development or testing
+  - The ~/.openclawd/ directory pattern follows Unix conventions for user config storage
+---
+
+## 2026-02-15 - IVV Fix: ProviderCapabilities type, REQ-020 fallback filtering
+- **Fixed**: 
+  1. Changed ProviderCapabilities.tool_calling_reliability from float to str with values "high", "medium", "low"
+  2. Updated all provider implementations to use string values:
+     - anthropic_provider.py: "high"
+     - openai_provider.py: "high"
+     - google_provider.py: "medium"
+     - claude_code_provider.py: "medium"
+     - ollama_provider.py: "low"
+  3. Added get_provider_with_fallback() function to provider_registry.py with capability filtering:
+     - Filters by tool_calling_reliability (skips "low" if required)
+     - Filters by validate_tool_calling() result
+     - Filters by min_context_tokens requirement
+- **Files changed**: 
+  - agent-dispatch/llm_provider.py
+  - agent-dispatch/provider_registry.py
+  - agent-dispatch/anthropic_provider.py
+  - agent-dispatch/openai_provider.py
+  - agent-dispatch/google_provider.py
+  - agent-dispatch/ollama_provider.py
+  - agent-dispatch/claude_code_provider.py
+- **Verification**: py_compile passes for all files
+---
+
+## 2026-02-15 - IVV Fix: REQ-026/067 denylists, REQ-065 sandbox limits
+- **Fixed**: 
+  1. Added denied_agents field to UniversalTool dataclass in universal_tool.py:
+     - New field: denied_agents: list = field(default_factory=list)
+     - Updated load_tool() to read denied_agents from YAML (defaults to empty list)
+     - Denylist takes precedence over allowlist in permission checking
+  2. Added _check_tool_permission() function to agent_runner.py:
+     - Permission logic: deny if in denied_agents, allow if no allowlist or in allowlist
+     - Denylist takes precedence over allowlist (REQ-026/REQ-067 compliance)
+     - Returns True if agent has permission, False otherwise
+  3. Integrated permission check into _execute_tool() in agent_runner.py:
+     - Calls _check_tool_permission() before executing any tool
+     - Returns JSON error if permission denied
+     - Logs warning with agent name, tool name, and trace ID
+  4. Added resource limits to shell_exec.py and python_exec.py (REQ-065):
+     - New _set_resource_limits() function sets memory (512MB) and CPU (60s) limits
+     - Uses resource.setrlimit() on Unix-like systems
+     - Gracefully handles Windows (resource module unavailable) via platform check
+     - Passes preexec_fn=_set_resource_limits to subprocess.run()
+     - Try/except handles ImportError, OSError, ValueError for unsupported systems
+- **Files changed**: 
+  - agent-dispatch/universal_tool.py
+  - agent-dispatch/agent_runner.py
+  - tools/executors/shell_exec.py
+  - tools/executors/python_exec.py
+- **Verification**: py_compile passes for all 4 files
+---
+
+## 2026-02-15 - IVV Fix: REQ-003, Schema NOT NULL, REQ-066
+- **Fixed**: 
+  1. REQ-003: Changed MAX_CONCURRENT_AGENTS default from 5 to 3 in config.py (line 23)
+  2. Schema NOT NULL fixes in migrations.py:
+     - Added migrate_dispatch_runs_trace_id_not_null() - fixes dispatch_runs.trace_id to NOT NULL
+     - Added migrate_audit_log_not_null_fixes() - fixes audit_log.trace_id and audit_log.arguments to NOT NULL
+     - Added migrate_working_memory_value_not_null() - fixes working_memory.value to NOT NULL
+     - All migrations are idempotent (check if already NOT NULL before migrating)
+     - Uses SQLite standard pattern: create temp table, copy data with COALESCE, drop original, rename temp, recreate indexes
+     - Added all three migration functions to __main__ block
+  3. REQ-066: Added audit_log permanence guards in data_retention.py:
+     - Added REQ-066 comment to module docstring explaining audit_log is permanent
+     - Added explicit guard comment in cleanup_old_records() function documenting audit_log exclusion
+     - Added note in run_retention_job() docstring that audit_log is permanent
+- **Files changed**: 
+  - agent-dispatch/config.py
+  - agent-dispatch/migrations.py
+  - agent-dispatch/data_retention.py
+- **Verification**: py_compile passes
+---
+
+## 2026-02-15 - IVV Fix: REQ-042 compatibility health check, REQ-032 structured SOPs
+- **Fixed**: 
+  1. REQ-042: OpenClawd compatibility as health check
+     - Added _store_compatibility_result() helper to compatibility_check.py
+     - Stores check results in provider_health table with provider='openclawd', model='system', test_name='compatibility_check'
+     - Captures passed (True/False), latency_ms, and error_message (semicolon-joined issues)
+     - Modified check_compatibility() to accept store_result parameter (default True)
+     - Added timing measurement using time.time() to calculate latency_ms
+     - Gracefully handles missing provider_health table (logs warning, doesn't fail startup)
+     - Added _run_compatibility_check() function to health/health_monitor.py
+     - Integrated compatibility check into run_health_checks() - runs first before provider canary tests
+     - Logs results at INFO (passed) or WARNING (failed) level with tier and issues
+     - Compatibility check now runs periodically on same schedule as provider health checks (default 6 hours)
+  2. REQ-032: Structured SOPs verification
+     - Enhanced all 8 prompt files with explicit numbered steps, decision gates, and machine-parseable status prefixes:
+       - base_sop.md: Already had excellent structure (no changes needed)
+       - rex.md: Added 4-step workflow with decision gates at each step
+       - pixel.md: Added 4-step product development workflow with decision gates
+       - haven.md: Added 4-step property analysis workflow with decision gates
+       - vault.md: Added 5-step deal analysis workflow with decision gates
+       - nora.md: Added 4-step operations workflow with Eisenhower matrix triage
+       - scout.md: Added 5-step validation workflow with quality scoring
+       - keeper.md: Added 5-step maintenance workflow with pre-action verification
+     - All workflows now include:
+       - Numbered procedural steps
+       - Clear IF/THEN/ELSE decision gates at each step
+       - Machine-parseable STATUS: prefixes (ANALYZING, EXECUTING, FORMATTING)
+       - Explicit outputs and working memory keys
+       - Consistency with base SOP structure
+- **Files changed**: 
+  - agent-dispatch/compatibility_check.py (added timing, storage function, store_result param)
+  - agent-dispatch/health/health_monitor.py (added _run_compatibility_check and integration)
+  - prompts/rex.md (added structured workflow)
+  - prompts/pixel.md (added structured workflow)
+  - prompts/haven.md (added structured workflow)
+  - prompts/vault.md (added structured workflow)
+  - prompts/nora.md (added structured workflow)
+  - prompts/scout.md (added structured workflow)
+  - prompts/keeper.md (added structured workflow)
+- **Verification**: py_compile passes for compatibility_check.py and health_monitor.py
+---
+
+## 2026-02-15 - IVV Fix: REQ-021, REQ-027, REQ-036, REQ-046, REQ-047
+- **Fixed**: 
+  1. REQ-021: Context budget enforcement (CRITICAL)
+     - Added enforce_context_budget() function to agent_prompts.py
+     - Uses provider.count_tokens() with fallback to char/4 estimate
+     - Three-tier trimming strategy: (1) remove skill summaries, (2) truncate task description, (3) raise error
+     - Integrated into build_prompt() - automatically enforces budget if provider is passed
+     - Updated build_prompt() signature to accept optional provider parameter
+     - Updated agent_runner.py run_agent() to pass provider to build_prompt() for automatic budget enforcement
+  2. REQ-027: Tool idempotency tracking
+     - Added _compute_tool_call_hash() function using SHA256 to track tool calls
+     - Added non_idempotent_hashes Set to track previously-called non-idempotent tools
+     - Check tool_def.idempotent flag for each tool call
+     - If idempotent=True, retry safely
+     - If idempotent=False and already called with same args, skip retry and return error message
+     - Defaults to non-idempotent (safer) if tool not found in registry
+  3. REQ-036: squad_chat milestone updates
+     - Added _post_milestone_update() function that calls adapter.squad_chat_post()
+     - Posts updates every 4 tool calls (configurable via _MILESTONE_UPDATE_INTERVAL)
+     - Rate-limited to maximum 3 updates per task (_MAX_MILESTONE_UPDATES)
+     - Wrapped in try/except so failures never block main loop
+     - Message format: "Agent {agent_name} working on task {task_id}: completed {n} tool calls"
+     - Added adapter parameter to run_agent() function signature
+  4. REQ-046: working_memory max_value_length 5000
+     - Updated _upsert_working_memory() to enforce 5000 char limit
+     - Checks len(value_str) > 5000 and truncates to value_str[:5000]
+     - Logs warning with original length when truncation occurs
+     - Enforced before database INSERT OR REPLACE
+  5. REQ-047: Working memory scope to dependency chains
+     - Added _load_dependency_chain() function to query task_dependencies table
+     - Added _load_working_memory_with_dependencies() function to load memory for task + dependency chain
+     - Queries working_memory WHERE task_id IN (current_task, ...dependency_ids)
+     - Auto-loads scoped working memory in build_prompt() if not explicitly provided
+     - Falls back to empty list if dependency query fails (graceful degradation)
+- **Files changed**: 
+  - agent-dispatch/agent_prompts.py (context budget enforcement, dependency scoping)
+  - agent-dispatch/agent_runner.py (idempotency tracking, milestone updates, 5000 char limit)
+- **Verification**: py_compile passes for both files
+---

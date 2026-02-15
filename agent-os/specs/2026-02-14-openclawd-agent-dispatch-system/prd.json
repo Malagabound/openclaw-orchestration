@@ -1,0 +1,1695 @@
+{
+  "project": "OpenClawd",
+  "branchName": "openclawd-agent-dispatch-system",
+  "specFile": "agent-os/specs/2026-02-14-openclawd-agent-dispatch-system/spec.md",
+  "description": "Add the missing execution layer to the OpenClawd multi-agent platform: a Python supervisor daemon that monitors the coordination database, matches tasks to specialist agents, spawns parallel LLM API calls with agent-specific system prompts via a provider-agnostic abstraction layer, and flows structured results back into the existing coordination dashboard.",
+  "componentContext": {
+    "components": [],
+    "forbiddenPatterns": [
+      "Direct imports from orchestrator-dashboard modules outside openclawd_adapter.py - use adapter isolation layer",
+      "Hardcoded database paths - resolve from config with fallback chain",
+      "String interpolation for SQL with agent-sourced data - always use parameterized queries",
+      "Fire-and-forget async operations - always await promises",
+      "Modifying existing OpenClawd tables or columns - only add new tables/columns"
+    ],
+    "discoveryNote": "This is a Python backend system (not Next.js). No UI components are needed. All integration with the existing OpenClawd orchestrator-dashboard must go through the openclawd_adapter.py isolation layer."
+  },
+  "systemContext": {
+    "systems": [
+      {
+        "name": "OrchestratorDashboard",
+        "description": "Existing Python module providing task CRUD, notifications, activity logging, squad chat, and agent coordination. Located at orchestrator-dashboard/dashboard.py",
+        "integration_points": {
+          "create_task": "Creates new task with domain, priority, assigned_agent",
+          "complete_task": "Marks task completed and internally creates notification + activity log",
+          "add_task_contribution": "Records deliverable and sets tasks.status='in_progress' as side effect",
+          "log_agent_activity": "Logs agent actions (silently swallows sqlite3.Error)",
+          "create_notification": "Creates notification with urgency routing",
+          "squad_chat_post": "Posts to team chat with optional task linkage",
+          "get_dashboard_summary": "Returns summary dict",
+          "agent_checkin": "Records agent heartbeat"
+        },
+        "primary_files": [
+          "/Users/alanwalker/openclaw-orchestration/orchestrator-dashboard/dashboard.py"
+        ],
+        "gotchas": [
+          "OrchestratorDashboard.__init__ takes db_path defaulting to relative path - must resolve to absolute path",
+          "Each adapter method opens its own sqlite3.connect() and CANNOT participate in dispatch system transactions",
+          "complete_task() internally calls create_notification() and log_agent_activity() - do not send duplicate completion notifications",
+          "add_task_contribution() has side effect: sets tasks.status='in_progress' if current status is 'open'",
+          "tasks table has CHECK constraint on status limited to ('open','in_progress','review','completed','blocked') - dispatch system adds dispatch_status as separate column"
+        ]
+      },
+      {
+        "name": "AgentCoordinator",
+        "description": "Keyword-based agent routing and domain-expertise matching for task assignment. Located at orchestrator-dashboard/agent_coordinator.py",
+        "integration_points": {
+          "_determine_relevant_agents": "Scans task title+description for keywords, returns list of agent names",
+          "_can_agent_contribute": "Checks if agent's expertise domains match task domain using agent_expertise dict",
+          "agent_expertise": "Dict mapping agent names to domain lists (rex: research/market_analysis, pixel: digital_products, haven: real_estate, vault: business_acquisition, nora: operations, scout: validation, keeper: maintenance)"
+        },
+        "primary_files": [
+          "/Users/alanwalker/openclaw-orchestration/orchestrator-dashboard/agent_coordinator.py"
+        ],
+        "gotchas": [
+          "AgentCoordinator.__init__() takes no parameters and internally creates OrchestratorDashboard with default relative path - adapter must monkey-patch with correct instance",
+          "_determine_relevant_agents is private method (underscore prefix) - wrap defensively",
+          "Keyword matching is deterministic (no ML) based on inline keyword lists"
+        ]
+      },
+      {
+        "name": "coordination.db",
+        "description": "Existing SQLite database with tasks, agent_activity, task_contributions, notifications, squad_chat, agent_checkins tables. Dispatch system extends with new tables and columns.",
+        "integration_points": {
+          "tasks": "Extended with dispatch_status and lease_until columns",
+          "new_tables": "dispatch_runs, task_dependencies, daily_usage, provider_health, provider_incidents, working_memory, audit_log, tasks_archive, health_daily_summary"
+        },
+        "primary_files": [
+          "/Users/alanwalker/openclaw-orchestration/orchestrator-dashboard/orchestrator-dashboard/coordination.db"
+        ],
+        "gotchas": [
+          "DB path contains doubled directory: orchestrator-dashboard/orchestrator-dashboard/coordination.db",
+          "Existing schema does NOT use WAL mode - must set per-connection",
+          "Must set PRAGMA foreign_keys=ON per-connection (SQLite disables by default)",
+          "Never modify or drop existing OpenClawd tables or columns",
+          "Check for network filesystem (NFS/SMB) and warn about WAL unreliability"
+        ]
+      },
+      {
+        "name": "skills",
+        "description": "44 skill directories providing methodology/reference content for agents. Each has SKILL.md with description. Skills are read-only knowledge sources, not callable tools.",
+        "integration_points": {
+          "SKILL.md": "Read description/summary and inject into agent prompts",
+          "AGENT_SKILLS": "Mapping in config.py defines which skills each agent can access"
+        },
+        "primary_files": [
+          "/Users/alanwalker/openclaw-orchestration/skills/"
+        ],
+        "gotchas": [
+          "Verify no hardcoded user-specific paths remain in skills/self-evolving-skill/ at implementation time",
+          "Some skill directories may lack SKILL.md - handle missing files gracefully",
+          "Skills directory is sibling of orchestrator-dashboard/, not inside agent-dispatch/"
+        ]
+      }
+    ],
+    "discoveryNote": "All system integrations must go through openclawd_adapter.py isolation layer. Search orchestrator-dashboard/ for additional methods and patterns not explicitly documented."
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Add dispatch_status column to tasks table",
+      "description": "As the dispatch system, I want a dispatch_status column on the tasks table with CHECK constraint for valid states, so that I can track task claim/dispatch lifecycle independently of the existing status column. **Implementation:** Use idempotent ALTER TABLE with try/except wrapper. CHECK constraint allows NULL plus ('queued','dispatched','completed','failed','interrupted','dispatch_failed').",
+      "acceptanceCriteria": [
+        "ALTER TABLE tasks ADD COLUMN dispatch_status TEXT CHECK(...) runs idempotently",
+        "CHECK constraint permits NULL and the 6 valid dispatch states",
+        "Migration succeeds on existing coordination.db without errors",
+        "Verify column added via sqlite_master query",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Add lease_until column to tasks table",
+      "description": "As the dispatch system, I want a lease_until DATETIME column on the tasks table, so that I can implement lease-based atomic task claiming with expiration. **Implementation:** Idempotent ALTER TABLE with DEFAULT NULL.",
+      "acceptanceCriteria": [
+        "ALTER TABLE tasks ADD COLUMN lease_until DATETIME DEFAULT NULL runs idempotently",
+        "Migration succeeds on existing coordination.db",
+        "Verify column added via sqlite_master query",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Create composite index on tasks(dispatch_status, lease_until)",
+      "description": "As the dispatch system, I want a composite index on dispatch_status and lease_until columns, so that the dispatchable task query runs efficiently on every 30-second poll. **Implementation:** CREATE INDEX IF NOT EXISTS idx_tasks_dispatch ON tasks(dispatch_status, lease_until).",
+      "acceptanceCriteria": [
+        "Index created idempotently",
+        "Verify index exists via sqlite_master query",
+        "Index covers conditions 2 and 3 of dispatchable task query",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Create dispatch_runs table with schema",
+      "description": "As the dispatch system, I want a dispatch_runs table to track individual agent execution attempts with provider, model, status, tokens, cost, trace_id, and retry timing, so that I can monitor dispatch history and implement retry backoff. **Implementation:** CREATE TABLE IF NOT EXISTS with all specified columns, indexes on task_id and trace_id, foreign key to tasks(id) ON DELETE CASCADE.",
+      "acceptanceCriteria": [
+        "Table created with all required columns (id, task_id, agent_name, provider, model, status, attempt, started_at, completed_at, output_file, error_summary, tokens_used, cost_estimate, trace_id, tool_calls_count, next_retry_at)",
+        "CHECK constraint on status for ('pending','running','completed','failed','timeout')",
+        "Indexes created on task_id and trace_id",
+        "Foreign key constraint with ON DELETE CASCADE",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Create task_dependencies table with schema",
+      "description": "As the dispatch system, I want a task_dependencies table to model task dependency graphs with completion and contribution dependency types, so that I can block dispatch of tasks until all dependencies are completed. **Implementation:** CREATE TABLE IF NOT EXISTS with task_id, depends_on_task_id, dependency_type CHECK constraint, foreign keys with ON DELETE CASCADE, UNIQUE constraint on (task_id, depends_on_task_id).",
+      "acceptanceCriteria": [
+        "Table created with required columns (id, task_id, depends_on_task_id, dependency_type, created_at)",
+        "CHECK constraint on dependency_type for ('completion','contribution')",
+        "Foreign keys with ON DELETE CASCADE",
+        "UNIQUE constraint on (task_id, depends_on_task_id)",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Create working_memory table with schema",
+      "description": "As the dispatch system, I want a working_memory table to store per-task key-value pairs that agents can write during execution and downstream tasks can read, so that agents can communicate structured data across dependency chains. **Implementation:** CREATE TABLE IF NOT EXISTS with task_id, agent_name, key, value, created_at, foreign key ON DELETE CASCADE, UNIQUE(task_id, agent_name, key).",
+      "acceptanceCriteria": [
+        "Table created with required columns (id, task_id, agent_name, key, value, created_at)",
+        "Foreign key to tasks(id) with ON DELETE CASCADE",
+        "UNIQUE constraint on (task_id, agent_name, key) for upsert semantics",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Create daily_usage table with schema",
+      "description": "As the dispatch system, I want a daily_usage table to track tokens and cost by date/provider/model/agent_name, so that I can enforce global and per-agent daily budgets. **Implementation:** CREATE TABLE IF NOT EXISTS with date, provider, model, agent_name (NOT NULL), total_tokens, total_cost_usd, task_count, UNIQUE(date, provider, model, agent_name).",
+      "acceptanceCriteria": [
+        "Table created with required columns (id, date, provider, model, agent_name NOT NULL, total_tokens, total_cost_usd, task_count)",
+        "UNIQUE constraint on (date, provider, model, agent_name)",
+        "agent_name declared NOT NULL to prevent NULL-handling issues",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Create provider_health table with schema",
+      "description": "As the health monitor, I want a provider_health table to store canary test results with latency, error_message, error_category, raw_response, so that I can detect regressions and trigger self-healing. **Implementation:** CREATE TABLE IF NOT EXISTS with provider, model, test_name, passed BOOLEAN, latency_ms, error_message, error_category, raw_response, tested_at, index on tested_at.",
+      "acceptanceCriteria": [
+        "Table created with required columns (id, provider, model, test_name, passed, latency_ms, error_message, error_category, raw_response, tested_at)",
+        "Index created on tested_at",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Create provider_incidents table with schema",
+      "description": "As the health monitor, I want a provider_incidents table to track incident detection, resolution, auto-healing actions, diagnostic reports, so that I can maintain incident history for 180 days. **Implementation:** CREATE TABLE IF NOT EXISTS with provider, incident_type, detected_at, resolved_at, auto_healed BOOLEAN, healing_action, diagnostic_report, notified_user BOOLEAN.",
+      "acceptanceCriteria": [
+        "Table created with required columns (id, provider, incident_type, detected_at, resolved_at, auto_healed, healing_action, diagnostic_report, notified_user)",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Create audit_log table with schema",
+      "description": "As the audit system, I want a permanent audit_log table for destructive tool calls that is never cleaned up by retention policy, with task_id foreign key ON DELETE SET NULL so archival DELETEs don't fail. **Implementation:** CREATE TABLE IF NOT EXISTS with trace_id, task_id (nullable), agent_name, tool_name, arguments, result, executed_at, foreign key ON DELETE SET NULL, indexes on trace_id and task_id.",
+      "acceptanceCriteria": [
+        "Table created with required columns (id, trace_id, task_id nullable, agent_name, tool_name, arguments, result, executed_at)",
+        "Foreign key to tasks(id) with ON DELETE SET NULL",
+        "Indexes created on trace_id and task_id",
+        "task_id column is nullable (INTEGER without NOT NULL)",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Create tasks_archive table with explicit schema",
+      "description": "As the retention system, I want a tasks_archive table with explicit schema matching tasks table plus archived_at column, so that archival INSERT OR IGNORE can copy completed tasks older than 90 days. **Implementation:** CREATE TABLE IF NOT EXISTS with all columns from tasks (id, title, description, status, priority, domain, assigned_agent, created_by, created_at, updated_at, due_date, deliverable_type, deliverable_url, estimated_effort, business_impact, dispatch_status, lease_until) plus archived_at DEFAULT CURRENT_TIMESTAMP. Must be created AFTER ALTER TABLE migrations on tasks.",
+      "acceptanceCriteria": [
+        "Table created with all tasks columns plus archived_at",
+        "Migration runs after dispatch_status and lease_until migrations",
+        "INSERT OR IGNORE pattern works for idempotent archival",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Create health_daily_summary table with schema",
+      "description": "As the retention system, I want a health_daily_summary table to store aggregated health metrics after deleting raw health check records older than 30 days. **Implementation:** CREATE TABLE IF NOT EXISTS with date, provider, model, tests_run, tests_passed, avg_latency_ms, UNIQUE(date, provider, model).",
+      "acceptanceCriteria": [
+        "Table created with required columns (id, date, provider, model, tests_run, tests_passed, avg_latency_ms)",
+        "UNIQUE constraint on (date, provider, model)",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Create config.py with constants and paths",
+      "description": "As the dispatch system, I want a config.py module defining all constants (timing, paths, AGENT_SKILLS mapping) and a config loader with resolution order (CLI flag, env var, cwd, project dir, home dir), so that all modules share consistent configuration. **Implementation:** Define POLL_INTERVAL_SECONDS=30, LEASE_SECONDS=300, TIMEOUT_SECONDS=1800, AGENT_SKILLS dict, config path resolution logic, YAML config loader.",
+      "acceptanceCriteria": [
+        "Constants defined: POLL_INTERVAL_SECONDS, LEASE_SECONDS, TIMEOUT_SECONDS, MAX_CONCURRENT_AGENTS, MAX_TOOL_ITERATIONS",
+        "AGENT_SKILLS dict maps agent names to skill directory list",
+        "Config path resolution implements 5-tier order (--config flag, OPENCLAWD_CONFIG env, ./openclawd.config.yaml, agent-dispatch/openclawd.config.yaml, ~/.openclawd/openclawd.config.yaml)",
+        "Config loader reads YAML and returns dict",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Create openclawd.config.yaml template",
+      "description": "As a user, I want a comprehensive config template with comments explaining every setting, so that I can configure providers, models, API keys, budgets, concurrency, and notifications. **Implementation:** YAML file with all sections: provider, agent_models, fallback, agent_fallbacks, agent_budgets, agent_lease_defaults, max_concurrent_agents, agent_timeout_seconds, dispatch_lease_seconds, max_tokens_per_task, daily_budget_usd, alert_threshold_usd, health_check_interval_hours, auto_fallback_on_failure, pricing, notifications (webhook, email, desktop, delivery_rules), retention, log_retention_days, max_log_file_mb, max_tool_iterations, min_tool_interval_seconds.",
+      "acceptanceCriteria": [
+        "YAML file includes all required sections with inline comments",
+        "Example values for anthropic provider with claude-sonnet-4-5 model",
+        "Pricing section includes input_per_1m_tokens and output_per_1m_tokens",
+        "Notifications section includes delivery_rules with urgency levels",
+        "File validates as valid YAML",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Create openclawd_adapter.py isolation layer",
+      "description": "As the dispatch system, I want an openclawd_adapter.py module as the ONLY file importing from orchestrator-dashboard modules, with defensive try/except wrapping every call and OpenClawdIncompatibleError reporting, so that compatibility issues are caught gracefully. **Implementation:** Import OrchestratorDashboard and AgentCoordinator with absolute paths. Wrap methods: create_task, complete_task, add_task_contribution, log_agent_activity, create_notification, squad_chat_post, get_dashboard_summary, agent_checkin, determine_agents, get_coordination_summary. Catch TypeError (signature changes) and sqlite3.Error (schema changes).",
+      "acceptanceCriteria": [
+        "File imports only from orchestrator-dashboard/ (no other dispatch modules import from orchestrator-dashboard/)",
+        "All adapter methods wrapped in try/except catching TypeError and sqlite3.Error",
+        "Adapter constructs OrchestratorDashboard with absolute db_path",
+        "Adapter exposes determine_agents() wrapping coordinator._determine_relevant_agents()",
+        "Adapter exposes get_coordination_summary() wrapping george_coordination_summary()",
+        "Monkey-patches coordinator.dashboard with correctly-configured instance",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Create compatibility_check.py with schema validation",
+      "description": "As the supervisor daemon, I want a compatibility_check module that validates expected tables, columns, and method signatures at startup via sqlite_master queries and inspect.signature(), so that I can detect breaking changes and enter tiered degradation. **Implementation:** Check for existence of tasks, agent_activity, task_contributions, notifications tables. Validate columns on tasks table. Validate OrchestratorDashboard method signatures against expected parameters. Return compatibility tier (1=additive, 2=breaking, 3=fundamental).",
+      "acceptanceCriteria": [
+        "Function queries sqlite_master for expected tables",
+        "Function checks tasks table for required columns (id, title, description, status, priority, domain, assigned_agent)",
+        "Function uses inspect.signature() to validate method signatures on OrchestratorDashboard and AgentCoordinator",
+        "Returns dict with compatible (bool), tier (int), and issues (list of strings)",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Create compatibility.yaml version matrix",
+      "description": "As the compatibility checker, I want a compatibility.yaml file mapping OpenClawd versions to compatibility tiers, so that startup checks can determine degradation mode based on detected version. **Implementation:** YAML file with structure: openclawd_versions, each with version key and fields: compatible (bool), tier (int), notes (string).",
+      "acceptanceCriteria": [
+        "YAML file includes example version entries",
+        "Each entry has version, compatible, tier, notes fields",
+        "File validates as valid YAML",
+        "Typecheck passes"
+      ],
+      "priority": 17,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Create dispatch_db.py with migrations and connection strategy",
+      "description": "As the dispatch system, I want a dispatch_db module that runs idempotent schema migrations on startup, sets WAL mode, busy_timeout=5000, PRAGMA foreign_keys=ON on every connection, and implements connection strategy (long-lived reader, short-lived writers). **Implementation:** Function run_migrations() calls all table/column creation functions in order. Function get_reader_connection() returns persistent connection with autocommit. Function get_writer_connection() returns new connection with DEFERRED isolation. All connections set PRAGMA statements. Detect network filesystem and warn about WAL unreliability.",
+      "acceptanceCriteria": [
+        "run_migrations() executes all CREATE TABLE and ALTER TABLE statements idempotently",
+        "All connections set PRAGMA journal_mode=WAL, PRAGMA busy_timeout=5000, PRAGMA foreign_keys=ON",
+        "get_reader_connection() returns long-lived connection for polls",
+        "get_writer_connection() returns short-lived connection for claims/updates",
+        "Network filesystem detection warns if coordination.db is on NFS/SMB",
+        "Typecheck passes"
+      ],
+      "priority": 18,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Verify no hardcoded user paths in skills directory",
+      "description": "As a developer, I want to verify that no hardcoded user-specific paths remain in skills/self-evolving-skill/, so that the system works for any user. **Implementation:** Grep skills/self-evolving-skill/ for patterns like /Users/[username] or /home/[username]. If found, replace with relative paths or $HOME expansion.",
+      "acceptanceCriteria": [
+        "Grep search for /Users/ and /home/ in skills/self-evolving-skill/ returns no matches OR issues are fixed",
+        "All paths use relative references or $HOME variable",
+        "Typecheck passes"
+      ],
+      "priority": 19,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Create LLMProvider abstract base class",
+      "description": "As a provider implementer, I want an abstract LLMProvider class with methods complete(), validate_connection(), validate_tool_calling(), get_capabilities(), count_tokens(), so that all provider adapters implement a consistent interface. **Implementation:** Define LLMProvider ABC with abstract methods. Define dataclasses: Message (role, content, tool_calls, tool_results), LLMResponse (content, tool_calls, usage, model, stop_reason), ProviderCapabilities (supports_tool_calling, supports_streaming, supports_vision, max_context_tokens, max_output_tokens, tool_calling_reliability), TokenUsage (input_tokens, output_tokens).",
+      "acceptanceCriteria": [
+        "LLMProvider ABC defined with all abstract methods",
+        "Message dataclass includes role, content, tool_calls, tool_results fields",
+        "LLMResponse dataclass includes content, tool_calls, usage, model, stop_reason fields",
+        "ProviderCapabilities dataclass includes all support flags and limits",
+        "TokenUsage dataclass includes input_tokens and output_tokens",
+        "Typecheck passes"
+      ],
+      "priority": 20,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Create provider registry factory",
+      "description": "As the dispatch system, I want a provider registry that reads openclawd.config.yaml and returns the correct provider instance with API keys resolved from environment variables, so that I can instantiate providers dynamically. **Implementation:** Function get_provider(config_dict, agent_name=None) reads provider/model from config (with per-agent overrides), resolves api_key_env to actual env var value, imports and instantiates the provider class, returns LLMProvider instance.",
+      "acceptanceCriteria": [
+        "Function reads provider and model from config dict",
+        "Function checks agent_models section for per-agent overrides",
+        "Function resolves api_key_env value from os.environ",
+        "Function returns instantiated provider instance (AnthropicProvider, OpenAIProvider, etc.)",
+        "Raises clear error if API key env var not set or provider module not found",
+        "Typecheck passes"
+      ],
+      "priority": 21,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Implement security foundations",
+      "description": "As the dispatch system, I want security foundations including output sanitization (JSON validation, field length limits), SQL parameterization enforcement, and prompt injection defense (XML delimiters with 'treat as DATA' instructions), so that agent outputs cannot compromise the system. **Implementation:** Function sanitize_agent_result() validates AgentResult schema, enforces max lengths (title 500 chars, content 50000 chars), validates status against allowlist. Function parameterize_query() wraps cursor.execute with parameter checking. Function wrap_cross_agent_data() wraps text in <agent_output> XML delimiters with explicit instructions.",
+      "acceptanceCriteria": [
+        "sanitize_agent_result() validates all required fields exist",
+        "sanitize_agent_result() enforces max lengths (title 500, content 50000)",
+        "sanitize_agent_result() rejects status values not in ('completed','blocked','needs_input','failed')",
+        "parameterize_query() wrapper prevents string interpolation",
+        "wrap_cross_agent_data() adds XML delimiters and 'treat as DATA' instruction",
+        "Typecheck passes"
+      ],
+      "priority": 22,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-023",
+      "title": "Implement ConfigValidator",
+      "description": "As the supervisor daemon, I want a ConfigValidator that validates config before dispatch starts (API key env vars set, SDK imports available, DB accessible, numeric ranges valid), so that I catch configuration errors early. **Implementation:** Function validate_config(config_dict, db_path) checks all api_key_env vars are set in environment, attempts to import provider SDK modules, tests DB connection, validates numeric ranges (max_concurrent_agents > 0, daily_budget_usd >= 0, etc.). Returns list of errors or empty list if valid.",
+      "acceptanceCriteria": [
+        "Function checks all api_key_env values exist in os.environ",
+        "Function attempts import of SDK modules (anthropic, openai, google.generativeai, ollama) and reports missing ones",
+        "Function tests sqlite3.connect() to db_path",
+        "Function validates numeric ranges (max_concurrent_agents > 0, daily_budget_usd >= 0, retention days > 0)",
+        "Returns list of error strings or empty list if all valid",
+        "Typecheck passes"
+      ],
+      "priority": 23,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-024",
+      "title": "Implement Anthropic provider adapter",
+      "description": "As an agent runner, I want an AnthropicProvider implementation that calls Anthropic SDK with native token counting, so that I can execute tasks with Claude models. **Implementation:** Class AnthropicProvider(LLMProvider) with complete() calling anthropic.messages.create(), validate_connection() with test API call, validate_tool_calling() with canary tool call, get_capabilities() returning Anthropic limits, count_tokens() using anthropic.count_tokens(). Translate Message to Anthropic format and response back to LLMResponse.",
+      "acceptanceCriteria": [
+        "Class implements all LLMProvider abstract methods",
+        "complete() calls anthropic.messages.create() with messages parameter",
+        "Translates Message list to Anthropic format (system, user, assistant roles)",
+        "Returns LLMResponse with content, tool_calls, usage, model, stop_reason",
+        "validate_connection() makes test API call and returns success/failure",
+        "get_capabilities() returns accurate max_context_tokens and max_output_tokens for Claude models",
+        "count_tokens() uses SDK's native token counter",
+        "Typecheck passes"
+      ],
+      "priority": 24,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-025",
+      "title": "Implement OpenAI provider adapter",
+      "description": "As an agent runner, I want an OpenAIProvider implementation that calls OpenAI SDK with tiktoken-based token counting, so that I can execute tasks with GPT models. **Implementation:** Class OpenAIProvider(LLMProvider) with complete() calling openai.chat.completions.create(), validate_connection(), validate_tool_calling(), get_capabilities(), count_tokens() using tiktoken. Translate Message to OpenAI format and response back to LLMResponse.",
+      "acceptanceCriteria": [
+        "Class implements all LLMProvider abstract methods",
+        "complete() calls openai.chat.completions.create() with messages parameter",
+        "Translates Message list to OpenAI format (system, user, assistant, function roles)",
+        "Returns LLMResponse with parsed content and tool_calls",
+        "validate_connection() makes test API call",
+        "get_capabilities() returns accurate limits for GPT models",
+        "count_tokens() uses tiktoken for accurate token counting",
+        "Typecheck passes"
+      ],
+      "priority": 25,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-026",
+      "title": "Implement Claude Code CLI provider adapter",
+      "description": "As an agent runner, I want a ClaudeCodeProvider that spawns subprocess calling Claude Code CLI with raw text passthrough (no UTS, no result parsing), so that I can use Claude Code as a fallback provider for complex tasks. **Implementation:** Class ClaudeCodeProvider(LLMProvider) with complete() spawning subprocess 'claude-code' with prompt as stdin, capturing stdout as raw text. No tool calling support. No structured result parsing.",
+      "acceptanceCriteria": [
+        "Class implements LLMProvider methods",
+        "complete() spawns subprocess with ['claude-code', '--non-interactive'] or similar",
+        "Sends prompt to stdin and captures stdout",
+        "Returns LLMResponse with raw stdout as content, empty tool_calls list",
+        "validate_connection() checks if 'claude-code' command exists",
+        "get_capabilities() returns supports_tool_calling=False",
+        "Typecheck passes"
+      ],
+      "priority": 26,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-027",
+      "title": "Implement Gemini provider adapter",
+      "description": "As an agent runner, I want a GeminiProvider implementation that calls Google Gemini SDK with SDK-based token counting, so that I can execute tasks with Gemini models. **Implementation:** Class GeminiProvider(LLMProvider) with complete() calling google.generativeai.generate_content(), validate_connection(), validate_tool_calling(), get_capabilities(), count_tokens() using SDK. Translate Message to Gemini format and response back to LLMResponse.",
+      "acceptanceCriteria": [
+        "Class implements all LLMProvider abstract methods",
+        "complete() calls google.generativeai.generate_content()",
+        "Translates Message list to Gemini format",
+        "Returns LLMResponse with parsed content and tool_calls",
+        "validate_connection() makes test API call",
+        "get_capabilities() returns accurate limits for Gemini models",
+        "count_tokens() uses SDK's token counter",
+        "Typecheck passes"
+      ],
+      "priority": 27,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-028",
+      "title": "Implement Ollama provider adapter",
+      "description": "As an agent runner, I want an OllamaProvider implementation that calls Ollama HTTP API with character-based token estimate, so that I can execute tasks with local models. **Implementation:** Class OllamaProvider(LLMProvider) with complete() calling Ollama HTTP API /api/chat, validate_connection(), validate_tool_calling(), get_capabilities(), count_tokens() using character estimate (chars / 4). Translate Message to Ollama format and response back to LLMResponse.",
+      "acceptanceCriteria": [
+        "Class implements all LLMProvider abstract methods",
+        "complete() makes HTTP POST to http://localhost:11434/api/chat",
+        "Translates Message list to Ollama format",
+        "Returns LLMResponse with parsed content",
+        "validate_connection() checks if Ollama server is running",
+        "count_tokens() estimates tokens as len(text) / 4",
+        "Typecheck passes"
+      ],
+      "priority": 28,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-029",
+      "title": "Create UniversalTool schema and YAML loader",
+      "description": "As a tool implementer, I want a UniversalTool dataclass and YAML loader that defines provider-agnostic tool schema with name, description, version, parameters, returns, execution, idempotent, destructive, timeout_seconds, allowed_agents, test, so that tools are portable across providers. **Implementation:** Define UniversalTool dataclass with all fields. Function load_tool(yaml_path) parses YAML and returns UniversalTool instance. Validate required fields.",
+      "acceptanceCriteria": [
+        "UniversalTool dataclass includes all specified fields",
+        "load_tool() reads YAML file and returns UniversalTool instance",
+        "Validates required fields (name, description, parameters, returns, execution)",
+        "Execution dict includes type, module, function",
+        "Parameters and returns are dicts with type schemas",
+        "Typecheck passes"
+      ],
+      "priority": 29,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-030",
+      "title": "Create tool registry",
+      "description": "As the agent runner, I want a tool registry that loads and caches all tool definitions from YAML files in tools/definitions/, so that I can access tool schemas by name. **Implementation:** Class ToolRegistry with method get_tool(name) that loads from tools/definitions/{name}.yaml on first access and caches in memory. Method list_tools() returns all tool names.",
+      "acceptanceCriteria": [
+        "Class caches loaded tools in dict",
+        "get_tool(name) loads from tools/definitions/{name}.yaml if not cached",
+        "list_tools() returns list of all available tool names",
+        "Handles missing tool files with clear error",
+        "Typecheck passes"
+      ],
+      "priority": 30,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-031",
+      "title": "Create Anthropic tool translator",
+      "description": "As the agent runner, I want a translator that converts UniversalTool to Anthropic tool_use format, so that tools work with Claude models. **Implementation:** Function translate_to_anthropic(tool: UniversalTool) returns dict in Anthropic's tool_use schema format with name, description, input_schema.",
+      "acceptanceCriteria": [
+        "Function converts UniversalTool.parameters to Anthropic input_schema format",
+        "Returns dict with name, description, input_schema fields",
+        "input_schema includes type, properties, required",
+        "Typecheck passes"
+      ],
+      "priority": 31,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-032",
+      "title": "Create OpenAI tool translator",
+      "description": "As the agent runner, I want a translator that converts UniversalTool to OpenAI function_calling format, so that tools work with GPT models. **Implementation:** Function translate_to_openai(tool: UniversalTool) returns dict in OpenAI's function schema format with name, description, parameters.",
+      "acceptanceCriteria": [
+        "Function converts UniversalTool.parameters to OpenAI parameters format",
+        "Returns dict with type='function', function={name, description, parameters}",
+        "parameters includes type, properties, required",
+        "Typecheck passes"
+      ],
+      "priority": 32,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-033",
+      "title": "Create Gemini tool translator",
+      "description": "As the agent runner, I want a translator that converts UniversalTool to Gemini function_declarations format, so that tools work with Gemini models. **Implementation:** Function translate_to_gemini(tool: UniversalTool) returns dict in Gemini's function_declarations schema format.",
+      "acceptanceCriteria": [
+        "Function converts UniversalTool to Gemini format",
+        "Returns dict with name, description, parameters in Gemini schema",
+        "Typecheck passes"
+      ],
+      "priority": 33,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-034",
+      "title": "Create Ollama tool translator",
+      "description": "As the agent runner, I want a translator that converts UniversalTool to Ollama tools format, so that tools work with local models. **Implementation:** Function translate_to_ollama(tool: UniversalTool) returns dict in Ollama's tools schema format.",
+      "acceptanceCriteria": [
+        "Function converts UniversalTool to Ollama format",
+        "Returns dict with name, description, parameters in Ollama schema",
+        "Typecheck passes"
+      ],
+      "priority": 34,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-035",
+      "title": "Create web_search tool definition YAML",
+      "description": "As the agent runner, I want a web_search.yaml tool definition with parameters (query, num_results), returns (results list), and execution metadata pointing to tools.executors.web_search.execute, so that agents can perform web searches. **Implementation:** YAML file with complete tool schema including test block with sample query.",
+      "acceptanceCriteria": [
+        "YAML file defines name='web_search', description, version",
+        "Parameters include query (string, required), num_results (integer, optional, default 5)",
+        "Returns defines results as array of objects with title, url, snippet",
+        "Execution specifies type='python', module='tools.executors.web_search', function='execute'",
+        "idempotent=true, destructive=false, timeout_seconds=30",
+        "Includes test block with sample query",
+        "File validates as valid YAML"
+      ],
+      "priority": 35,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-036",
+      "title": "Create remaining 7 tool definition YAMLs",
+      "description": "As the agent runner, I want YAML definitions for file_read, file_write, database_query, database_write, shell_exec, python_exec, send_email tools with complete schemas, so that agents have access to all 8 tools. **Implementation:** Create 7 YAML files following same pattern as web_search.yaml with appropriate parameters, returns, idempotent flags, destructive flags, and test blocks.",
+      "acceptanceCriteria": [
+        "file_read.yaml: parameters (path), returns (content, encoding), idempotent=true, destructive=false",
+        "file_write.yaml: parameters (path, content, mode), returns (success, bytes_written), idempotent=false, destructive=true",
+        "database_query.yaml: parameters (query, params), returns (rows, columns), idempotent=true, destructive=false",
+        "database_write.yaml: parameters (query, params), returns (rows_affected), idempotent=false, destructive=true",
+        "shell_exec.yaml: parameters (command, cwd, timeout), returns (stdout, stderr, exit_code), idempotent=false, destructive=false",
+        "python_exec.yaml: parameters (code, timeout), returns (stdout, stderr, result), idempotent=false, destructive=false",
+        "send_email.yaml: parameters (to, subject, body, attachments), returns (success, message_id), idempotent=false, destructive=false",
+        "All files validate as valid YAML"
+      ],
+      "priority": 36,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-037",
+      "title": "Implement web_search tool executor",
+      "description": "As an agent, I want a web_search executor that tries SerpAPI, then Brave Search API, then DuckDuckGo HTML scraping as fallback, so that I can search the web without requiring API keys. **Implementation:** Function execute(query, num_results=5) checks SERPAPI_KEY env var first, then BRAVE_SEARCH_API_KEY, then falls back to DuckDuckGo with logged warning. Returns list of dicts with title, url, snippet. Timeout 30s.",
+      "acceptanceCriteria": [
+        "Function checks for SERPAPI_KEY env var and uses SerpAPI if set",
+        "Falls back to BRAVE_SEARCH_API_KEY and uses Brave Search if set",
+        "Falls back to DuckDuckGo HTML scraping with requests if neither API key set",
+        "Logs warning when falling back to DuckDuckGo",
+        "Returns list of dicts with title, url, snippet fields",
+        "Enforces 30s timeout",
+        "Handles API errors and returns empty list with logged error",
+        "Typecheck passes"
+      ],
+      "priority": 37,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-038",
+      "title": "Implement file_read tool executor",
+      "description": "As an agent, I want a file_read executor that reads file content with sandboxing (path validation, size limit), so that I can access files safely. **Implementation:** Function execute(path) validates path is not absolute or contains .., reads file with max size 10MB, returns content and encoding. Timeout 10s.",
+      "acceptanceCriteria": [
+        "Function validates path does not start with / or contain ..",
+        "Reads file up to 10MB max size",
+        "Returns dict with content (string) and encoding (utf-8 or detected)",
+        "Raises error if file exceeds 10MB",
+        "Enforces 10s timeout",
+        "Typecheck passes"
+      ],
+      "priority": 38,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-039",
+      "title": "Implement file_write tool executor",
+      "description": "As an agent, I want a file_write executor that writes file content with sandboxing (path validation, parent directory creation, destructive flag audit logging), so that I can create files safely. **Implementation:** Function execute(path, content, mode='w') validates path, creates parent directories if needed, writes content, logs to audit_log. Timeout 10s.",
+      "acceptanceCriteria": [
+        "Function validates path does not contain dangerous patterns",
+        "Creates parent directories with os.makedirs(exist_ok=True)",
+        "Writes content to file with specified mode (w, a, wb)",
+        "Returns dict with success (bool) and bytes_written (int)",
+        "Logs to audit_log with destructive=true",
+        "Enforces 10s timeout",
+        "Typecheck passes"
+      ],
+      "priority": 39,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-040",
+      "title": "Implement database_query tool executor",
+      "description": "As an agent, I want a database_query executor that runs SELECT queries with parameterization and row limit, so that I can query coordination.db safely. **Implementation:** Function execute(query, params=[]) validates query starts with SELECT, executes with cursor.execute(query, params), returns rows and column names. Max 1000 rows. Timeout 30s.",
+      "acceptanceCriteria": [
+        "Function validates query starts with SELECT (case-insensitive)",
+        "Executes query with parameterized params list",
+        "Returns dict with rows (list of tuples) and columns (list of strings)",
+        "Limits result to 1000 rows max",
+        "Enforces 30s timeout",
+        "Raises error if query is not SELECT",
+        "Typecheck passes"
+      ],
+      "priority": 40,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-041",
+      "title": "Implement database_write tool executor",
+      "description": "As an agent, I want a database_write executor that runs INSERT/UPDATE/DELETE with parameterization and audit logging, so that I can modify coordination.db safely. **Implementation:** Function execute(query, params=[]) validates query starts with INSERT/UPDATE/DELETE, executes with cursor.execute(query, params), commits, logs to audit_log. Returns rows_affected. Timeout 30s.",
+      "acceptanceCriteria": [
+        "Function validates query starts with INSERT, UPDATE, or DELETE (case-insensitive)",
+        "Executes query with parameterized params list",
+        "Commits transaction",
+        "Logs to audit_log with destructive=true",
+        "Returns dict with rows_affected (int)",
+        "Enforces 30s timeout",
+        "Raises error if query is not INSERT/UPDATE/DELETE",
+        "Typecheck passes"
+      ],
+      "priority": 41,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-042",
+      "title": "Implement shell_exec tool executor",
+      "description": "As an agent, I want a shell_exec executor that runs shell commands with subprocess sandboxing (timeout, memory limit 512MB, CPU limit), so that I can execute system commands safely. **Implementation:** Function execute(command, cwd=None, timeout=30) spawns subprocess with resource limits, captures stdout/stderr, returns exit code. Max timeout 60s.",
+      "acceptanceCriteria": [
+        "Function spawns subprocess.run() with shell=True",
+        "Sets timeout parameter (default 30s, max 60s)",
+        "Captures stdout and stderr",
+        "Returns dict with stdout (string), stderr (string), exit_code (int)",
+        "Implements resource limits via subprocess parameters where possible",
+        "Logs to audit_log with destructive=false (read-only assumption)",
+        "Typecheck passes"
+      ],
+      "priority": 42,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-043",
+      "title": "Implement python_exec tool executor",
+      "description": "As an agent, I want a python_exec executor that runs Python code in subprocess with sandboxing (timeout, memory limit), capturing stdout/stderr and return value, so that I can execute Python scripts safely. **Implementation:** Function execute(code, timeout=30) writes code to temp file, spawns subprocess python with timeout, captures output, returns result. Max timeout 60s.",
+      "acceptanceCriteria": [
+        "Function writes code to temporary file",
+        "Spawns subprocess ['python', temp_file_path] with timeout",
+        "Captures stdout and stderr",
+        "Returns dict with stdout, stderr, result (last expression if eval-able)",
+        "Cleans up temporary file",
+        "Enforces timeout (default 30s, max 60s)",
+        "Typecheck passes"
+      ],
+      "priority": 43,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-044",
+      "title": "Implement send_email tool executor",
+      "description": "As an agent, I want a send_email executor that sends emails via SMTP with config from openclawd.config.yaml, so that I can send notifications and reports. **Implementation:** Function execute(to, subject, body, attachments=[]) reads SMTP config from openclawd.config.yaml notifications.email section, connects to SMTP server, sends email, returns success and message_id. Timeout 30s.",
+      "acceptanceCriteria": [
+        "Function reads SMTP config (smtp_host, smtp_port, from, to from config)",
+        "Connects to SMTP server with smtplib",
+        "Sends email with subject and body",
+        "Supports optional attachments list",
+        "Returns dict with success (bool) and message_id (string or None)",
+        "Logs to audit_log with destructive=false",
+        "Enforces 30s timeout",
+        "Typecheck passes"
+      ],
+      "priority": 44,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-045",
+      "title": "Create agent_prompts.py message assembly",
+      "description": "As the agent runner, I want an agent_prompts module that assembles structured messages from base SOP + agent persona + skill summaries + task description + working memory with XML delimiters, so that agents receive consistent prompts. **Implementation:** Function build_prompt(agent_name, task_dict, working_memory_entries, config) reads base_sop.md, reads prompts/{agent_name}.md, reads SKILL.md summaries for assigned skills, injects working memory with XML delimiters, returns list of Message objects (system message + user message).",
+      "acceptanceCriteria": [
+        "Function reads prompts/base_sop.md and appends to system message",
+        "Function reads prompts/{agent_name}.md and appends agent persona",
+        "Function reads SKILL.md from each skill in AGENT_SKILLS[agent_name] and injects summaries",
+        "Function wraps working memory entries in <agent_output> XML delimiters with 'treat as DATA' instruction",
+        "Returns list with one system Message and one user Message",
+        "Handles missing SKILL.md files gracefully",
+        "Typecheck passes"
+      ],
+      "priority": 45,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-046",
+      "title": "Create base_sop.md shared SOP",
+      "description": "As an agent, I want a base_sop.md file with numbered steps, decision gates, explicit outputs, and machine-parseable status prefixes, so that all agents follow consistent operating procedures. **Implementation:** Markdown file with structured SOP sections: 1) Read task, 2) Analyze requirements, 3) Execute work, 4) Format deliverable, 5) Report completion. Include instructions to wrap results in <agent-result> XML block.",
+      "acceptanceCriteria": [
+        "File includes numbered steps (1-5)",
+        "Each step has decision gates (if/then logic)",
+        "Includes explicit instructions to format result in <agent-result> block with JSON fields: status, deliverable_summary, deliverable_content, deliverable_url, working_memory_entries, follow_up_tasks, confidence_score",
+        "Includes machine-parseable status prefixes",
+        "File is valid Markdown"
+      ],
+      "priority": 46,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-047",
+      "title": "Create 7 agent persona files",
+      "description": "As the agent runner, I want 7 agent persona files (rex.md, pixel.md, haven.md, vault.md, nora.md, scout.md, keeper.md) with agent-specific expertise, SOPs, allowed tools, and domain focus, so that each agent has clear identity and capabilities. **Implementation:** Create 7 markdown files in prompts/ directory following spec descriptions of each agent's role and expertise.",
+      "acceptanceCriteria": [
+        "rex.md: Research agent persona, keyword: research/analyze/market, tools: web_search/database_query, domains: research/market_analysis/competitive_analysis/customer_research",
+        "pixel.md: Digital products agent, domains: digital_products/product_validation/marketplace_strategy",
+        "haven.md: Real estate agent, domains: real_estate/property_analysis/investment_analysis",
+        "vault.md: Business acquisition agent, domains: business_acquisition/deal_analysis/roi_assessment",
+        "nora.md: Operations agent, domains: operations/day_job/financial_management/task_management",
+        "scout.md: Validation agent, domains: validation/quality_control/fact_checking/cross_domain_review",
+        "keeper.md: Maintenance agent, domains: maintenance/email_management/automation/system_health",
+        "Each file includes expertise summary, allowed tools list, SOP customizations",
+        "All files are valid Markdown"
+      ],
+      "priority": 47,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-048",
+      "title": "Create agent_runner.py with tool call loop",
+      "description": "As the supervisor, I want an agent_runner module that calls provider.complete(), handles tool call loop with depth/loop/timeout limits, parses <agent-result> blocks, validates AgentResult schema, writes working_memory during execution, so that agents can execute with tool access. **Implementation:** Function run_agent(agent_name, task_dict, provider, tool_registry, config) assembles prompt, calls provider.complete(), loops on tool_calls (max 20 iterations), detects identical-call loops, executes tools via registry, sends results back to provider, parses final <agent-result>, validates AgentResult, upserts working_memory entries. Returns AgentResult or error.",
+      "acceptanceCriteria": [
+        "Function calls agent_prompts.build_prompt() to assemble messages",
+        "Function calls provider.complete() with messages and tools",
+        "Implements tool call loop with max iterations (20 default)",
+        "Detects identical tool call loops (same tool+args called 3x in a row) and breaks",
+        "Executes tools via tool_registry.get_tool() and imported executor",
+        "Enforces per-tool timeouts from tool definition",
+        "Sends tool results back to provider in next complete() call",
+        "Parses <agent-result> XML block from final response",
+        "Validates parsed result against AgentResult schema",
+        "Upserts working_memory entries with UNIQUE(task_id, agent_name, key)",
+        "Returns AgentResult on success or raises error",
+        "Typecheck passes"
+      ],
+      "priority": 48,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-049",
+      "title": "Implement dispatchable task query",
+      "description": "As the supervisor, I want a dispatchable task query that checks all 7 conditions (status, dispatch_status, lease_until, dependencies, retry backoff, global budget, per-agent budget) and orders by priority DESC + created_at ASC, so that I poll for the right tasks. **Implementation:** SQL query in dispatch_db.py function get_dispatchable_tasks(config, conn) with WHERE clauses for all 7 conditions and ORDER BY. Returns list of task dicts.",
+      "acceptanceCriteria": [
+        "Query WHERE clause checks: status IN ('open','in_progress')",
+        "Query checks: dispatch_status IS NULL OR dispatch_status='queued'",
+        "Query checks: lease_until IS NULL OR lease_until < CURRENT_TIMESTAMP",
+        "Query checks: all task_dependencies rows for this task reference completed tasks (subquery)",
+        "Query checks: no dispatch_runs row with next_retry_at > CURRENT_TIMESTAMP (subquery)",
+        "Query checks: global daily budget not exceeded (SUM(daily_usage.total_cost_usd) < config.daily_budget_usd)",
+        "Query checks: per-agent budget not exceeded for assigned_agent (SUM with agent_name filter)",
+        "Query orders by: priority DESC, created_at ASC",
+        "Returns list of dicts with all task columns",
+        "Typecheck passes"
+      ],
+      "priority": 49,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-050",
+      "title": "Implement atomic task claim with lease",
+      "description": "As the supervisor, I want an atomic task claim function that sets dispatch_status='queued' and lease_until with WHERE guards, returning success only if rows affected > 0, so that concurrent supervisors don't double-dispatch. **Implementation:** Function claim_task(task_id, lease_seconds, conn) runs UPDATE tasks SET dispatch_status='queued', lease_until=datetime('now','+N seconds') WHERE id=? AND (dispatch_status IS NULL OR dispatch_status IN ('queued','failed','interrupted')) AND (lease_until IS NULL OR lease_until < CURRENT_TIMESTAMP). Returns True if cursor.rowcount > 0 else False.",
+      "acceptanceCriteria": [
+        "Function executes UPDATE with parameterized task_id",
+        "Sets dispatch_status='queued' and lease_until to future timestamp",
+        "WHERE clause includes dispatch_status and lease_until guards",
+        "Returns True if cursor.rowcount > 0 (claim succeeded)",
+        "Returns False if cursor.rowcount == 0 (lost race)",
+        "Typecheck passes"
+      ],
+      "priority": 50,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-051",
+      "title": "Implement task completion sequence with recovery",
+      "description": "As the supervisor, I want a task completion handler that executes the 4-step sequence (validate AgentResult, Block A transaction, add_task_contribution, complete_task) with recovery sweep for partially-completed tasks, so that failures don't leave tasks in inconsistent state. **Implementation:** Function handle_task_completion(task_id, agent_result, trace_id, config, conn) validates schema, executes Block A (dispatch_status='completed', upsert working_memory, update dispatch_run, write daily_usage) in single transaction, calls adapter.add_task_contribution(), calls adapter.complete_task(). Function recover_partial_completions(conn) finds tasks with dispatch_status='completed' but status!='completed' and retries from failed step. Retry up to 3x, then urgent notification.",
+      "acceptanceCriteria": [
+        "Function validates AgentResult schema before any writes",
+        "Block A executes in single transaction: SET dispatch_status='completed', upsert working_memory, update dispatch_run, write daily_usage",
+        "Calls adapter.add_task_contribution(task_id, agent_name, 'deliverable', deliverable_content) after Block A commits",
+        "Calls adapter.complete_task(task_id, agent_name, deliverable_url) after Step 3 succeeds (internally creates notification)",
+        "Logs critical error if any step after Block A fails",
+        "recover_partial_completions() queries for dispatch_status='completed' AND status!='completed'",
+        "Recovery retries from last successful step (checks dispatch_runs for Block A completion, working_memory for Step 3)",
+        "Creates urgent notification after 3 failed recovery attempts",
+        "Typecheck passes"
+      ],
+      "priority": 51,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-052",
+      "title": "Implement retry logic with exponential backoff",
+      "description": "As the supervisor, I want retry logic that sets next_retry_at on failed dispatch_runs with exponential backoff (immediate, +60s, +300s), so that transient failures recover automatically. **Implementation:** Function handle_dispatch_failure(task_id, attempt, error, trace_id, conn) updates dispatch_run with status='failed', error_summary, sets next_retry_at based on attempt (0s for attempt 1, 60s for attempt 2, 300s for attempt 3), marks task dispatch_status='failed'. If attempt >= 3, sets dispatch_status='dispatch_failed' and cascades to dependents.",
+      "acceptanceCriteria": [
+        "Function updates dispatch_run with status='failed' and error_summary",
+        "Sets next_retry_at: immediate (NULL) for attempt 1, +60s for attempt 2, +300s for attempt 3",
+        "Sets task dispatch_status='failed' for retries",
+        "Sets task dispatch_status='dispatch_failed' if attempt >= 3 (max retries exceeded)",
+        "Creates urgent notification when max retries exceeded",
+        "Typecheck passes"
+      ],
+      "priority": 52,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-053",
+      "title": "Implement dependency failure cascading",
+      "description": "As the supervisor, I want dependency failure cascading that propagates dispatch_failed status to all dependent tasks with notification, so that blocked task chains are clearly marked. **Implementation:** Function cascade_failure(task_id, conn) queries task_dependencies for tasks depending on task_id, sets each dependent's dispatch_status='dispatch_failed', creates high-urgency notification for each.",
+      "acceptanceCriteria": [
+        "Function queries task_dependencies WHERE depends_on_task_id=?",
+        "For each dependent task, sets dispatch_status='dispatch_failed'",
+        "Creates high-urgency notification for each dependent with message indicating upstream failure",
+        "Recursively cascades if dependents have their own dependents",
+        "Typecheck passes"
+      ],
+      "priority": 53,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-054",
+      "title": "Implement supervisor poll loop core",
+      "description": "As the system operator, I want a supervisor daemon with 30-second poll loop that queries dispatchable tasks, claims atomically, spawns agent runners respecting max_concurrent_agents, extends leases via heartbeat, so that tasks execute automatically. **Implementation:** Main loop in agent_supervisor.py: sleep 30s, run recovery sweep, query dispatchable tasks, claim each task, spawn agent_runner in thread pool (max 3 concurrent), heartbeat thread extends leases every 2 minutes, enforces agent_timeout_seconds hard cap.",
+      "acceptanceCriteria": [
+        "Main loop sleeps 30 seconds between polls",
+        "Calls recover_partial_completions() before each poll",
+        "Calls get_dispatchable_tasks() and iterates results",
+        "Calls claim_task() for each dispatchable task",
+        "Spawns run_agent() in ThreadPoolExecutor with max_workers from config",
+        "Heartbeat thread extends lease_until every 2 minutes for active tasks",
+        "Enforces hard cap: terminates task if running longer than agent_timeout_seconds",
+        "Typecheck passes"
+      ],
+      "priority": 54,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-055",
+      "title": "Implement graceful shutdown with SIGTERM/SIGINT",
+      "description": "As the system operator, I want graceful shutdown on SIGTERM/SIGINT that stops accepting new tasks, waits 60s for running agents, marks remaining as interrupted, so that restarts don't lose work. **Implementation:** Signal handler sets global shutdown flag, main loop exits poll on next iteration, waits for ThreadPoolExecutor with 60s timeout, marks any still-running tasks with dispatch_status='interrupted' and lease_until=NULL.",
+      "acceptanceCriteria": [
+        "Registers signal handlers for SIGTERM and SIGINT",
+        "Handler sets global shutdown_requested flag",
+        "Main loop checks shutdown_requested after each poll and exits",
+        "Waits for ThreadPoolExecutor.shutdown(wait=True, timeout=60)",
+        "After timeout, marks tasks with dispatch_status='dispatched' as 'interrupted'",
+        "Clears lease_until on interrupted tasks",
+        "Logs graceful shutdown message",
+        "Typecheck passes"
+      ],
+      "priority": 55,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-056",
+      "title": "Implement interrupted task recovery on restart",
+      "description": "As the supervisor, I want interrupted task recovery that re-queues tasks marked 'interrupted' on startup counting toward retry limit, so that graceful shutdowns don't permanently block tasks. **Implementation:** Function recover_interrupted_tasks(conn) on startup queries tasks with dispatch_status='interrupted', sets dispatch_status='queued', increments retry attempt counter.",
+      "acceptanceCriteria": [
+        "Function queries tasks WHERE dispatch_status='interrupted'",
+        "For each task, sets dispatch_status='queued' and lease_until=NULL",
+        "Increments attempt counter in dispatch_runs (creates new run or updates existing)",
+        "Logs recovery of interrupted tasks",
+        "Typecheck passes"
+      ],
+      "priority": 56,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-057",
+      "title": "Implement SIGUSR1 and SIGUSR2 signal handlers",
+      "description": "As the system operator, I want SIGUSR1 (immediate poll) and SIGUSR2 (immediate health check) signal handlers, so that I can trigger operations without restarting daemon. **Implementation:** Register signal handlers: SIGUSR1 sets immediate_poll flag (main loop checks and polls immediately), SIGUSR2 spawns health check in background thread.",
+      "acceptanceCriteria": [
+        "Registers signal handler for SIGUSR1",
+        "SIGUSR1 handler sets immediate_poll flag",
+        "Main loop checks immediate_poll flag and runs poll cycle immediately (resets flag after)",
+        "Registers signal handler for SIGUSR2",
+        "SIGUSR2 handler spawns health check in separate thread",
+        "Logs signal receipt and action",
+        "Typecheck passes"
+      ],
+      "priority": 57,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-058",
+      "title": "Implement PID file with stale-PID detection",
+      "description": "As the system operator, I want PID file written to agent-dispatch/supervisor.pid with stale-PID detection, so that only one supervisor runs and restarts work correctly. **Implementation:** On startup, check if supervisor.pid exists and contains PID of running process (via os.kill(pid, 0)), if stale delete and proceed, if active exit with error. Write current PID to file. Delete PID file on graceful shutdown.",
+      "acceptanceCriteria": [
+        "On startup, reads agent-dispatch/supervisor.pid if exists",
+        "Checks if PID is still running via os.kill(pid, 0) or /proc/{pid}",
+        "If stale, deletes PID file and logs warning",
+        "If active, exits with error message",
+        "Writes os.getpid() to supervisor.pid",
+        "Deletes supervisor.pid on graceful shutdown",
+        "Typecheck passes"
+      ],
+      "priority": 58,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-059",
+      "title": "Implement supervisor heartbeat file",
+      "description": "As the system monitor, I want supervisor.heartbeat file written with timestamp on each poll cycle, so that service managers can detect stale daemon and restart. **Implementation:** On each poll cycle, write CURRENT_TIMESTAMP to agent-dispatch/supervisor.heartbeat file. Service managers check if file is older than 5 minutes and restart if stale.",
+      "acceptanceCriteria": [
+        "On each poll cycle, writes current timestamp to agent-dispatch/supervisor.heartbeat",
+        "File format is ISO 8601 timestamp or unix epoch",
+        "Creates file on first poll if not exists",
+        "Typecheck passes"
+      ],
+      "priority": 59,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-060",
+      "title": "Create 4 canary tests for provider health",
+      "description": "As the health monitor, I want 4 canary tests (basic_completion, tool_calling, tool_result_handling, structured_output) that validate provider capabilities, so that regressions are detected automatically. **Implementation:** Functions in health/canary_tests.py: test_basic_completion(provider) calls simple prompt, test_tool_calling(provider) requests tool use, test_tool_result_handling(provider) sends tool result back, test_structured_output(provider) requests JSON response. Each returns dict with passed (bool), latency_ms, error_message, error_category, raw_response.",
+      "acceptanceCriteria": [
+        "test_basic_completion() calls provider.complete() with simple prompt and validates response",
+        "test_tool_calling() calls provider with tool definitions and validates tool_call in response",
+        "test_tool_result_handling() sends tool result back and validates continuation",
+        "test_structured_output() requests JSON response and validates parseable JSON",
+        "Each test returns dict with passed, latency_ms, error_message, error_category, raw_response",
+        "Tests have 30s timeout per test",
+        "Typecheck passes"
+      ],
+      "priority": 60,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-061",
+      "title": "Implement health monitor scheduled runner",
+      "description": "As the health system, I want a health monitor that runs canary tests every 6 hours (configurable) on primary and fallback providers, stores results in provider_health table, so that provider reliability is tracked. **Implementation:** Function run_health_checks(config, conn) runs all 4 tests for each configured provider, writes results to provider_health table with tested_at timestamp.",
+      "acceptanceCriteria": [
+        "Function reads health_check_interval_hours from config",
+        "Runs all 4 canary tests for primary provider",
+        "Runs all 4 tests for fallback provider if configured",
+        "Writes results to provider_health table with all fields",
+        "Runs on background thread scheduled every N hours",
+        "Typecheck passes"
+      ],
+      "priority": 61,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-062",
+      "title": "Implement regression detection",
+      "description": "As the health monitor, I want regression detection that compares current health check against last successful run for failures, 3x latency increase, 2+ consecutive failures, novel error categories, so that incidents are detected early. **Implementation:** Function detect_regressions(provider, model, test_name, current_result, conn) queries last successful run from provider_health, compares latency, checks for consecutive failures, detects novel error_category. Returns list of detected issues.",
+      "acceptanceCriteria": [
+        "Function queries provider_health for last successful run (passed=true) for this provider/model/test_name",
+        "Detects failure when current passed=false and last passed=true",
+        "Detects latency regression when current latency_ms > 3 * last latency_ms",
+        "Detects consecutive failures when last 2 runs both passed=false",
+        "Detects novel error category when error_category not seen in last 20 runs",
+        "Returns list of issue dicts with type and details",
+        "Typecheck passes"
+      ],
+      "priority": 62,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-063",
+      "title": "Implement conformance-based fallback tracking",
+      "description": "As the health system, I want conformance tracking that calculates tool-calling reliability over rolling 20-check window and switches to prompt-based mode if below 80%, recovering after 2 consecutive passes, so that unreliable providers degrade gracefully. **Implementation:** Function check_tool_calling_conformance(provider, model, conn) queries last 20 tool_calling and tool_result_handling health checks, calculates pass rate. If < 80%, sets provider to prompt-based mode. Recovery: check last 2 consecutive runs for both tests passed=true, if so switch back to native mode.",
+      "acceptanceCriteria": [
+        "Function queries last 20 health checks for tool_calling and tool_result_handling tests",
+        "Counts failures (passed=false) across both test types",
+        "If failure rate > 20% (4+ failures in 20 checks), switches provider to prompt-based tool mode",
+        "Recovery: queries last 2 consecutive health check runs, if both tool_calling and tool_result_handling passed, switches back to native mode",
+        "Logs mode switch with reasoning",
+        "Typecheck passes"
+      ],
+      "priority": 63,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-064",
+      "title": "Implement 5-tier self-healing",
+      "description": "As the health system, I want 5-tier self-healing (retry with backoff, runtime format adaptation, provider fallback, graceful degradation with accelerated checks, diagnostic report) that automatically recovers from provider failures, so that the system stays operational. **Implementation:** Function heal_incident(incident_type, provider, model, error, config, conn) implements tier selection based on error type, executes healing action, logs to provider_incidents, updates healing_action and auto_healed flag.",
+      "acceptanceCriteria": [
+        "Tier 1 (rate limit 429): Retry with exponential backoff (1s, 5s, 30s)",
+        "Tier 2 (format change): Try known format variations, update translator at runtime if one works, log adaptation",
+        "Tier 3 (auth failure 401/403, persistent 5xx): Switch to fallback provider, create urgent notification",
+        "Tier 4 (multiple failures): Enter graceful degradation, accelerate health checks to 5-min interval",
+        "Tier 5 (model deprecated, fundamental breakage): Generate diagnostic report, escalate to user",
+        "Creates provider_incidents row with detected_at, incident_type, healing_action",
+        "Sets auto_healed=true if recovery successful",
+        "Sets resolved_at when incident resolves",
+        "Typecheck passes"
+      ],
+      "priority": 64,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-065",
+      "title": "Implement diagnostic report generation",
+      "description": "As the health system, I want diagnostic report generation for novel/persistent failures that includes error analysis, recent health history, provider status, suggested actions, so that users can debug complex issues. **Implementation:** Function generate_diagnostic_report(provider, model, incident_type, error, conn) queries provider_health history, analyzes error patterns, generates markdown report with sections: Summary, Error Details, Recent Health History, Provider Status, Suggested Actions.",
+      "acceptanceCriteria": [
+        "Function queries last 30 days of provider_health for this provider/model",
+        "Analyzes error patterns (frequency, categories, latency trends)",
+        "Generates markdown report with 5 sections",
+        "Includes actionable suggestions (update config, check API key, try different model, etc.)",
+        "Stores report in provider_incidents.diagnostic_report column",
+        "Returns report string",
+        "Typecheck passes"
+      ],
+      "priority": 65,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-066",
+      "title": "Implement cost tracking and budget enforcement",
+      "description": "As the system operator, I want cost tracking that writes to daily_usage table on every dispatch with tokens and estimated cost, enforcing global and per-agent daily budgets by pausing dispatch, so that spending stays within limits. **Implementation:** Function record_cost(date, provider, model, agent_name, tokens_used, cost_estimate, conn) upserts to daily_usage with UNIQUE constraint. Function check_budget(config, agent_name, conn) queries daily_usage SUM for today, returns dict with global_exceeded, agent_exceeded. Supervisor checks budget before claiming tasks.",
+      "acceptanceCriteria": [
+        "record_cost() upserts to daily_usage with UNIQUE(date, provider, model, agent_name)",
+        "Increments total_tokens, total_cost_usd, task_count",
+        "check_budget() queries SUM(total_cost_usd) for today globally",
+        "check_budget() queries SUM(total_cost_usd) for today filtered by agent_name",
+        "Returns dict with global_exceeded (bool) and agent_exceeded (bool)",
+        "Supervisor calls check_budget() before claiming tasks",
+        "Skips tasks if global budget exceeded (pause all dispatch)",
+        "Skips tasks for specific agent if agent budget exceeded (other agents continue)",
+        "Creates alert notification when alert_threshold_usd reached",
+        "Typecheck passes"
+      ],
+      "priority": 66,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-067",
+      "title": "Implement per-provider token counting",
+      "description": "As the cost tracker, I want per-provider token counting (SDK-based for Anthropic/OpenAI/Gemini, character estimate for Ollama) that accurately estimates costs, so that daily_usage data is reliable. **Implementation:** Each provider implements count_tokens() method. Anthropic uses anthropic.count_tokens(), OpenAI uses tiktoken, Gemini uses SDK counter, Ollama estimates as len(text) / 4.",
+      "acceptanceCriteria": [
+        "AnthropicProvider.count_tokens() uses anthropic.count_tokens()",
+        "OpenAIProvider.count_tokens() uses tiktoken.encoding_for_model()",
+        "GeminiProvider.count_tokens() uses SDK's token counter",
+        "OllamaProvider.count_tokens() estimates as total_chars / 4",
+        "All return TokenUsage(input_tokens, output_tokens)",
+        "Typecheck passes"
+      ],
+      "priority": 67,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-068",
+      "title": "Implement pricing calculation",
+      "description": "As the cost tracker, I want pricing calculation that reads user-configured per-token pricing from openclawd.config.yaml and calculates cost_estimate from token usage, warning if pricing_updated_at is older than 90 days. **Implementation:** Function calculate_cost(provider, model, token_usage, config) reads pricing section from config, multiplies input_tokens by input_per_1m_tokens and output_tokens by output_per_1m_tokens, divides by 1000000. Checks pricing_updated_at and logs warning if stale.",
+      "acceptanceCriteria": [
+        "Function reads config['pricing'][provider][model] for input_per_1m_tokens and output_per_1m_tokens",
+        "Calculates cost as (input_tokens * input_price + output_tokens * output_price) / 1000000",
+        "Returns cost_estimate in USD as float",
+        "Checks config['pricing_updated_at'] and logs warning if date is > 90 days ago",
+        "Raises error if pricing not configured for provider/model",
+        "Typecheck passes"
+      ],
+      "priority": 68,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-069",
+      "title": "Implement data retention archival job",
+      "description": "As the retention system, I want a daily archival job that copies completed tasks older than 90 days to tasks_archive, deletes from tasks (cascading to related tables), deletes output files, using explicit INSERT OR IGNORE / DELETE SQL, so that database stays manageable. **Implementation:** Function run_retention_cleanup(config, conn) runs archival SQL (INSERT OR IGNORE into tasks_archive, DELETE from tasks with id IN subquery), deletes output files for archived task IDs, aggregates health checks older than 30 days to health_daily_summary and deletes raw records, deletes agent_activity/dispatch_runs/working_memory older than 90 days, retains provider_incidents for 180 days.",
+      "acceptanceCriteria": [
+        "Executes INSERT OR IGNORE INTO tasks_archive SELECT ... FROM tasks WHERE status='completed' AND updated_at < datetime('now','-90 days')",
+        "Executes DELETE FROM tasks WHERE status='completed' AND updated_at < datetime('now','-90 days') AND id IN (SELECT id FROM tasks_archive)",
+        "Deletes files in agent-dispatch/output/ matching archived task IDs",
+        "Aggregates provider_health records older than 30 days: INSERT INTO health_daily_summary with SUM/AVG, then DELETE raw records",
+        "Deletes agent_activity, dispatch_runs, working_memory older than 90 days",
+        "Deletes provider_incidents older than 180 days (only if resolved_at < threshold)",
+        "Runs as scheduled job (daily heartbeat)",
+        "Typecheck passes"
+      ],
+      "priority": 69,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-070",
+      "title": "Implement database size monitoring and vacuum",
+      "description": "As the retention system, I want database size monitoring with 500MB alert threshold and PRAGMA incremental_vacuum, falling back to full VACUUM only when no active dispatches, so that database file size stays reasonable. **Implementation:** Function monitor_and_vacuum_db(config, conn) checks DB file size with os.path.getsize(), creates alert notification if > threshold, runs PRAGMA incremental_vacuum if auto_vacuum=INCREMENTAL, falls back to VACUUM only when no tasks with dispatch_status='dispatched'.",
+      "acceptanceCriteria": [
+        "Function checks os.path.getsize(db_path) against config max_db_size_mb threshold",
+        "Creates alert notification if size exceeds threshold",
+        "Runs PRAGMA incremental_vacuum(N) to reclaim space",
+        "Checks if auto_vacuum mode is INCREMENTAL via PRAGMA auto_vacuum query",
+        "Falls back to full VACUUM only if no tasks with dispatch_status='dispatched' (no active dispatches)",
+        "Logs vacuum operation with before/after size",
+        "Typecheck passes"
+      ],
+      "priority": 70,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-071",
+      "title": "Implement structured JSON logging",
+      "description": "As an operator, I want structured JSON logging to agent-dispatch/logs/supervisor.jsonl with consistent fields (timestamp, level, component, trace_id, agent_name, task_id, message, extra), so that logs are machine-readable. **Implementation:** Configure Python logging with JSONFormatter, write to supervisor.jsonl with append mode, include all standard fields on every log entry.",
+      "acceptanceCriteria": [
+        "Logging writes to agent-dispatch/logs/supervisor.jsonl",
+        "Each log entry is single-line JSON object",
+        "Every entry includes: timestamp (ISO 8601), level, component, message",
+        "Entries related to dispatch include: trace_id, agent_name, task_id",
+        "Extra field captures additional structured data as dict",
+        "Logs append to file (do not truncate on restart)",
+        "Typecheck passes"
+      ],
+      "priority": 71,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-072",
+      "title": "Implement trace ID propagation",
+      "description": "As an operator, I want trace ID (UUID v4) generated per dispatch and propagated through entire task lifecycle (dispatch_runs, audit_log, logs), so that I can trace all operations for a single task. **Implementation:** Generate UUID v4 at start of dispatch, store in dispatch_runs.trace_id, pass to agent_runner, include in all log entries, store in audit_log for tool calls.",
+      "acceptanceCriteria": [
+        "Generate uuid.uuid4() when claiming task",
+        "Store in dispatch_runs.trace_id on dispatch_run creation",
+        "Pass trace_id to run_agent() function",
+        "Include trace_id in all log entries related to this dispatch",
+        "Store trace_id in audit_log rows for tool calls",
+        "Typecheck passes"
+      ],
+      "priority": 72,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-073",
+      "title": "Implement daily log rotation",
+      "description": "As the retention system, I want daily log rotation with gzip compression and configurable retention (default 30 days), so that logs don't fill disk. **Implementation:** Function rotate_logs(config) renames supervisor.jsonl to supervisor-YYYY-MM-DD.jsonl, gzips old file, deletes gzipped logs older than retention period. Runs on daily schedule.",
+      "acceptanceCriteria": [
+        "Function renames agent-dispatch/logs/supervisor.jsonl to supervisor-YYYY-MM-DD.jsonl",
+        "Gzips renamed file to supervisor-YYYY-MM-DD.jsonl.gz",
+        "Deletes .gz files older than config.log_retention_days",
+        "Creates new empty supervisor.jsonl for continued logging",
+        "Runs as scheduled job (daily heartbeat)",
+        "Typecheck passes"
+      ],
+      "priority": 73,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-074",
+      "title": "Implement output directory and file creation",
+      "description": "As the agent runner, I want output files written to agent-dispatch/output/ with naming convention {task_id}_{agent_name}_{trace_id[:8]}.md in Markdown format with YAML frontmatter, so that deliverables are stored on disk. **Implementation:** Function write_output_file(task_id, agent_name, trace_id, deliverable_content, status) creates output/ directory if not exists, writes file with frontmatter (task_id, agent_name, trace_id, timestamp, status) and deliverable content, stores relative path in dispatch_runs.output_file.",
+      "acceptanceCriteria": [
+        "Creates agent-dispatch/output/ directory if not exists",
+        "Generates filename as f'{task_id}_{agent_name}_{trace_id[:8]}.md'",
+        "Writes YAML frontmatter with task_id, agent_name, trace_id, timestamp, status",
+        "Writes deliverable_content below frontmatter separator (---)",
+        "Returns relative path output/{filename}",
+        "Stores path in dispatch_runs.output_file column",
+        "Typecheck passes"
+      ],
+      "priority": 74,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-075",
+      "title": "Implement webhook notification delivery",
+      "description": "As the notification system, I want webhook delivery via HTTP POST to configured URLs with retry cascade (3 attempts per channel with exponential backoff), so that notifications reach Slack/Discord/custom endpoints. **Implementation:** Function send_webhook(url, notification_dict) posts JSON to URL with 10s timeout, retries 3x with backoff (1s, 5s, 30s), returns success/failure.",
+      "acceptanceCriteria": [
+        "Function reads webhook_url from config['notifications']['webhook_url']",
+        "Makes HTTP POST with notification as JSON body",
+        "Sets timeout to 10s",
+        "Retries on failure with backoff: 1s, 5s, 30s",
+        "Returns success (bool) after exhausting retries",
+        "Logs delivery attempts and failures",
+        "Typecheck passes"
+      ],
+      "priority": 75,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-076",
+      "title": "Implement email notification delivery",
+      "description": "As the notification system, I want email delivery via SMTP with retry cascade, so that notifications reach configured email addresses. **Implementation:** Function send_email_notification(to, subject, body, config) reads SMTP config, connects, sends email, retries 3x with backoff.",
+      "acceptanceCriteria": [
+        "Function reads config['notifications']['email'] section (smtp_host, smtp_port, from, to)",
+        "Connects to SMTP server with smtplib.SMTP()",
+        "Sends email with subject and body",
+        "Retries on failure with backoff: 1s, 5s, 30s",
+        "Returns success (bool)",
+        "Logs delivery attempts and failures",
+        "Typecheck passes"
+      ],
+      "priority": 76,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-077",
+      "title": "Implement desktop notification delivery",
+      "description": "As the notification system, I want desktop notifications via macOS osascript, so that urgent notifications appear on user's desktop. **Implementation:** Function send_desktop_notification(title, message) spawns subprocess osascript with AppleScript display notification command, returns success/failure.",
+      "acceptanceCriteria": [
+        "Function checks platform is macOS (sys.platform == 'darwin')",
+        "Spawns subprocess ['osascript', '-e', 'display notification ...']",
+        "Passes title and message to AppleScript",
+        "Returns success (bool)",
+        "Logs delivery attempts",
+        "Typecheck passes"
+      ],
+      "priority": 77,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-078",
+      "title": "Implement urgency-based notification routing",
+      "description": "As the notification system, I want urgency-based routing (urgent: all channels, high: webhook+desktop, normal: webhook, low: DB only) with retry cascade (try next channel if current exhausted), so that notifications are delivered appropriately. **Implementation:** Function deliver_notification(notification_dict, urgency, config) reads delivery_rules from config, tries channels in order, cascades to next on failure, marks notification as delivered or failed.",
+      "acceptanceCriteria": [
+        "Function reads config['notifications']['delivery_rules'][urgency]",
+        "For 'urgent': tries webhook, email, desktop in order",
+        "For 'high': tries webhook, desktop",
+        "For 'normal': tries webhook only",
+        "For 'low': no delivery (DB record only)",
+        "Cascades to next channel if current fails all 3 retries",
+        "Returns final status (delivered channels list or 'failed')",
+        "Notification failures never block dispatch operations",
+        "Typecheck passes"
+      ],
+      "priority": 78,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-079",
+      "title": "Create macOS launchd plist",
+      "description": "As a macOS user, I want a launchd plist file that runs supervisor daemon with WatchPaths monitoring supervisor.heartbeat file, so that the daemon auto-starts and restarts on stale heartbeat. **Implementation:** Create scripts/com.openclaw.agent-supervisor.plist with ProgramArguments pointing to openclawd daemon, WatchPaths pointing to supervisor.heartbeat, StandardOutPath and StandardErrorPath for logs.",
+      "acceptanceCriteria": [
+        "File defines Label as 'com.openclaw.agent-supervisor'",
+        "ProgramArguments points to openclawd daemon command",
+        "WatchPaths includes path to agent-dispatch/supervisor.heartbeat",
+        "ThrottleInterval set to 60 seconds",
+        "StandardOutPath and StandardErrorPath set to log files",
+        "RunAtLoad set to true",
+        "File validates as valid plist XML",
+        "Typecheck passes"
+      ],
+      "priority": 79,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-080",
+      "title": "Create Linux systemd service",
+      "description": "As a Linux user, I want a systemd service file that runs supervisor daemon with WatchdogSec=300 monitoring, so that the daemon auto-starts and restarts on failure. **Implementation:** Create scripts/openclawd-supervisor.service with ExecStart pointing to openclawd daemon, WatchdogSec=300, Restart=always.",
+      "acceptanceCriteria": [
+        "File defines [Service] section with Type=simple",
+        "ExecStart points to openclawd daemon command",
+        "WatchdogSec set to 300",
+        "Restart set to always",
+        "RestartSec set to 10",
+        "[Install] section with WantedBy=multi-user.target",
+        "File validates as valid systemd unit",
+        "Typecheck passes"
+      ],
+      "priority": 80,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-081",
+      "title": "Implement CLI entry point and basic commands",
+      "description": "As a user, I want a CLI entry point 'openclawd' with basic commands (status, tasks, dispatch, run, daemon, stop, kick), so that I can control the supervisor. **Implementation:** Create cli.py with argparse defining subcommands, each calling appropriate function. Entry point in setup.py console_scripts.",
+      "acceptanceCriteria": [
+        "CLI command 'openclawd' available after installation",
+        "openclawd status: prints supervisor status (running/stopped, PID, active tasks)",
+        "openclawd tasks: lists tasks with filters (status, agent, priority)",
+        "openclawd dispatch <task_id>: manually dispatches specific task",
+        "openclawd run: runs single poll cycle and exits",
+        "openclawd daemon: starts persistent supervisor loop",
+        "openclawd stop: sends SIGTERM to supervisor PID",
+        "openclawd kick: sends SIGUSR1 to trigger immediate poll",
+        "All commands support --json flag for machine-readable output",
+        "Typecheck passes"
+      ],
+      "priority": 81,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-082",
+      "title": "Implement CLI health and doctor commands",
+      "description": "As a user, I want CLI health and doctor commands that validate system health and configuration, so that I can diagnose issues. **Implementation:** openclawd health: runs health checks on all providers and prints results. openclawd doctor: runs full diagnostic (config, DB, provider auth, connectivity, compatibility, disk space) and prints report.",
+      "acceptanceCriteria": [
+        "openclawd health: calls run_health_checks() and prints results table",
+        "openclawd health --json: outputs JSON",
+        "openclawd doctor: validates config (all required fields, API keys set), tests DB connection, validates provider API keys, checks disk space, runs compatibility check, prints comprehensive report",
+        "openclawd doctor --json: outputs JSON",
+        "Typecheck passes"
+      ],
+      "priority": 82,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-083",
+      "title": "Implement CLI config validate command",
+      "description": "As a user, I want 'openclawd config validate' that validates config file against schema and checks API keys, so that I can catch config errors before running. **Implementation:** Subcommand calls ConfigValidator and prints errors or success message.",
+      "acceptanceCriteria": [
+        "openclawd config validate: loads config YAML, validates all required sections, checks API key env vars, validates numeric ranges, prints errors or success",
+        "openclawd config validate --json: outputs JSON",
+        "Typecheck passes"
+      ],
+      "priority": 83,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-084",
+      "title": "Implement CLI logs command",
+      "description": "As a user, I want 'openclawd logs' command that tails supervisor.jsonl with optional filters (level, component, agent, task_id, trace_id), so that I can monitor operations. **Implementation:** Subcommand reads supervisor.jsonl, optionally follows with --follow, filters by specified criteria, prints formatted or JSON output.",
+      "acceptanceCriteria": [
+        "openclawd logs: prints recent log entries (last 50)",
+        "openclawd logs --follow: tails log file continuously",
+        "openclawd logs --level ERROR: filters by log level",
+        "openclawd logs --agent rex: filters by agent_name",
+        "openclawd logs --task 42: filters by task_id",
+        "openclawd logs --trace abc123: filters by trace_id",
+        "openclawd logs --json: outputs JSON lines",
+        "Typecheck passes"
+      ],
+      "priority": 84,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-085",
+      "title": "Implement CLI demo command",
+      "description": "As a user, I want 'openclawd demo' that creates a simple test task and dispatches it, so that I can verify end-to-end functionality. **Implementation:** Subcommand calls adapter.create_task() with demo task (e.g., 'Research: What is SQLite WAL mode?'), waits for completion or timeout, prints result.",
+      "acceptanceCriteria": [
+        "openclawd demo: creates demo task via adapter.create_task()",
+        "Triggers immediate poll via kick or direct dispatch",
+        "Polls for completion up to 5 minutes",
+        "Prints task result on completion or timeout message",
+        "Cleans up demo task on exit",
+        "Typecheck passes"
+      ],
+      "priority": 85,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-086",
+      "title": "Implement CLI init wizard",
+      "description": "As a new user, I want 'openclawd init' interactive setup wizard that guides me through provider selection, API key configuration, concurrency, budget settings, so that I can get started quickly. **Implementation:** Subcommand prompts for provider, model, API key env var name, max_concurrent_agents, daily_budget_usd, generates openclawd.config.yaml in current directory.",
+      "acceptanceCriteria": [
+        "openclawd init: prompts for provider selection (anthropic, openai, gemini, ollama)",
+        "Prompts for model name",
+        "Prompts for API key environment variable name",
+        "Prompts for max_concurrent_agents (default 3)",
+        "Prompts for daily_budget_usd (default 50.00)",
+        "Generates openclawd.config.yaml in current directory",
+        "Does not overwrite existing config without confirmation",
+        "Prints success message with next steps",
+        "Typecheck passes"
+      ],
+      "priority": 86,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-087",
+      "title": "Implement CLI pipeline create command",
+      "description": "As a user, I want 'openclawd pipeline create' that interactively creates task dependency chains, so that I can decompose complex work. **Implementation:** Subcommand prompts for parent task, child tasks, dependency types, creates task_dependencies rows.",
+      "acceptanceCriteria": [
+        "openclawd pipeline create: prompts for parent task ID or creates new task",
+        "Prompts for number of child tasks",
+        "For each child, prompts for title, description, assigned_agent",
+        "Prompts for dependency_type (completion or contribution)",
+        "Creates child tasks via adapter.create_task()",
+        "Creates task_dependencies rows linking children to parent",
+        "Prints summary of created pipeline",
+        "Typecheck passes"
+      ],
+      "priority": 87,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-088",
+      "title": "Implement CLI tool test command",
+      "description": "As a developer, I want 'openclawd tool test <tool_name>' that runs tool test blocks from YAML definitions, so that I can verify tool executors work. **Implementation:** Subcommand loads tool definition, reads test block, executes tool with test inputs, compares output to expected shape, prints result.",
+      "acceptanceCriteria": [
+        "openclawd tool test <tool_name>: loads tool definition YAML",
+        "Reads test block with sample inputs and expected output shape",
+        "Imports and calls tool executor with test inputs",
+        "Validates output matches expected shape (not exact value, but structure)",
+        "Prints success or failure with details",
+        "Supports --json output",
+        "Typecheck passes"
+      ],
+      "priority": 88,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-089",
+      "title": "Implement CLI serve command",
+      "description": "As an operator, I want 'openclawd serve' that starts lightweight HTTP server on port 8377 bound to localhost exposing GET /status endpoint, so that external tools can query status. **Implementation:** Subcommand starts HTTP server in separate process using http.server or Flask, single endpoint returns same JSON as 'openclawd status --json'.",
+      "acceptanceCriteria": [
+        "openclawd serve: starts HTTP server on 127.0.0.1:8377",
+        "GET /status endpoint returns JSON with supervisor status, active tasks, budget usage, health summary",
+        "Server runs as separate process (not embedded in daemon)",
+        "Logs requests",
+        "No authentication for v1 (localhost binding provides security)",
+        "Supports --port flag to override default 8377",
+        "Typecheck passes"
+      ],
+      "priority": 89,
+      "qa_required": true,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-090",
+      "title": "Integrate rich library for CLI output formatting",
+      "description": "As a user, I want rich tables, progress bars, and color-coded status in CLI output with plain-text fallback, so that output is readable and pretty. **Implementation:** Import rich library, use Table for status/tasks output, use Progress for long operations, use color coding for status (green=success, red=failure, yellow=warning), detect if rich is installed and fall back to plain text if not.",
+      "acceptanceCriteria": [
+        "status command uses rich.Table for formatted output",
+        "tasks command uses rich.Table with color-coded status column",
+        "Long operations (demo, health) show rich.Progress bar",
+        "Status values color-coded: green for completed, red for failed, yellow for in_progress",
+        "Detects if rich is installed and falls back to plain text if ImportError",
+        "All commands support --json flag which bypasses rich formatting",
+        "Typecheck passes"
+      ],
+      "priority": 90,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-091",
+      "title": "Create pyproject.toml for packaging",
+      "description": "As a developer, I want a pyproject.toml that defines openclawd package with entry point, dependencies, optional dependency groups, so that the package is pip-installable. **Implementation:** Create pyproject.toml with [project] metadata, console_scripts entry point, core dependencies (pyyaml, requests), optional groups ([anthropic], [openai], [gemini], [all]).",
+      "acceptanceCriteria": [
+        "File defines [project] with name='openclawd-dispatch', version, description, authors",
+        "dependencies list includes: pyyaml, requests",
+        "[project.scripts] defines openclawd = 'agent_dispatch.cli:main'",
+        "[project.optional-dependencies] defines: anthropic=['anthropic'], openai=['openai','tiktoken'], gemini=['google-generativeai'], all=['anthropic','openai','google-generativeai','rich']",
+        "File validates as valid pyproject.toml",
+        "Typecheck passes"
+      ],
+      "priority": 91,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-092",
+      "title": "Implement auto-generated config template on first run",
+      "description": "As a new user, I want openclawd to auto-generate a commented config template on first run if no config exists, so that I have a starting point. **Implementation:** On startup, check if any config file exists in resolution order, if not, copy openclawd.config.yaml template to ~/.openclawd/openclawd.config.yaml with all comments.",
+      "acceptanceCriteria": [
+        "On first run, checks for config file in resolution order",
+        "If no config found, creates ~/.openclawd/ directory if not exists",
+        "Copies openclawd.config.yaml template to ~/.openclawd/openclawd.config.yaml",
+        "Prints message: 'Config template created at ~/.openclawd/openclawd.config.yaml. Please edit and add your API keys.'",
+        "Does not overwrite existing config files",
+        "Typecheck passes"
+      ],
+      "priority": 92,
+      "qa_required": false,
+      "passes": true,
+      "notes": ""
+    }
+  ]
+}

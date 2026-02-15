@@ -1,0 +1,42 @@
+name: python_exec
+description: Execute a Python code snippet and return its stdout, stderr, and result value.
+version: "1.0.0"
+
+parameters:
+  code:
+    type: string
+    description: The Python code to execute
+    required: true
+  timeout:
+    type: integer
+    description: Maximum execution time in seconds
+    required: false
+    default: 300
+
+returns:
+  stdout:
+    type: string
+    description: Standard output captured during execution
+  stderr:
+    type: string
+    description: Standard error output captured during execution
+  result:
+    type: string
+    description: String representation of the last expression value, or null if no return value
+
+execution:
+  type: python
+  module: tools.executors.python_exec
+  function: execute
+
+idempotent: false
+destructive: false
+timeout_seconds: 300
+
+test:
+  input:
+    code: "print(2 + 2)"
+    timeout: 10
+  expected:
+    stdout: "4\n"
+    exit_code: 0

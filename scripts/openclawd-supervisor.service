@@ -1,0 +1,17 @@
+[Unit]
+Description=OpenClawd Agent Supervisor Daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -m agent-dispatch.agent_supervisor
+WorkingDirectory=/opt/openclawd
+WatchdogSec=300
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=openclawd-supervisor
+
+[Install]
+WantedBy=multi-user.target

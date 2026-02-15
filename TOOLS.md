@@ -59,19 +59,23 @@ curl "https://gtkehmsgiofaexftirgu.supabase.co/rest/v1/opportunity" \
 
 ## Git Workflow
 
-**Branches:**
+**Branches (this repo — openclaw-orchestration):**
+- `main` — stable, default branch
+- `dev` — development work
+
+**Branches (Netlify-deployed app projects):**
 - `dev` — George works here
-- `prod` — Production, Alan controls
+- `prod` — production, auto-deploys to Netlify
 
 **Rules:**
 - I push to `dev` only
 - I create PRs for Alan to review
-- I do NOT push to `prod` or merge to `prod`
-- Alan reviews, tests, and decides when to deploy
+- I do NOT push to `main`/`prod` or merge to `main`/`prod`
+- Alan reviews, tests, and decides when to merge
 
-## New Project Setup (Standard)
+## New App Project Setup (Standard)
 
-Every new app follows this setup:
+Every new **Netlify-deployed app** follows this setup (does NOT apply to openclaw-orchestration):
 
 1. **Create branches:**
    - `dev` branch (my working branch)
@@ -90,7 +94,7 @@ Every new app follows this setup:
    - Trigger on `push` events
    - Result: pushes to `prod` auto-deploy to Netlify
 
-**This is standard for ALL projects. Don't ask — just do it.**
+**This is standard for Netlify app projects. Don't ask — just do it.**
 
 ## Validation Rule
 

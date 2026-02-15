@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openclawd-dispatch"
+version = "0.1.0"
+description = "OpenClawd Agent Dispatch System - provider-agnostic multi-agent orchestration"
+authors = [{name = "Alan Walker"}]
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml",
+    "requests",
+]
+
+[project.scripts]
+openclawd = "agent_dispatch.cli:main"
+
+[project.optional-dependencies]
+anthropic = ["anthropic"]
+openai = ["openai", "tiktoken"]
+gemini = ["google-generativeai"]
+all = ["anthropic", "openai", "google-generativeai", "rich"]
+
+[tool.setuptools]
+packages = ["agent_dispatch", "agent_dispatch.health"]

@@ -1,0 +1,50 @@
+name: send_email
+description: Send an email to the specified recipient with subject, body, and optional attachments.
+version: "1.0.0"
+
+parameters:
+  to:
+    type: string
+    description: Recipient email address
+    required: true
+  subject:
+    type: string
+    description: Email subject line
+    required: true
+  body:
+    type: string
+    description: Email body content (plain text or HTML)
+    required: true
+  attachments:
+    type: array
+    description: List of file paths to attach to the email
+    required: false
+    default: []
+
+returns:
+  success:
+    type: boolean
+    description: Whether the email was sent successfully
+  message_id:
+    type: string
+    description: Unique message ID assigned by the mail server
+
+execution:
+  type: python
+  module: tools.executors.send_email
+  function: execute
+
+idempotent: false
+destructive: false
+timeout_seconds: 60
+
+test:
+  input:
+    to: "test@example.com"
+    subject: "Test Email"
+    body: "This is a test email."
+    attachments: []
+  expected:
+    success: true
+    has_fields:
+      - message_id

@@ -1,0 +1,51 @@
+name: web_search
+description: Perform a web search and return a list of results with titles, URLs, and snippets.
+version: "1.0.0"
+
+parameters:
+  query:
+    type: string
+    description: The search query string
+    required: true
+  num_results:
+    type: integer
+    description: Number of search results to return
+    required: false
+    default: 5
+
+returns:
+  results:
+    type: array
+    description: List of search result objects
+    items:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the search result
+        url:
+          type: string
+          description: URL of the search result
+        snippet:
+          type: string
+          description: Text snippet from the search result
+
+execution:
+  type: python
+  module: tools.executors.web_search
+  function: execute
+
+idempotent: true
+destructive: false
+timeout_seconds: 30
+
+test:
+  input:
+    query: "OpenAI API documentation"
+    num_results: 3
+  expected:
+    results_count_gte: 1
+    result_fields:
+      - title
+      - url
+      - snippet

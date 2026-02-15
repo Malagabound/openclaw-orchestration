@@ -11,6 +11,9 @@
 
 set -e
 
+# Allow nested Claude invocations when running inside Claude Code
+unset CLAUDECODE 2>/dev/null || true
+
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -18,6 +21,45 @@ set -e
 MAX_FIX_ATTEMPTS=3          # Max diagnosis+fix cycles per blocking story
 DIAGNOSIS_TIMEOUT=300       # 5 minutes for diagnosis agent
 FIX_TIMEOUT=600             # 10 minutes for fix agent
+
+# macOS doesn't have GNU timeout by default, so we detect and adapt
+TIMEOUT_CMD=""
+if command -v gtimeout &> /dev/null; then
+  TIMEOUT_CMD="gtimeout"
+elif command -v timeout &> /dev/null; then
+  TIMEOUT_CMD="timeout"
+fi
+
+# Portable timeout function (works on macOS without coreutils)
+run_with_timeout() {
+  local timeout_seconds="$1"
+  shift
+  local command_to_run="$@"
+
+  if [ -n "$TIMEOUT_CMD" ]; then
+    $TIMEOUT_CMD --foreground --signal=TERM --kill-after=30s "${timeout_seconds}s" bash -c "$command_to_run"
+    return $?
+  else
+    bash -c "$command_to_run" &
+    local cmd_pid=$!
+    local elapsed=0
+    while [ $elapsed -lt $timeout_seconds ]; do
+      if ! kill -0 $cmd_pid 2>/dev/null; then
+        wait $cmd_pid
+        return $?
+      fi
+      sleep 1
+      elapsed=$((elapsed + 1))
+    done
+    echo "" >&2
+    echo "Timeout: Process exceeded ${timeout_seconds}s limit" >&2
+    kill -TERM $cmd_pid 2>/dev/null
+    sleep 2
+    kill -KILL $cmd_pid 2>/dev/null
+    wait $cmd_pid 2>/dev/null
+    return 124
+  fi
+}
 
 # Colors
 RED='\033[0;31m'
@@ -52,7 +94,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Normalize spec name: strip leading "agent-os/specs/" if present
 SPEC_NAME="${SPEC_NAME#agent-os/specs/}"
 
-SPEC_DIR="$SCRIPT_DIR/specs/$SPEC_NAME"
+SPEC_DIR="$PROJECT_ROOT/agent-os/specs/$SPEC_NAME"
 FAILURE_FILE="$SPEC_DIR/ralph-failure.json"
 FIX_LOG="$SPEC_DIR/ralph-fix-log.md"
 PRD_FILE="$SPEC_DIR/prd.json"
@@ -231,7 +273,8 @@ IMPORTANT: Your fix_details must be specific enough that another agent can execu
 - For EDIT_SPEC: What clarifications to add to spec.md"
 
   # Run diagnosis agent with timeout
-  echo "$prompt" | timeout ${DIAGNOSIS_TIMEOUT}s claude --print --dangerously-skip-permissions 2>&1 | tee "$output_file"
+  export prompt
+  run_with_timeout ${DIAGNOSIS_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1' | tee "$output_file"
   return ${PIPESTATUS[0]}
 }
 
@@ -326,7 +369,7 @@ If you cannot make the edit, output:
 <fix-result>FAILED</fix-result>
 <fix-error>Reason why the fix failed</fix-error>"
 
-  local result=$(echo "$prompt" | timeout ${FIX_TIMEOUT}s claude --print --dangerously-skip-permissions 2>&1)
+  export prompt; local result=$(run_with_timeout ${FIX_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1')
   echo "$result"
 
   if echo "$result" | grep -q "<fix-result>SUCCESS</fix-result>"; then
@@ -368,7 +411,7 @@ If you cannot make the fix, output:
 <fix-result>FAILED</fix-result>
 <fix-error>Reason why the fix failed</fix-error>"
 
-  local result=$(echo "$prompt" | timeout ${FIX_TIMEOUT}s claude --print --dangerously-skip-permissions 2>&1)
+  export prompt; local result=$(run_with_timeout ${FIX_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1')
   echo "$result"
 
   if echo "$result" | grep -q "<fix-result>SUCCESS</fix-result>"; then
@@ -413,7 +456,7 @@ If you cannot split the story, output:
 <fix-result>FAILED</fix-result>
 <fix-error>Reason why the split failed</fix-error>"
 
-  local result=$(echo "$prompt" | timeout ${FIX_TIMEOUT}s claude --print --dangerously-skip-permissions 2>&1)
+  export prompt; local result=$(run_with_timeout ${FIX_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1')
   echo "$result"
 
   if echo "$result" | grep -q "<fix-result>SUCCESS</fix-result>"; then
@@ -486,7 +529,7 @@ Use Bash commands to fix the issue. Common fixes:
 After fixing, output:
 <fix-result>SUCCESS</fix-result>"
 
-  local result=$(echo "$prompt" | timeout ${FIX_TIMEOUT}s claude --print --dangerously-skip-permissions 2>&1)
+  export prompt; local result=$(run_with_timeout ${FIX_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1')
   echo "$result"
 
   echo "- **Result:** ATTEMPTED" >> "$FIX_LOG"
@@ -517,7 +560,7 @@ RULES:
 After editing, output:
 <fix-result>SUCCESS</fix-result>"
 
-  local result=$(echo "$prompt" | timeout ${FIX_TIMEOUT}s claude --print --dangerously-skip-permissions 2>&1)
+  export prompt; local result=$(run_with_timeout ${FIX_TIMEOUT} 'echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1')
   echo "$result"
 
   if echo "$result" | grep -q "<fix-result>SUCCESS</fix-result>"; then

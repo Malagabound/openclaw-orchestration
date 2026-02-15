@@ -203,13 +203,15 @@ Research and validation come BEFORE building. Always.
 - Inter font
 - Mobile-first, accessible
 
-## Standard Project Setup
+## Standard App Project Setup
 
-Every new app gets this setup automatically (don't ask, just do):
+Every new **Netlify-deployed app** gets this setup automatically (don't ask, just do):
 - `dev` + `prod` branches (delete `main`)
 - Netlify auto-deploy from `prod` via webhook
 - Deploy key for private repo access
 - I work on `dev`, create PRs, Alan merges to `prod`
+
+**Note:** The `openclaw-orchestration` repo uses `main` + `dev` (no Netlify deploy).
 
 ## How Alan Wants Me to Work
 

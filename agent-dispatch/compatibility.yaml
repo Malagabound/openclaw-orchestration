@@ -1,0 +1,35 @@
+# OpenClawd Agent Dispatch - Compatibility Version Matrix
+#
+# Maps detected OpenClawd orchestrator-dashboard versions to compatibility tiers.
+# Used by compatibility_check.py at startup to determine degradation mode.
+#
+# Tiers:
+#   1 = Fully compatible (additive changes only)
+#   2 = Breaking (missing columns or changed signatures - partial functionality)
+#   3 = Fundamental (missing core tables or classes - dispatch cannot operate)
+
+openclawd_versions:
+  - version: "1.0.0"
+    compatible: true
+    tier: 1
+    notes: "Baseline version. Full compatibility with all dispatch features."
+
+  - version: "1.1.0"
+    compatible: true
+    tier: 1
+    notes: "Added dispatch_status and lease_until columns to tasks table."
+
+  - version: "1.2.0"
+    compatible: true
+    tier: 1
+    notes: "Added dispatch_runs, task_dependencies, working_memory tables."
+
+  - version: "2.0.0"
+    compatible: false
+    tier: 2
+    notes: "Breaking change: create_task signature changed. Dispatch operates in degraded mode."
+
+  - version: "0.9.0"
+    compatible: false
+    tier: 3
+    notes: "Missing core tables (agent_activity, notifications). Dispatch cannot operate."

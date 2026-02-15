@@ -1,0 +1,35 @@
+name: database_write
+description: Execute a write SQL statement (INSERT, UPDATE, DELETE) against the coordination database and return the number of affected rows.
+version: "1.0.0"
+
+parameters:
+  query:
+    type: string
+    description: The SQL write statement to execute (INSERT, UPDATE, DELETE)
+    required: true
+  params:
+    type: array
+    description: Parameterized query values to substitute for ? placeholders
+    required: false
+    default: []
+
+returns:
+  rows_affected:
+    type: integer
+    description: Number of rows affected by the write operation
+
+execution:
+  type: python
+  module: tools.executors.database_write
+  function: execute
+
+idempotent: false
+destructive: true
+timeout_seconds: 60
+
+test:
+  input:
+    query: "INSERT INTO tasks (title, description, status) VALUES (?, ?, ?)"
+    params: ["test_task", "test description", "pending"]
+  expected:
+    rows_affected: 1

@@ -1,0 +1,183 @@
+# ═══════════════════════════════════════════════════════════════════
+# OpenClawd Agent Dispatch System - Configuration Template
+# ═══════════════════════════════════════════════════════════════════
+#
+# Copy this file to one of the following locations (checked in order):
+#   1. Path specified via --config CLI flag
+#   2. Path in OPENCLAWD_CONFIG environment variable
+#   3. ./openclawd.config.yaml (current working directory)
+#   4. agent-dispatch/openclawd.config.yaml (project directory)
+#   5. ~/.openclawd/openclawd.config.yaml (home directory)
+#
+# All values shown are defaults. Uncomment and modify as needed.
+
+# ── Provider Configuration ──────────────────────────────────────
+# Primary LLM provider and model for agent dispatch calls.
+provider:
+  name: "anthropic"                    # Provider identifier (anthropic, openai, google, etc.)
+  api_key_env: "ANTHROPIC_API_KEY"     # Environment variable holding the API key
+  model: "claude-sonnet-4-5"           # Default model for all agents
+  base_url: null                       # Custom API endpoint (null = provider default)
+
+# ── Agent-Specific Model Overrides ──────────────────────────────
+# Override the default model on a per-agent basis.
+# Keys match agent names from AGENT_SKILLS in config.py.
+agent_models:
+  research: "claude-sonnet-4-5"        # Research agents use Sonnet for depth
+  product: "claude-sonnet-4-5"         # Product agents use Sonnet
+  comms: "claude-haiku-4-5"            # Communication agents use Haiku for speed
+  ops: "claude-haiku-4-5"              # Operations agents use Haiku for speed
+  meta: "claude-sonnet-4-5"            # Meta/self-improvement agents use Sonnet
+  content: "claude-sonnet-4-5"         # Content agents use Sonnet
+  taskr: "claude-haiku-4-5"            # Task management agents use Haiku
+  security: "claude-sonnet-4-5"        # Security agents use Sonnet
+  memory: "claude-haiku-4-5"           # Memory agents use Haiku
+
+# ── Global Fallback Provider ────────────────────────────────────
+# Used when the primary provider fails health checks or returns errors.
+fallback:
+  name: "openai"                       # Fallback provider identifier
+  api_key_env: "OPENAI_API_KEY"        # Environment variable for fallback API key
+  model: "gpt-4o"                      # Fallback model
+  base_url: null                       # Custom endpoint (null = provider default)
+
+# ── Agent-Specific Fallback Overrides ───────────────────────────
+# Per-agent fallback models when the primary provider/model fails.
+agent_fallbacks:
+  research: "gpt-4o"                   # Research fallback
+  product: "gpt-4o"                    # Product fallback
+  comms: "gpt-4o-mini"                 # Comms fallback (smaller model)
+  ops: "gpt-4o-mini"                   # Ops fallback
+  meta: "gpt-4o"                       # Meta fallback
+  content: "gpt-4o"                    # Content fallback
+  taskr: "gpt-4o-mini"                 # Taskr fallback
+  security: "gpt-4o"                   # Security fallback
+  memory: "gpt-4o-mini"               # Memory fallback
+
+# ── Agent Budget Limits ─────────────────────────────────────────
+# Per-agent daily spending caps in USD. Dispatch halts for the agent
+# when its daily total_cost_usd in daily_usage table exceeds this.
+agent_budgets:
+  research: 5.00                       # Research agents: $5/day
+  product: 3.00                        # Product agents: $3/day
+  comms: 1.00                          # Comms agents: $1/day
+  ops: 1.00                            # Ops agents: $1/day
+  meta: 2.00                           # Meta agents: $2/day
+  content: 2.00                        # Content agents: $2/day
+  taskr: 1.00                          # Taskr agents: $1/day
+  security: 2.00                       # Security agents: $2/day
+  memory: 0.50                         # Memory agents: $0.50/day
+
+# ── Agent Lease Defaults ────────────────────────────────────────
+# Per-agent lease durations in seconds. A lease reserves a task for
+# the agent; if not completed before expiry, the task is re-queued.
+agent_lease_defaults:
+  research: 600                        # Research: 10 min (complex queries)
+  product: 300                         # Product: 5 min
+  comms: 180                           # Comms: 3 min (quick sends)
+  ops: 300                             # Ops: 5 min
+  meta: 600                            # Meta: 10 min (self-improvement)
+  content: 300                         # Content: 5 min
+  taskr: 180                           # Taskr: 3 min
+  security: 300                        # Security: 5 min
+  memory: 180                          # Memory: 3 min
+
+# ── Concurrency & Timing ───────────────────────────────────────
+# Global limits for the dispatch supervisor daemon.
+max_concurrent_agents: 5               # Max parallel agent executions
+agent_timeout_seconds: 1800            # Hard timeout per agent run (30 min)
+dispatch_lease_seconds: 300            # Default lease duration (5 min)
+
+# ── Token & Budget Limits ──────────────────────────────────────
+max_tokens_per_task: 100000            # Max tokens (input + output) per task
+daily_budget_usd: 20.00               # Global daily spending cap across all agents
+alert_threshold_usd: 15.00            # Alert when daily spend exceeds this amount
+
+# ── Health Checks ──────────────────────────────────────────────
+health_check_interval_hours: 6         # Hours between provider canary tests
+auto_fallback_on_failure: true         # Auto-switch to fallback on health failure
+
+# ── Pricing ────────────────────────────────────────────────────
+# Token pricing per model for cost tracking. Prices are per 1M tokens.
+pricing:
+  anthropic:
+    claude-sonnet-4-5:
+      input_per_1m_tokens: 3.00        # $3.00 per 1M input tokens
+      output_per_1m_tokens: 15.00      # $15.00 per 1M output tokens
+    claude-haiku-4-5:
+      input_per_1m_tokens: 0.80        # $0.80 per 1M input tokens
+      output_per_1m_tokens: 4.00       # $4.00 per 1M output tokens
+    claude-opus-4-6:
+      input_per_1m_tokens: 15.00       # $15.00 per 1M input tokens
+      output_per_1m_tokens: 75.00      # $75.00 per 1M output tokens
+  openai:
+    gpt-4o:
+      input_per_1m_tokens: 2.50        # $2.50 per 1M input tokens
+      output_per_1m_tokens: 10.00      # $10.00 per 1M output tokens
+    gpt-4o-mini:
+      input_per_1m_tokens: 0.15        # $0.15 per 1M input tokens
+      output_per_1m_tokens: 0.60       # $0.60 per 1M output tokens
+
+# ── Notifications ──────────────────────────────────────────────
+# Configure how alerts and status updates are delivered.
+notifications:
+  webhook:
+    enabled: false                     # Enable webhook notifications
+    url: ""                            # Webhook endpoint URL
+    secret: ""                         # HMAC secret for request signing
+    timeout_seconds: 10                # HTTP request timeout
+
+  email:
+    enabled: false                     # Enable email notifications
+    smtp_host: "smtp.gmail.com"        # SMTP server hostname
+    smtp_port: 587                     # SMTP server port
+    username_env: "SMTP_USERNAME"      # Env var for SMTP username
+    password_env: "SMTP_PASSWORD"      # Env var for SMTP password
+    from_address: ""                   # Sender email address
+    to_addresses: []                   # Recipient email addresses
+
+  desktop:
+    enabled: true                      # Enable desktop notifications (macOS)
+    sound: true                        # Play notification sound
+
+  # Delivery rules map urgency levels to notification channels.
+  # Urgency values: low, normal, high, critical
+  delivery_rules:
+    critical:                          # System failures, budget exceeded
+      channels: ["webhook", "email", "desktop"]
+      repeat_interval_minutes: 15      # Re-notify every 15 min if unresolved
+    high:                              # Health check failures, high spend
+      channels: ["webhook", "desktop"]
+      repeat_interval_minutes: 60
+    normal:                            # Task completions, status updates
+      channels: ["desktop"]
+      repeat_interval_minutes: 0       # 0 = no repeat
+    low:                               # Informational, daily summaries
+      channels: []                     # No active notification
+      repeat_interval_minutes: 0
+
+# ── Data Retention ─────────────────────────────────────────────
+# Controls how long historical data is kept before cleanup.
+retention:
+  provider_health_days: 30             # Raw health check records (summarized before delete)
+  dispatch_runs_days: 90               # Completed dispatch run records
+  audit_log_days: 365                  # Audit trail entries
+  working_memory_days: 30              # Per-task working memory entries
+  archive_days: 180                    # Archived tasks
+
+# ── Logging ────────────────────────────────────────────────────
+log_retention_days: 30                 # Days to keep log files
+max_log_file_mb: 50                    # Max size per log file before rotation
+
+# ── Tool API Keys ─────────────────────────────────────────────
+# Environment variable names for tool executor API keys.
+# The web_search tool uses: SerpAPI > Brave Search > DuckDuckGo (fallback).
+# Firecrawl provides web scraping/crawling for agents.
+tool_api_keys:
+  serpapi_env: "SERPAPI_KEY"                    # SerpAPI (priority 1 for web_search)
+  brave_search_env: "BRAVE_SEARCH_API_KEY"     # Brave Search (priority 2 for web_search)
+  firecrawl_env: "FIRECRAWL_API_KEY"           # Firecrawl web scraping/crawling
+
+# ── Tool Execution Limits ──────────────────────────────────────
+max_tool_iterations: 50                # Max tool call iterations per agent run
+min_tool_interval_seconds: 1           # Min seconds between consecutive tool calls

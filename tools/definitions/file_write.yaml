@@ -1,0 +1,44 @@
+name: file_write
+description: Write content to a file at the given path, creating or overwriting as specified by the mode parameter.
+version: "1.0.0"
+
+parameters:
+  path:
+    type: string
+    description: Absolute or relative path to the file to write
+    required: true
+  content:
+    type: string
+    description: The text content to write to the file
+    required: true
+  mode:
+    type: string
+    description: "Write mode: 'overwrite' replaces file contents, 'append' adds to end of file"
+    required: false
+    default: overwrite
+
+returns:
+  success:
+    type: boolean
+    description: Whether the write operation completed successfully
+  bytes_written:
+    type: integer
+    description: Number of bytes written to the file
+
+execution:
+  type: python
+  module: tools.executors.file_write
+  function: execute
+
+idempotent: false
+destructive: true
+timeout_seconds: 30
+
+test:
+  input:
+    path: "/tmp/test_file_write.txt"
+    content: "Hello, world!"
+    mode: overwrite
+  expected:
+    success: true
+    bytes_written_gte: 1
