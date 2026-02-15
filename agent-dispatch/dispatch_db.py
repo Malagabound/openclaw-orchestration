@@ -274,7 +274,7 @@ def claim_task(task_id, lease_seconds, conn=None):
         cursor = conn.execute(
             """
             UPDATE tasks
-            SET dispatch_status = 'queued',
+            SET dispatch_status = 'dispatched',
                 lease_until = datetime('now', '+' || ? || ' seconds')
             WHERE id = ?
               AND (dispatch_status IS NULL
@@ -1030,8 +1030,45 @@ def recover_interrupted_tasks(
     except sqlite3.Error as e:
         logger.error("Failed to query recovering tasks: %s", e)
 
+    # --- Phase 3: Clear stale 'queued' tasks with expired leases ---
+    # Safety net: prior to the dispatched-status fix, claim_task set
+    # dispatch_status='queued' instead of 'dispatched', so tasks could be
+    # left with stale leases that block re-claiming on restart.
+    stale_count = 0
+    try:
+        stale_rows = conn.execute(
+            "SELECT id FROM tasks "
+            "WHERE dispatch_status = 'queued' "
+            "AND lease_until IS NOT NULL "
+            "AND lease_until < datetime('now')"
+        ).fetchall()
+
+        for row in stale_rows:
+            task_id = row["id"] if isinstance(row, sqlite3.Row) else row[0]
+            try:
+                conn.execute(
+                    "UPDATE tasks SET lease_until = NULL "
+                    "WHERE id = ? AND dispatch_status = 'queued' "
+                    "AND lease_until IS NOT NULL AND lease_until < datetime('now')",
+                    (task_id,),
+                )
+                recovered.append(task_id)
+                stale_count += 1
+            except sqlite3.Error as e:
+                logger.error(
+                    "Failed to clear stale lease on queued task %s: %s", task_id, e
+                )
+
+        if stale_count > 0:
+            logger.info(
+                "Cleared stale leases on %d queued task(s) for re-dispatch",
+                stale_count,
+            )
+    except sqlite3.Error as e:
+        logger.error("Failed to query stale queued tasks: %s", e)
+
     if not recovered:
-        logger.debug("No interrupted or recovering tasks to recover")
+        logger.debug("No interrupted, recovering, or stale tasks to recover")
         if close_conn:
             conn.close()
         return []
@@ -1054,7 +1091,7 @@ def recover_interrupted_tasks(
 
     if recovered:
         logger.info(
-            "Recovered %d task(s) on startup (interrupted + recovering): %s",
+            "Recovered %d task(s) on startup (interrupted + recovering + stale): %s",
             len(recovered), recovered,
         )
 
