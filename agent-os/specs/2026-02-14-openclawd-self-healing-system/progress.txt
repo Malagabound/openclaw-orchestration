@@ -1,0 +1,14 @@
+# Ralph Progress Log
+
+**Feature:** Add task-level self-healing capabilities to the OpenClawd agent dispatch system with an 8-stage recovery pipeline, error taxonomy, diagnostic agent, strategy ladder, failure memory, and observability for automatic recovery from agent execution failures.
+**Branch:** openclawd-self-healing-system
+**Started:** 2026-02-15
+
+---
+
+## Codebase Patterns
+
+(Add reusable patterns discovered during implementation here)
+
+---
+

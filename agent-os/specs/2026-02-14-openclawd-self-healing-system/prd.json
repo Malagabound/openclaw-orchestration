@@ -1,0 +1,1098 @@
+{
+  "project": "OpenClawd",
+  "branchName": "openclawd-self-healing-system",
+  "specFile": "agent-os/specs/2026-02-14-openclawd-self-healing-system/spec.md",
+  "description": "Add task-level self-healing capabilities to the OpenClawd agent dispatch system with an 8-stage recovery pipeline, error taxonomy, diagnostic agent, strategy ladder, failure memory, and observability for automatic recovery from agent execution failures.",
+
+  "componentContext": {
+    "components": [],
+    "forbiddenPatterns": [
+      "Direct database queries bypassing dispatch_db.py connection strategy",
+      "Modifying existing error handling in agent_runner.py without preserving original behavior",
+      "Adding recovery logic to agent_supervisor.py poll loop that blocks dispatch cycle",
+      "Creating new LLM providers - use existing provider registry",
+      "Automatic task decomposition - only recommend decomposition to operator"
+    ],
+    "discoveryNote": "This is a pure backend system. Search agent-dispatch/ for existing error handling patterns. Integrate with health/self_healer.py for provider-level healing coordination. Use structured_logging.py for all recovery events."
+  },
+
+  "systemContext": {
+    "systems": [
+      {
+        "name": "agent_runner",
+        "description": "Executes agent tasks with tool call loop, result validation, and error handling. Located at agent-dispatch/agent_runner.py",
+        "integration_points": {
+          "run": "Main execution entry point - needs error context capture on all failures",
+          "RunnerResult": "Dataclass returned on success/failure",
+          "RunnerError": "Exception raised on execution errors with tool_call_log"
+        },
+        "primary_files": ["agent-dispatch/agent_runner.py"],
+        "gotchas": [
+          "Tool call loop has depth/loop detection but no recovery integration yet",
+          "AgentResult validation happens here - errors must be captured structurally",
+          "Raw LLM output is not currently stored - needs new dispatch_runs column"
+        ]
+      },
+      {
+        "name": "agent_supervisor",
+        "description": "Daemon poll loop that claims tasks, dispatches to agents, handles completion. Located at agent-dispatch/agent_supervisor.py",
+        "integration_points": {
+          "handle_dispatch_failure": "Current retry logic with flat 3-retry backoff",
+          "handle_task_completion": "Validates results and flows to OpenClawd",
+          "poll loop": "30-second cycle - recovery must not block this"
+        },
+        "primary_files": ["agent-dispatch/agent_supervisor.py"],
+        "gotchas": [
+          "US-052 implements basic retry - recovery pipeline must integrate without breaking existing retry",
+          "US-051 recover_partial_completions sweep handles completion sequence failures",
+          "Recovery operations must be atomic to prevent duplicate recovery"
+        ]
+      },
+      {
+        "name": "health_system",
+        "description": "Provider-level health monitoring and 5-tier self-healing. Located at agent-dispatch/health/",
+        "integration_points": {
+          "self_healer.py": "5-tier provider healing (rate limits, format adapt, fallback, degrade, report)",
+          "health_monitor.py": "Canary tests and provider health tracking",
+          "provider_incidents": "Table tracking provider failures"
+        },
+        "primary_files": ["agent-dispatch/health/self_healer.py", "agent-dispatch/health/health_monitor.py"],
+        "gotchas": [
+          "Provider healing is orthogonal to task recovery - coordinate but don't duplicate",
+          "Diagnostic reports exist for providers - task diagnostic agent is new",
+          "Provider health checks may trigger during task recovery - integrate status queries"
+        ]
+      },
+      {
+        "name": "dispatch_db",
+        "description": "Database connection strategy with WAL mode, busy_timeout, reader/writer separation. Located at agent-dispatch/dispatch_db.py",
+        "integration_points": {
+          "reader_connection": "Read-only queries",
+          "writer_connection": "Atomic writes with transaction context",
+          "execute_with_retry": "Handles DB_LOCKED transient errors"
+        },
+        "primary_files": ["agent-dispatch/dispatch_db.py"],
+        "gotchas": [
+          "All recovery state must use writer_connection for atomic transitions",
+          "dispatch_status transitions must use WHERE guards to prevent races",
+          "New columns/tables need migrations in migrations.py"
+        ]
+      },
+      {
+        "name": "structured_logging",
+        "description": "JSON logging to supervisor.jsonl with event types and durations. Located at agent-dispatch/structured_logging.py",
+        "integration_points": {
+          "log_event": "Logs structured JSON events with timestamp, event_type, duration_ms",
+          "supervisor.jsonl": "Log file for all supervisor events"
+        },
+        "primary_files": ["agent-dispatch/structured_logging.py"],
+        "gotchas": [
+          "Recovery events need new event types: recovery.capture, recovery.classify, etc.",
+          "Log to supervisor.jsonl, not separate recovery log file",
+          "Duration tracking for observability"
+        ]
+      }
+    ],
+    "discoveryNote": "Search agent-dispatch/ for error handling patterns. Check agent_runner.py for RunnerError structure. Review agent_supervisor.py handle_dispatch_failure for retry integration points."
+  },
+
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Add recovery state columns to dispatch_runs table",
+      "description": "As a developer, I want the dispatch_runs table to store recovery context so that the diagnostic agent and recovery pipeline have full failure history. **Implementation:** Add all 8 columns from spec Section 8.1: raw_output (TEXT nullable), tool_call_log (JSON TEXT nullable), stop_reason (TEXT nullable), error_context (JSON TEXT nullable), recovery_tier (INTEGER nullable), recovery_strategy (TEXT nullable), lease_extensions (INTEGER DEFAULT 0), tool_calls_count_at_last_extension (INTEGER DEFAULT 0) to dispatch_runs table via migration.",
+      "acceptanceCriteria": [
+        "Add raw_output column to dispatch_runs (TEXT, nullable)",
+        "Add tool_call_log column to dispatch_runs (JSON stored as TEXT, nullable)",
+        "Add stop_reason column to dispatch_runs (TEXT, nullable)",
+        "Add error_context column to dispatch_runs (JSON stored as TEXT, nullable)",
+        "Add recovery_tier column to dispatch_runs (INTEGER, nullable)",
+        "Add recovery_strategy column to dispatch_runs (TEXT, nullable)",
+        "Add lease_extensions column to dispatch_runs (INTEGER, DEFAULT 0)",
+        "Add tool_calls_count_at_last_extension column to dispatch_runs (INTEGER, DEFAULT 0)",
+        "Migration creates all 8 columns with proper types matching spec Section 8.1",
+        "Migration is idempotent (checks if columns exist before adding)",
+        "Existing dispatch_runs rows remain valid after migration",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Add recovering status to dispatch_status check constraint",
+      "description": "As a developer, I want dispatch_status to include 'recovering' so that the recovery pipeline can atomically transition failed tasks to recovery state. **Implementation:** Modify dispatch_status CHECK constraint in tasks table to include 'recovering' in the allowed values.",
+      "acceptanceCriteria": [
+        "tasks.dispatch_status CHECK constraint includes 'recovering'",
+        "Migration updates constraint to allow NULL, 'queued', 'dispatched', 'completed', 'failed', 'interrupted', 'dispatch_failed', 'recovering'",
+        "Existing tasks remain valid after constraint update",
+        "Can insert task with dispatch_status='recovering'",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Create failure_memory table for pattern learning",
+      "description": "As a developer, I want a failure_memory table to store error-diagnosis-fix triples so that the recovery system learns from past successes. **Implementation:** Create failure_memory table with: id (INTEGER PRIMARY KEY), task_id (INTEGER), agent_name (TEXT), error_code (TEXT), error_pattern (TEXT nullable), diagnostic_summary (TEXT), resolution_summary (TEXT), success (BOOLEAN), recovery_tier (INTEGER), created_at (TEXT ISO8601), task_domain (TEXT nullable), similarity_key (TEXT generated column for matching).",
+      "acceptanceCriteria": [
+        "Create failure_memory table with specified columns",
+        "id is INTEGER PRIMARY KEY AUTOINCREMENT",
+        "task_id has foreign key to tasks(id) with ON DELETE CASCADE",
+        "success is BOOLEAN (stored as INTEGER 0/1)",
+        "created_at defaults to CURRENT_TIMESTAMP",
+        "Index on (error_code, agent_name, success) for fast similarity queries",
+        "Index on (created_at) for retention cleanup",
+        "Migration is idempotent",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Create recovery_events table for observability",
+      "description": "As a developer, I want a recovery_events table to track every recovery pipeline stage for debugging and metrics. **Implementation:** Create recovery_events table with: id (INTEGER PRIMARY KEY), task_id (INTEGER), trace_id (TEXT for correlating events), event_type (TEXT like 'recovery.capture', 'recovery.classify'), stage (TEXT nullable), duration_ms (INTEGER), metadata (JSON TEXT nullable), created_at (TEXT ISO8601).",
+      "acceptanceCriteria": [
+        "Create recovery_events table with specified columns",
+        "id is INTEGER PRIMARY KEY AUTOINCREMENT",
+        "task_id has foreign key to tasks(id) with ON DELETE CASCADE",
+        "trace_id is TEXT for grouping related recovery events",
+        "event_type uses dot notation (recovery.capture, recovery.diagnose.start, etc)",
+        "created_at defaults to CURRENT_TIMESTAMP",
+        "Index on (task_id, created_at) for timeline queries",
+        "Index on (trace_id) for correlation queries",
+        "Migration is idempotent",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Create error taxonomy lookup table with recovery parameters",
+      "description": "As a developer, I want an ERROR_TAXONOMY dict mapping error codes to categories and recovery parameters so that error classification is deterministic. **Implementation:** Create error_classifier.py with ERROR_TAXONOMY dict mapping error codes (RATE_LIMITED, RESULT_SCHEMA_INVALID, etc) to ErrorCategory dataclass with fields: category (str), max_retries (int), requires_diagnosis (bool), requires_compensation (bool), initial_backoff_seconds (int), backoff_multiplier (float), max_backoff_seconds (int).",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/error_classifier.py",
+        "Define ErrorCategory dataclass with specified fields",
+        "Define ERROR_TAXONOMY dict with all error codes from spec Section 3",
+        "Include all Transient Error codes with appropriate retry counts",
+        "Include all Execution Error codes with diagnosis requirement",
+        "Include all Logic Error codes",
+        "Include all Structural Error codes",
+        "Include all Configuration Error codes with max_retries=0",
+        "Include all Resource Error codes",
+        "ERROR_TAXONOMY is frozen/immutable",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Implement detect_error_code function for exception to error code mapping",
+      "description": "As a developer, I want detect_error_code() to map raw exceptions and contexts to canonical error codes so that classification is consistent. **Implementation:** In error_classifier.py, create detect_error_code(exception, http_status, agent_result, context) function that inspects exception types (anthropic.RateLimitError, requests.Timeout, json.JSONDecodeError), HTTP status codes, AgentResult fields (status='failed', confidence_score < threshold), and returns error code string.",
+      "acceptanceCriteria": [
+        "detect_error_code() handles anthropic.RateLimitError -> RATE_LIMITED",
+        "detect_error_code() handles requests.Timeout -> PROVIDER_TIMEOUT",
+        "detect_error_code() handles json.JSONDecodeError on agent output -> RESULT_PARSE_FAILED",
+        "detect_error_code() handles AgentResult.status == 'failed' -> AGENT_SELF_REPORTED_FAILURE",
+        "detect_error_code() handles AgentResult.confidence_score < threshold -> CONFIDENCE_TOO_LOW",
+        "detect_error_code() handles missing <agent-result> block -> RESULT_PARSE_FAILED",
+        "detect_error_code() handles tool loop detection -> TOOL_LOOP_DETECTED",
+        "detect_error_code() handles unknown exceptions -> UNKNOWN_ERROR",
+        "Returns string error code from ERROR_TAXONOMY",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Implement classify_error function for error code to category lookup",
+      "description": "As a developer, I want classify_error() to look up error codes in ERROR_TAXONOMY and return category with parameters so that recovery pipeline knows how to handle each error. **Implementation:** In error_classifier.py, create classify_error(error_code) that looks up error_code in ERROR_TAXONOMY and returns ErrorCategory. If error_code not found, return default ErrorCategory with category='unknown', max_retries=1, requires_diagnosis=True.",
+      "acceptanceCriteria": [
+        "classify_error() looks up error_code in ERROR_TAXONOMY",
+        "Returns ErrorCategory dataclass with all fields",
+        "Handles unknown error codes with default category",
+        "Default category has max_retries=1 and requires_diagnosis=True",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Create ErrorContext dataclass for structured error capture",
+      "description": "As a developer, I want an ErrorContext dataclass to structure all failure information so that the recovery pipeline has consistent input. **Implementation:** In recovery/error_capture.py, define ErrorContext dataclass with fields from spec Appendix C.7: error_code, error_category, error_message, error_pattern, task_id, agent_name, task_domain, raw_output, tool_call_log, stop_reason, tokens_used, provider, model, duration_ms, captured_at.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/error_capture.py",
+        "Define ErrorContext dataclass with all specified fields",
+        "error_pattern is Optional[str] for similarity matching",
+        "raw_output truncated to config.recovery.raw_output_max_chars (default 10000)",
+        "tool_call_log is Optional[list[dict]]",
+        "captured_at is ISO 8601 string",
+        "All fields match spec Appendix C.7",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Implement capture_error function to extract failure context",
+      "description": "As a developer, I want capture_error() to extract all failure information from RunnerError and task context so that diagnostic agent has complete evidence. **Implementation:** In error_capture.py, create capture_error(runner_error, task_row, dispatch_run_row, config) that builds ErrorContext by reading exception, agent output, tool calls, and task metadata. Calls detect_error_code() and classify_error() to populate error_code and error_category.",
+      "acceptanceCriteria": [
+        "capture_error() accepts RunnerError, task dict, dispatch_run dict, config object",
+        "Extracts raw agent output from runner_error (if available)",
+        "Extracts tool_call_log from runner_error",
+        "Calls detect_error_code() with exception context",
+        "Calls classify_error() with detected error code",
+        "Truncates raw_output to config.recovery.raw_output_max_chars",
+        "Populates all ErrorContext fields",
+        "Returns ErrorContext dataclass",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Create DiagnosticInput and DiagnosticOutput dataclasses",
+      "description": "As a developer, I want structured schemas for diagnostic agent input/output so that diagnostic calls are type-safe. **Implementation:** In recovery/diagnostic_agent.py, define DiagnosticInput and DiagnosticOutput dataclasses matching spec Appendix C.3.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/diagnostic_agent.py",
+        "Define DiagnosticInput dataclass with: task_description, task_domain, agent_name, error_code, error_message, raw_output_excerpt, tool_call_summary, previous_attempts, similar_past_fixes",
+        "Define DiagnosticOutput dataclass with: root_cause, root_cause_category, confidence, recommended_strategy, specific_fix, tools_to_adjust, avoid_approaches, needs_human, human_action_needed, is_repeat_failure, cycle_detected",
+        "All fields match spec Appendix C.3",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Create diagnostic system prompt template",
+      "description": "As a developer, I want a diagnostic_sop.md prompt template so that the diagnostic agent analyzes failures consistently. **Implementation:** Create agent-dispatch/prompts/diagnostic_sop.md with analytical prompt following spec Section 5.3 guidelines: focus on root cause, evidence-based reasoning, no fixing (diagnosis only), detect cycles, categorize root cause, recommend strategy.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/prompts/diagnostic_sop.md",
+        "Prompt instructs LLM to diagnose, not fix",
+        "Requests root cause analysis with evidence",
+        "Asks for confidence score (0.0-1.0)",
+        "Asks for recommended strategy from ladder",
+        "Asks for specific_fix instructions for agent",
+        "Asks for tools_to_adjust and avoid_approaches",
+        "Asks for cycle detection (is_repeat_failure, cycle_detected)",
+        "Prompt is under 1500 tokens (excluding injected context)",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Implement diagnose_failure function with LLM call",
+      "description": "As a developer, I want diagnose_failure() to make a lightweight LLM call for non-transient errors so that recovery has targeted fix guidance. **Implementation:** In diagnostic_agent.py, create diagnose_failure(diagnostic_input, config) that loads diagnostic_sop.md, injects context, calls config.recovery.diagnostic_model (default claude-haiku-4-5), parses DiagnosticOutput from response, handles token overflow by truncating context.",
+      "acceptanceCriteria": [
+        "diagnose_failure() loads prompts/diagnostic_sop.md",
+        "Injects DiagnosticInput fields into prompt",
+        "Uses config.recovery.diagnostic_model (default 'claude-haiku-4-5')",
+        "Falls back to primary provider if diagnostic_model not configured",
+        "Truncates context if exceeds config.recovery.diagnostic_max_input_tokens (default 4000)",
+        "Truncation order: tool_call_log to last 10 entries, raw_output to 1000 chars, previous_attempts to 1-line summaries",
+        "Parses LLM response into DiagnosticOutput",
+        "Handles JSON parse errors by returning default diagnosis",
+        "Returns DiagnosticOutput dataclass",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Create RecoveryStrategy dataclass for strategy ladder output",
+      "description": "As a developer, I want a RecoveryStrategy dataclass to structure strategy ladder decisions so that recovery execution has clear instructions. **Implementation:** In recovery/strategy_selector.py, define RecoveryStrategy dataclass matching spec Appendix C.5: strategy_name, tier, strategy_description, constraints, prompt_modifications, scope_reduction, is_terminal.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/strategy_selector.py",
+        "Define RecoveryStrategy dataclass with all specified fields",
+        "strategy_name is one of: fix_specific, rewrite_with_diagnosis, simplify, decompose, escalate",
+        "tier is 1-5",
+        "constraints is list of strings",
+        "prompt_modifications is dict",
+        "scope_reduction is Optional[str]",
+        "is_terminal is bool (True for decompose/escalate)",
+        "All fields match spec Appendix C.5",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Implement select_strategy function for 5-tier strategy ladder",
+      "description": "As a developer, I want select_strategy() to choose recovery approach based on attempt number and diagnostic guidance so that recovery escalates appropriately. **Implementation:** In strategy_selector.py, create select_strategy(attempt_number, error_category, diagnostic_output, config) that implements spec Section 4.3 ladder: Tier 1=Fix Specific, Tier 2=Rewrite with Diagnosis, Tier 3=Simplify + Constrain, Tier 4=Decompose Recommendation, Tier 5=Escalate. Returns RecoveryStrategy.",
+      "acceptanceCriteria": [
+        "select_strategy() accepts attempt_number, error_category, diagnostic_output, config",
+        "Tier 1 (attempt 1): Returns fix_specific strategy with exact error feedback",
+        "Tier 2 (attempt 2): Returns rewrite_with_diagnosis with diagnostic guidance",
+        "Tier 3 (attempt 3): Returns simplify with scope reduction and tool constraints",
+        "Tier 4 (attempt 4): Returns decompose with recommendations for operator",
+        "Tier 5 (attempt 5+): Returns escalate with is_terminal=True",
+        "Special case: errors with max_retries=1 AND requires_diagnosis=True skip Tier 1",
+        "Diagnostic output influences strategy description",
+        "Returns RecoveryStrategy dataclass",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Create failure_memory.py module with query functions",
+      "description": "As a developer, I want failure_memory.py to query similar past fixes so that recovery learns from history. **Implementation:** Create recovery/failure_memory.py with functions: record_attempt(task_id, error_code, agent_name, diagnostic_summary, resolution_summary, success, recovery_tier, task_domain), find_similar_fixes(error_code, agent_name, task_domain, limit), cleanup_old_entries(retention_days).",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/failure_memory.py",
+        "record_attempt() inserts row into failure_memory table",
+        "find_similar_fixes() implements 3-tier query: (1) exact match on error_code+agent_name+success=True, (2) match error_code+task_domain, (3) match error_code only",
+        "Returns first tier that produces results, limit 3",
+        "cleanup_old_entries() deletes rows where created_at older than retention_days",
+        "All functions use dispatch_db writer_connection",
+        "All functions handle sqlite3.Error gracefully",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Create RecoveryContext dataclass for enriched retry prompts",
+      "description": "As a developer, I want a RecoveryContext dataclass to structure recovery prompt injection so that agents receive targeted guidance. **Implementation:** In recovery/recovery_pipeline.py, define RecoveryContext dataclass matching spec Appendix C.2: attempt_number, max_attempts, original_error_code, original_error_message, strategy, constraints, previous_attempts, similar_past_fixes, diagnostic_summary.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/recovery_pipeline.py",
+        "Define RecoveryContext dataclass with all specified fields",
+        "previous_attempts is list of PreviousAttemptSummary",
+        "similar_past_fixes is list of dicts from failure_memory",
+        "All fields match spec Appendix C.2",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Create PreviousAttemptSummary dataclass",
+      "description": "As a developer, I want a PreviousAttemptSummary dataclass to structure past attempt history in recovery context so that agents see what was tried. **Implementation:** In recovery_pipeline.py, define PreviousAttemptSummary dataclass matching spec Appendix C.4: attempt_number, strategy_used, error_code, error_message, diagnostic_summary, tools_used, duration_ms.",
+      "acceptanceCriteria": [
+        "Define PreviousAttemptSummary dataclass in recovery_pipeline.py",
+        "All fields match spec Appendix C.4",
+        "error_message truncated to max 200 chars",
+        "diagnostic_summary is Optional[str]",
+        "tools_used is list of tool name strings",
+        "Typecheck passes"
+      ],
+      "priority": 17,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Implement compensate function for pre-retry cleanup",
+      "description": "As a developer, I want compensate() to clean up failed attempt artifacts so that retry starts from known-good state. **Implementation:** Create recovery/compensating_actions.py with compensate(task_id, agent_name, error_code, dispatch_db) that: clears partial working_memory entries (DELETE FROM working_memory WHERE task_id=? AND agent_name=?), resets dispatch_status to 'queued', logs abandoned output.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/compensating_actions.py",
+        "compensate() accepts task_id, agent_name, error_code, dispatch_db connection",
+        "Deletes working_memory rows for this task+agent only (preserves upstream dependency data)",
+        "Resets dispatch_status to 'queued' if error_code requires compensation",
+        "Logs compensating action to structured_logging",
+        "Uses atomic UPDATE with WHERE guards",
+        "Handles sqlite3.Error gracefully",
+        "Returns success bool",
+        "Typecheck passes"
+      ],
+      "priority": 18,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Enhance agent_prompts.py to accept recovery_context parameter",
+      "description": "As a developer, I want build_prompt() to inject recovery context into agent prompts so that retry attempts have targeted guidance. **Implementation:** Modify agent_prompts.build_prompt() to accept optional recovery_context: RecoveryContext parameter. If provided, inject recovery section (spec Appendix G format) into USER message after task description, before skills.",
+      "acceptanceCriteria": [
+        "agent_prompts.build_prompt() accepts optional recovery_context parameter",
+        "If recovery_context is None, build prompt as usual (no change to existing behavior)",
+        "If recovery_context provided, inject <recovery-context> XML block into USER message",
+        "Recovery context appears after <task> and before <skills>",
+        "Includes attempt number, error, strategy, constraints, previous attempts, similar fixes",
+        "Truncates raw_output to config.recovery.recovery_prompt_context_chars (default 500)",
+        "XML tags for clear delineation",
+        "Format matches spec Appendix G",
+        "Typecheck passes"
+      ],
+      "priority": 19,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Implement recovery_executor.execute function for retry with verification",
+      "description": "As a developer, I want recovery_executor.execute() to re-run agent with recovery context and verify original error resolved so that recovery validates success. **Implementation:** Create recovery/recovery_executor.py with execute(task_id, recovery_context, config, dispatch_db) that builds enriched prompt, calls agent_runner.run(), verifies result, compares error code against original, returns RunnerResult with success indicator.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/recovery_executor.py",
+        "execute() accepts task_id, recovery_context, config, dispatch_db",
+        "Builds recovery prompt via agent_prompts.build_prompt(recovery_context=...)",
+        "Calls agent_runner.run() with enriched prompt",
+        "Verifies AgentResult schema on success",
+        "Compares new error_code (if failed) against original error_code from recovery_context",
+        "Returns RunnerResult with success indicator",
+        "Logs recovery.execute.start and recovery.execute.complete events",
+        "Typecheck passes"
+      ],
+      "priority": 20,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Create RecoveryOutcome dataclass for pipeline result",
+      "description": "As a developer, I want a RecoveryOutcome dataclass to structure the full recovery pipeline result so that supervisor knows final disposition. **Implementation:** In recovery_pipeline.py, define RecoveryOutcome dataclass matching spec Appendix C.9: task_id, success, final_status, attempts_used, winning_strategy, escalation_reason, total_duration_ms, total_cost_usd, error_code, trace_id.",
+      "acceptanceCriteria": [
+        "Define RecoveryOutcome dataclass in recovery_pipeline.py",
+        "All fields match spec Appendix C.9",
+        "final_status is one of: 'completed', 'failed', 'dispatch_failed'",
+        "winning_strategy is Optional[str]",
+        "escalation_reason is Optional[str]",
+        "trace_id for correlating recovery_events",
+        "Typecheck passes"
+      ],
+      "priority": 21,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Implement handle_failure function for full recovery pipeline orchestration",
+      "description": "As a developer, I want handle_failure() to orchestrate all 8 recovery stages so that task failures trigger structured recovery. **Implementation:** In recovery_pipeline.py, create handle_failure(task_id, runner_error, config, dispatch_db) that runs: (1) CAPTURE via error_capture, (2) CLASSIFY via error_classifier, (3) DIAGNOSE via diagnostic_agent (if required), (4) COMPENSATE via compensating_actions (if required), (5) STRATEGIZE via strategy_selector, (6) EXECUTE via recovery_executor, (7) VERIFY result, (8) LEARN via failure_memory. Returns RecoveryOutcome.",
+      "acceptanceCriteria": [
+        "handle_failure() accepts task_id, runner_error, config, dispatch_db",
+        "Stage 1: Calls error_capture.capture_error() and logs recovery.capture event",
+        "Stage 2: Calls error_classifier.classify_error() and logs recovery.classify event",
+        "Stage 3: Calls diagnostic_agent.diagnose_failure() if error_category.requires_diagnosis=True, logs recovery.diagnose.start/complete events",
+        "Stage 4: Calls compensating_actions.compensate() if error_category.requires_compensation=True, logs recovery.compensate event",
+        "Stage 5: Calls playbooks.has_playbook(error_code) first; if True uses playbook.select_strategy() to replace generic ladder, otherwise calls strategy_selector.select_strategy(). Logs recovery.strategy.selected event",
+        "Stage 6: Calls recovery_executor.execute() with RecoveryContext, logs recovery.execute.start/complete events",
+        "Stage 7: Verifies RunnerResult success and compares error codes, logs recovery.verify event",
+        "Stage 8: Calls failure_memory.record_attempt() with outcome, logs recovery.learn event",
+        "Returns RecoveryOutcome dataclass",
+        "Generates UUID trace_id for correlating all recovery_events",
+        "All stages log to recovery_events table",
+        "Typecheck passes"
+      ],
+      "priority": 22,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-023",
+      "title": "Add atomic failed to recovering status transition",
+      "description": "As a developer, I want atomic dispatch_status transition from 'failed' to 'recovering' so that duplicate recovery is prevented. **Implementation:** In recovery_pipeline.py handle_failure(), before starting recovery, execute atomic UPDATE tasks SET dispatch_status='recovering' WHERE id=? AND dispatch_status='failed'. If rowcount=0, return early (another process already claimed recovery).",
+      "acceptanceCriteria": [
+        "handle_failure() begins with atomic UPDATE ... WHERE dispatch_status='failed'",
+        "Uses dispatch_db.writer_connection for atomic write",
+        "Checks cursor.rowcount after UPDATE",
+        "Returns RecoveryOutcome with success=False if rowcount=0 (already recovering)",
+        "Logs recovery.claim.failed event if duplicate detected",
+        "Logs recovery.claim.success event if transition succeeded",
+        "Typecheck passes"
+      ],
+      "priority": 23,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-024",
+      "title": "Add recovery budget check before retry",
+      "description": "As a developer, I want recovery_executor to check per-task recovery budget before executing retry so that runaway recovery is prevented. **Implementation:** In recovery_executor.execute(), before calling agent_runner.run(), query SUM(cost_estimate) FROM dispatch_runs WHERE task_id=? AND recovery_tier IS NOT NULL. Calculate recovery_budget = min(config.daily_budget_usd * config.recovery.recovery_budget_ratio, config.recovery.recovery_budget_cap_usd). If total_recovery_cost >= recovery_budget, raise RecoveryBudgetExceeded.",
+      "acceptanceCriteria": [
+        "recovery_executor.execute() queries total recovery cost for task",
+        "Calculates recovery_budget using config.recovery.recovery_budget_ratio (default 0.04) and recovery_budget_cap_usd (default 2.00)",
+        "Compares total_recovery_cost against recovery_budget",
+        "Raises RecoveryBudgetExceeded if over budget",
+        "Logs recovery.budget.exceeded event",
+        "handle_failure() catches RecoveryBudgetExceeded and escalates immediately",
+        "Typecheck passes"
+      ],
+      "priority": 24,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-025",
+      "title": "Add max concurrent recoveries guard",
+      "description": "As a developer, I want max concurrent recoveries enforcement so that recovery doesn't overwhelm the system. **Implementation:** In recovery_pipeline.py handle_failure(), before starting recovery, query SELECT COUNT(*) FROM tasks WHERE dispatch_status='recovering'. If count >= config.recovery.max_concurrent_recoveries (default 3), defer recovery by setting dispatch_runs.next_retry_at to 60 seconds from now and return early.",
+      "acceptanceCriteria": [
+        "handle_failure() queries count of tasks with dispatch_status='recovering'",
+        "Compares against config.recovery.max_concurrent_recoveries (default 3)",
+        "If at or over limit, sets next_retry_at to now + 60 seconds",
+        "Returns RecoveryOutcome with success=False and escalation_reason='concurrency_limit'",
+        "Logs recovery.deferred event",
+        "Next poll cycle will retry when slot opens",
+        "Typecheck passes"
+      ],
+      "priority": 25,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-026",
+      "title": "Add recovery timeout enforcement per attempt",
+      "description": "As a developer, I want per-attempt recovery timeout so that stuck recovery doesn't block progress. **Implementation:** In recovery_executor.execute(), wrap agent_runner.run() call with timeout using signal.alarm() or threading.Timer(). If recovery_timeout_per_attempt (default 600s) expires, raise RecoveryTimeoutError. handle_failure() catches this and treats as failed attempt.",
+      "acceptanceCriteria": [
+        "recovery_executor.execute() sets timeout before agent_runner.run()",
+        "Uses config.recovery.recovery_timeout_per_attempt (default 600)",
+        "Raises RecoveryTimeoutError if timeout expires",
+        "handle_failure() catches RecoveryTimeoutError",
+        "Logs recovery.timeout event",
+        "Treats timeout as failed attempt, proceeds to next tier if retries remain",
+        "Typecheck passes"
+      ],
+      "priority": 26,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-027",
+      "title": "Add total recovery time hard timeout",
+      "description": "As a developer, I want max_recovery_time_seconds hard timeout so that recovery pipeline cannot run indefinitely. **Implementation:** In recovery_pipeline.py handle_failure(), track start_time at beginning. Before each retry, check if (now - start_time) > config.recovery.max_recovery_time_seconds (default 1800). If exceeded, escalate immediately regardless of attempts remaining.",
+      "acceptanceCriteria": [
+        "handle_failure() records start_time at beginning",
+        "Before each recovery attempt, checks elapsed time",
+        "Compares against config.recovery.max_recovery_time_seconds (default 1800)",
+        "If exceeded, breaks recovery loop and escalates",
+        "Logs recovery.hard_timeout event",
+        "Sets final_status='dispatch_failed' with escalation_reason='max_recovery_time_exceeded'",
+        "Typecheck passes"
+      ],
+      "priority": 27,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-028",
+      "title": "Integrate recovery pipeline into agent_supervisor handle_dispatch_failure",
+      "description": "As a developer, I want agent_supervisor.handle_dispatch_failure() to call recovery_pipeline.handle_failure() so that failures trigger recovery instead of simple retry. **Implementation:** Modify agent_supervisor.handle_dispatch_failure() to call recovery_pipeline.handle_failure() and handle RecoveryOutcome. If final_status='completed', call handle_task_completion(). If final_status='failed', update dispatch_runs.next_retry_at for next poll cycle. If final_status='dispatch_failed', create urgent notification and stop retrying.",
+      "acceptanceCriteria": [
+        "agent_supervisor.handle_dispatch_failure() calls recovery_pipeline.handle_failure()",
+        "Passes task_id, runner_error, config, dispatch_db to handle_failure()",
+        "Receives RecoveryOutcome",
+        "If final_status='completed': calls handle_task_completion() to flow result to OpenClawd",
+        "If final_status='failed': updates next_retry_at for next poll cycle retry",
+        "If final_status='dispatch_failed': creates urgent notification with escalation_reason",
+        "Logs integration point for debugging",
+        "Preserves existing handle_dispatch_failure behavior as fallback if recovery disabled",
+        "Typecheck passes"
+      ],
+      "priority": 28,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-029",
+      "title": "Capture error context in agent_runner on all failures",
+      "description": "As a developer, I want agent_runner.run() to capture structured error context on all failures so that recovery pipeline has complete information. **Implementation:** Modify agent_runner.run() to: (1) store raw LLM output before validation, (2) accumulate tool_call_log during tool loop, (3) populate RunnerError with full context, (4) write raw_output, tool_call_log, stop_reason, error_context JSON to dispatch_runs on failure.",
+      "acceptanceCriteria": [
+        "agent_runner.run() stores raw LLM response before parsing AgentResult",
+        "Tool call loop appends each tool call to tool_call_log list",
+        "RunnerError includes: raw_output, tool_call_log, stop_reason fields",
+        "On failure, writes to dispatch_runs: raw_output, tool_call_log, stop_reason, error_context JSON",
+        "error_context JSON includes exception type, message, traceback",
+        "Truncates raw_output to config.recovery.raw_output_max_chars before writing",
+        "Does not break existing agent_runner.run() success path",
+        "Typecheck passes"
+      ],
+      "priority": 29,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-030",
+      "title": "Add recovery configuration section to openclawd.config.yaml",
+      "description": "As a developer, I want a recovery section in openclawd.config.yaml so that recovery parameters are configurable. **Implementation:** Add recovery section to openclawd.config.yaml with all parameters from spec Appendix E: max_recovery_attempts, max_recovery_time_seconds, max_concurrent_recoveries, recovery_timeout_per_attempt, diagnostic_model, diagnostic_max_input_tokens, diagnostic_prompt_file, recovery_budget_ratio, recovery_budget_cap_usd, raw_output_max_chars, diagnostic_context_chars, recovery_prompt_context_chars, error_message_max_chars, min_confidence_score, systemic_failure_threshold_count, systemic_failure_window_minutes, max_escalations_per_hour, escalation_cooldown_seconds, failure_memory_retention_days, recovery_events_retention_days.",
+      "acceptanceCriteria": [
+        "Add recovery section to openclawd.config.yaml",
+        "All parameters from spec Appendix E included with default values",
+        "max_recovery_attempts: 5",
+        "max_recovery_time_seconds: 1800",
+        "max_concurrent_recoveries: 3",
+        "recovery_timeout_per_attempt: 600",
+        "diagnostic_model: 'claude-haiku-4-5'",
+        "diagnostic_max_input_tokens: 4000",
+        "diagnostic_prompt_file: 'prompts/diagnostic_sop.md'",
+        "recovery_budget_ratio: 0.04",
+        "recovery_budget_cap_usd: 2.00",
+        "All truncation and threshold parameters included",
+        "Config loader in config.py reads recovery section with fallback to defaults",
+        "Typecheck passes"
+      ],
+      "priority": 30,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-031",
+      "title": "Add recovery event types to structured_logging",
+      "description": "As a developer, I want recovery-specific event types in structured_logging so that recovery pipeline stages are observable. **Implementation:** Add event type definitions to structured_logging.py for: recovery.capture, recovery.classify, recovery.diagnose.start, recovery.diagnose.complete, recovery.compensate, recovery.strategy.selected, recovery.execute.start, recovery.execute.complete, recovery.verify, recovery.learn, recovery.escalate, recovery.claim.success, recovery.claim.failed, recovery.deferred, recovery.timeout, recovery.hard_timeout, recovery.budget.exceeded.",
+      "acceptanceCriteria": [
+        "All recovery event types from spec Section 5.7 defined",
+        "Events logged to supervisor.jsonl",
+        "Each event includes: timestamp, event_type, task_id, duration_ms (if applicable), metadata dict",
+        "Metadata includes: error_code, recovery_tier, strategy_name (as applicable)",
+        "Log events are valid JSON",
+        "Typecheck passes"
+      ],
+      "priority": 31,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-032",
+      "title": "Implement failure_memory cleanup task for retention",
+      "description": "As a developer, I want automatic failure_memory cleanup so that old entries are purged per retention policy. **Implementation:** In failure_memory.py, implement cleanup_old_entries(retention_days, dispatch_db) that deletes failure_memory rows where created_at older than retention_days. Call from data_retention.py scheduled cleanup sweep.",
+      "acceptanceCriteria": [
+        "cleanup_old_entries() deletes failure_memory rows older than retention_days",
+        "Uses config.recovery.failure_memory_retention_days (default 90)",
+        "DELETE query uses WHERE created_at < date('now', '-{retention_days} days')",
+        "Logs count of deleted rows",
+        "Called from data_retention.py sweep (integrate with existing cleanup tasks)",
+        "Handles sqlite3.Error gracefully",
+        "Typecheck passes"
+      ],
+      "priority": 32,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-033",
+      "title": "Implement recovery_events cleanup task for retention",
+      "description": "As a developer, I want automatic recovery_events cleanup so that observability data doesn't bloat the database. **Implementation:** In recovery_pipeline.py, implement cleanup_recovery_events(retention_days, dispatch_db) that deletes recovery_events rows older than retention_days. Call from data_retention.py scheduled cleanup.",
+      "acceptanceCriteria": [
+        "cleanup_recovery_events() deletes recovery_events rows older than retention_days",
+        "Uses config.recovery.recovery_events_retention_days (default 90)",
+        "DELETE query uses WHERE created_at < date('now', '-{retention_days} days')",
+        "Logs count of deleted rows",
+        "Called from data_retention.py sweep",
+        "Handles sqlite3.Error gracefully",
+        "Typecheck passes"
+      ],
+      "priority": 33,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-034",
+      "title": "Add query_similar_fixes to failure_memory for context enrichment",
+      "description": "As a developer, I want query_similar_fixes() to find past successful recoveries so that diagnostic agent and strategy selector learn from history. **Implementation:** In failure_memory.py, implement find_similar_fixes(error_code, agent_name, task_domain, limit) using 3-tier SQL query strategy from spec Section 5.5: (1) exact match on error_code+agent_name+success=True, (2) match error_code+task_domain, (3) match error_code only. Returns list of dicts with resolution_summary.",
+      "acceptanceCriteria": [
+        "find_similar_fixes() accepts error_code, agent_name, task_domain, limit",
+        "Tier 1 query: SELECT * FROM failure_memory WHERE error_code=? AND agent_name=? AND success=1 ORDER BY created_at DESC LIMIT ?",
+        "If no results, Tier 2: WHERE error_code=? AND task_domain=? AND success=1",
+        "If no results, Tier 3: WHERE error_code=? AND success=1",
+        "Returns first tier that produces results",
+        "Limit defaults to 3",
+        "Returns list of dicts with: error_code, resolution_summary, diagnostic_summary, recovery_tier",
+        "Handles sqlite3.Error gracefully",
+        "Typecheck passes"
+      ],
+      "priority": 34,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-035",
+      "title": "Integrate similar fixes into diagnostic agent input",
+      "description": "As a developer, I want diagnostic_agent.diagnose_failure() to include similar past fixes so that diagnosis learns from patterns. **Implementation:** Before calling diagnose_failure(), query failure_memory.find_similar_fixes() and include results in DiagnosticInput.similar_past_fixes field.",
+      "acceptanceCriteria": [
+        "Before creating DiagnosticInput, query failure_memory.find_similar_fixes()",
+        "Pass error_code, agent_name, task_domain from ErrorContext",
+        "Populate DiagnosticInput.similar_past_fixes with query results",
+        "diagnostic_sop.md prompt template includes section for similar_past_fixes",
+        "If no similar fixes found, similar_past_fixes is empty list",
+        "Typecheck passes"
+      ],
+      "priority": 35,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-036",
+      "title": "Add escalation notification for terminal recovery failures",
+      "description": "As a developer, I want urgent notifications when recovery escalates so that operators are alerted to persistent failures. **Implementation:** In recovery_pipeline.py handle_failure(), when final_status='dispatch_failed', create notification via notification_delivery with urgency='urgent', include full diagnostic report, recovery history, and escalation_reason.",
+      "acceptanceCriteria": [
+        "handle_failure() creates notification when final_status='dispatch_failed'",
+        "Notification urgency='urgent'",
+        "Notification content includes: task_id, task_description, error_code, diagnostic_summary, recovery attempts used, escalation_reason",
+        "Uses existing notification_delivery.py module",
+        "Respects max_escalations_per_hour limit (default 5)",
+        "Respects escalation_cooldown_seconds for same task (default 300)",
+        "Logs notification creation",
+        "Typecheck passes"
+      ],
+      "priority": 36,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-037",
+      "title": "Add Tier 4 decomposition recommendation notification",
+      "description": "As a developer, I want Tier 4 strategy to create notification with decomposition guidance so that operators can manually split complex tasks. **Implementation:** In strategy_selector.py, when select_strategy() returns Tier 4 (decompose), include decomposition suggestions from diagnostic_output. In handle_failure(), create notification with decomposition recommendations.",
+      "acceptanceCriteria": [
+        "Tier 4 RecoveryStrategy includes decomposition suggestions",
+        "handle_failure() creates notification when strategy is 'decompose'",
+        "Notification urgency='high'",
+        "Content includes: diagnostic_output.specific_fix with decomposition steps",
+        "Recommends operator use 'openclawd pipeline create' to split task",
+        "Task transitions to dispatch_status='dispatch_failed' (terminal)",
+        "Logs decomposition recommendation",
+        "Typecheck passes"
+      ],
+      "priority": 37,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-038",
+      "title": "Add recovering status to interrupted task recovery sweep",
+      "description": "As a developer, I want recover_interrupted_tasks() to reset 'recovering' status on daemon restart so that crashed recoveries are retried. **Implementation:** Modify agent_supervisor.recover_interrupted_tasks() to include dispatch_status='recovering' in query. Reset recovering tasks to 'failed' so they re-enter recovery pipeline on next poll cycle.",
+      "acceptanceCriteria": [
+        "recover_interrupted_tasks() queries tasks WHERE dispatch_status='recovering'",
+        "Resets dispatch_status from 'recovering' to 'failed'",
+        "Logs recovered count for 'recovering' status",
+        "Preserves existing 'dispatched' -> 'interrupted' recovery",
+        "Runs on daemon startup per US-056 spec",
+        "Typecheck passes"
+      ],
+      "priority": 38,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-039",
+      "title": "Add INCOMPLETE_RESEARCH auto-detection for research tasks",
+      "description": "As a developer, I want INCOMPLETE_RESEARCH auto-detection so that research tasks with insufficient sources trigger recovery. **Implementation:** In error_classifier.py detect_error_code(), add post-completion check: if agent_result.status='completed' AND task_domain='research', count distinct URLs (http/https pattern) in deliverable_content. If fewer than 3, classify as INCOMPLETE_RESEARCH.",
+      "acceptanceCriteria": [
+        "detect_error_code() checks agent_result.status='completed'",
+        "If task_domain='research', scans deliverable_content for URL patterns",
+        "Regex pattern matches http:// and https:// URLs",
+        "Counts distinct URLs (unique full URLs, not just domains)",
+        "If count < 3, returns INCOMPLETE_RESEARCH error code",
+        "Only applies to completed status (not failed/blocked)",
+        "Typecheck passes"
+      ],
+      "priority": 39,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-040",
+      "title": "Add STUCK_TASK detection for long-running dispatched tasks",
+      "description": "As a developer, I want STUCK_TASK detection so that tasks stuck in 'dispatched' status trigger recovery. **Implementation:** In agent_supervisor.py poll loop, add stuck task detection query: tasks WHERE dispatch_status='dispatched' AND lease_until < now AND (now - dispatch_runs.started_at) > agent_timeout_seconds. Classify as STUCK_TASK and trigger recovery.",
+      "acceptanceCriteria": [
+        "Poll loop queries for stuck tasks: dispatch_status='dispatched' AND lease expired AND duration > agent_timeout_seconds",
+        "Uses config.agent_timeout_seconds (default 1800)",
+        "Alternative detection: lease extended 3+ times with no tool_calls_count increment",
+        "On detection, creates RunnerError with STUCK_TASK code",
+        "Transitions to 'failed' and triggers recovery pipeline",
+        "Logs stuck task detection event",
+        "Typecheck passes"
+      ],
+      "priority": 40,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-041",
+      "title": "Coordinate with health/self_healer for provider-level issues",
+      "description": "As a developer, I want recovery_pipeline to check provider health before retry so that task recovery doesn't fight provider healing. **Implementation:** In recovery_executor.execute(), before calling agent_runner.run(), query provider_health for the task's assigned provider. If provider is degraded/down, defer recovery by 60 seconds. Log coordination event.",
+      "acceptanceCriteria": [
+        "recovery_executor.execute() queries provider_health table",
+        "Checks status for task's assigned provider",
+        "If status='degraded' or 'down', defers retry: sets next_retry_at = now + 60s",
+        "Returns early with deferred status",
+        "Logs recovery.provider_health_check event",
+        "Allows health/self_healer.py to complete provider healing first",
+        "Typecheck passes"
+      ],
+      "priority": 41,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-042",
+      "title": "Add systemic failure pattern detection to failure_memory",
+      "description": "As a developer, I want pattern detection for systemic failures so that correlated errors trigger system-level alerts. **Implementation:** In failure_memory.py, add detect_systemic_pattern(error_code, window_minutes, threshold_count) that queries failure_memory for same error_code across multiple tasks within time window. If count >= threshold, returns True.",
+      "acceptanceCriteria": [
+        "detect_systemic_pattern() accepts error_code, window_minutes, threshold_count",
+        "Queries failure_memory for rows WHERE error_code=? AND created_at > datetime('now', '-{window_minutes} minutes')",
+        "Counts distinct task_id for the error_code",
+        "Returns True if count >= threshold_count",
+        "Uses config.recovery.systemic_failure_threshold_count (default 3)",
+        "Uses config.recovery.systemic_failure_window_minutes (default 10)",
+        "Typecheck passes"
+      ],
+      "priority": 42,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-043",
+      "title": "Add systemic failure alert on pattern detection",
+      "description": "As a developer, I want urgent alerts when systemic failure patterns are detected so that operators address root cause. **Implementation:** In recovery_pipeline.py handle_failure(), after recording to failure_memory, call detect_systemic_pattern(). If True, create urgent notification indicating systemic issue affecting multiple tasks.",
+      "acceptanceCriteria": [
+        "handle_failure() calls failure_memory.detect_systemic_pattern()",
+        "If pattern detected, creates urgent notification",
+        "Notification content includes: error_code, affected task count, time window",
+        "Recommends system-level investigation (check provider health, API keys, database)",
+        "Logs systemic_failure_detected event",
+        "Rate-limited to prevent alert storm (max 1 per error_code per hour)",
+        "Typecheck passes"
+      ],
+      "priority": 43,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-044",
+      "title": "Add error_pattern generation for similarity matching",
+      "description": "As a developer, I want error_pattern normalization so that similar errors match even with different specific values. **Implementation:** In error_capture.py capture_error(), generate error_pattern by normalizing error_message: strip task-specific IDs, UUIDs, timestamps, URLs. Store in ErrorContext.error_pattern and failure_memory.error_pattern for future similarity matching.",
+      "acceptanceCriteria": [
+        "capture_error() generates error_pattern from error_message",
+        "Normalization: replace task IDs with <TASK_ID>, UUIDs with <UUID>, timestamps with <TIMESTAMP>, URLs with <URL>",
+        "Regex patterns for common ID formats",
+        "Stores pattern in ErrorContext.error_pattern",
+        "failure_memory.record_attempt() stores error_pattern",
+        "Future enhancement point: similarity matching can use error_pattern",
+        "Typecheck passes"
+      ],
+      "priority": 44,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-045",
+      "title": "Add CONFIDENCE_TOO_LOW detection with configurable threshold",
+      "description": "As a developer, I want CONFIDENCE_TOO_LOW detection so that agents with low confidence trigger recovery. **Implementation:** In error_classifier.py detect_error_code(), check if agent_result.confidence_score is not None and < config.recovery.min_confidence_score (default 0.3). If true, classify as CONFIDENCE_TOO_LOW.",
+      "acceptanceCriteria": [
+        "detect_error_code() checks agent_result.confidence_score field",
+        "If confidence_score is None, skip check (confidence not provided)",
+        "If confidence_score < config.recovery.min_confidence_score, return CONFIDENCE_TOO_LOW",
+        "Uses config.recovery.min_confidence_score (default 0.3)",
+        "Only applies if agent_result.status='completed' (agent completed but not confident)",
+        "Typecheck passes"
+      ],
+      "priority": 45,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-046",
+      "title": "Add recovery state to openclawd serve GET /status endpoint",
+      "description": "As a developer, I want recovery state exposed in GET /status so that operators can monitor active recoveries. **Implementation:** Extend cli.py serve route GET /status to include recovery_state: list of tasks currently in dispatch_status='recovering' with attempt count, current tier, error_code.",
+      "acceptanceCriteria": [
+        "GET /status JSON response includes 'recovery_state' key",
+        "recovery_state is list of dicts with: task_id, attempt_number, recovery_tier, error_code, time_in_recovery_seconds",
+        "Queries tasks WHERE dispatch_status='recovering'",
+        "Joins with dispatch_runs to get recovery metadata",
+        "Returns empty list if no active recoveries",
+        "Preserves existing /status response structure",
+        "Typecheck passes"
+      ],
+      "priority": 46,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-047",
+      "title": "Add openclawd logs --recovery filter for recovery event viewing",
+      "description": "As a developer, I want openclawd logs --recovery command so that operators can view recovery events without full log noise. **Implementation:** Add --recovery flag to cli.py logs command that filters supervisor.jsonl for event_type starting with 'recovery.'.",
+      "acceptanceCriteria": [
+        "cli.py logs command accepts --recovery flag",
+        "Filters supervisor.jsonl for lines where event_type starts with 'recovery.'",
+        "Shows all recovery events: capture, classify, diagnose, compensate, strategize, execute, verify, learn, escalate",
+        "Preserves timestamp ordering",
+        "Pretty-prints JSON for readability",
+        "Works with --tail flag for live viewing",
+        "Typecheck passes"
+      ],
+      "priority": 47,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-048",
+      "title": "Add recovery metrics to openclawd doctor diagnostic output",
+      "description": "As a developer, I want openclawd doctor to show recovery health metrics so that operators can assess recovery effectiveness. **Implementation:** Extend cli.py doctor command to query recovery statistics: total recoveries attempted (last 24h), success rate by tier, most common error codes, systemic failure patterns, recovery budget utilization.",
+      "acceptanceCriteria": [
+        "openclawd doctor command includes recovery section",
+        "Shows: total recovery attempts (24h), success rate overall, success rate by tier (1-5)",
+        "Shows: top 5 error codes by frequency",
+        "Shows: detected systemic patterns (if any)",
+        "Shows: recovery budget utilization (% of daily budget spent on recovery)",
+        "Queries failure_memory and recovery_events tables",
+        "Time window is last 24 hours",
+        "Pretty formatting for terminal output",
+        "Typecheck passes"
+      ],
+      "priority": 48,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-049",
+      "title": "Add recovery cost tracking to dispatch_runs",
+      "description": "As a developer, I want recovery cost tracked per attempt so that budget enforcement works. **Implementation:** In recovery_executor.execute(), after agent_runner.run() completes, calculate cost_estimate (tokens_used * provider_cost_per_token) and store in dispatch_runs row with recovery_tier populated.",
+      "acceptanceCriteria": [
+        "recovery_executor.execute() calculates cost after agent_runner.run()",
+        "Uses tokens_used from RunnerResult",
+        "Looks up provider cost per token from config",
+        "Stores cost_estimate in dispatch_runs.cost_estimate column (use existing column)",
+        "Ensures recovery_tier column is populated for recovery attempts",
+        "Cost includes both prompt and completion tokens",
+        "Typecheck passes"
+      ],
+      "priority": 49,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-050",
+      "title": "Add integration test for full recovery pipeline on schema error",
+      "description": "As a developer, I want an integration test that simulates RESULT_SCHEMA_INVALID and verifies full recovery pipeline so that end-to-end recovery works. **Implementation:** Create test_recovery_pipeline.py with test that mocks agent_runner to return invalid schema on first attempt, valid result on second attempt. Verify recovery pipeline captures, classifies, diagnoses, strategizes, executes, verifies, learns.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/tests/test_recovery_pipeline.py",
+        "Test simulates task with RESULT_SCHEMA_INVALID error",
+        "Mocks agent_runner.run() to fail first attempt, succeed second",
+        "Calls recovery_pipeline.handle_failure()",
+        "Verifies: ErrorContext captured, error classified as Execution Error, diagnostic agent called, recovery strategy selected, retry executed, success verified, failure_memory recorded",
+        "Asserts RecoveryOutcome.success=True and final_status='completed'",
+        "Verifies recovery_events logged for all 8 stages",
+        "Test passes",
+        "Typecheck passes"
+      ],
+      "priority": 50,
+      "qa_required": false,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-051",
+      "title": "Create recovery/playbooks.py with deterministic playbook sequences",
+      "description": "As a developer, I want error-specific deterministic playbooks so that known error scenarios follow prescribed recovery sequences instead of the generic strategy ladder. **Implementation:** Create agent-dispatch/recovery/playbooks.py with PlaybookStep and Playbook dataclasses (spec Appendix C.6) and playbook definitions for all 7 scenarios from spec Section 7: (1) SEARCH_API_UNAVAILABLE - web search API down with backoff retries, (2) TOOL_CALL_MALFORMED - malformed LLM tool calls with schema examples, (3) RESULT_SCHEMA_INVALID - AgentResult validation failure with format enforcement, (4) TOOL_LOOP_DETECTED - stuck in tool call loop with tool constraints, (5) DEPENDENCY_STALE - task keeps failing despite completed dependencies, (6) SUPERVISOR_CRASH - supervisor daemon crash recovery, (7) SYSTEMIC_FAILURE - multiple tasks fail with same error. Each Playbook replaces ONLY the STRATEGIZE step (step 7c in pipeline) by producing a RecoveryStrategy with pre-defined prompt modifications and constraints. All other pipeline stages (DIAGNOSE, COMPENSATE, EXECUTE, VERIFY, LEARN) still run normally.",
+      "acceptanceCriteria": [
+        "Create agent-dispatch/recovery/playbooks.py",
+        "Define PlaybookStep dataclass with fields: stage, action, parameters, condition (matching spec Appendix C.6)",
+        "Define Playbook dataclass with fields: error_code, steps, and select_strategy(attempt, error, classification) method",
+        "Implement has_playbook(error_code) -> bool function",
+        "Implement get_playbook(error_code) -> Playbook function",
+        "Playbook for SEARCH_API_UNAVAILABLE with backoff retry sequence (30s, 60s, 120s, 300s)",
+        "Playbook for TOOL_CALL_MALFORMED with schema example injection",
+        "Playbook for RESULT_SCHEMA_INVALID with format enforcement constraints",
+        "Playbook for TOOL_LOOP_DETECTED with tool call limit and constraints",
+        "Playbook for DEPENDENCY_STALE with dependency re-check and re-dispatch",
+        "Playbook for SUPERVISOR_CRASH with state recovery sequence",
+        "Playbook for SYSTEMIC_FAILURE with system-level alert and deferral",
+        "Playbook.select_strategy() returns RecoveryStrategy with deterministic prompt_modifications and constraints",
+        "All 7 playbooks from spec Section 7 implemented",
+        "Typecheck passes"
+      ],
+      "priority": 19,
+      "qa_required": false,
+      "passes": false,
+      "notes": "Must be completed before US-022 (handle_failure) which references playbooks.has_playbook() in the STRATEGIZE step override (spec Section 9.1.1 step 7c). Placed after strategy_selector.py (US-014) since Playbook.select_strategy() returns RecoveryStrategy."
+    },
+    {
+      "id": "US-052",
+      "title": "Add openclawd recovery status and recovery history CLI subcommands",
+      "description": "As a developer, I want dedicated `openclawd recovery status` and `openclawd recovery history` CLI subcommands so that operators can inspect active recoveries and historical failure patterns. **Implementation:** In cli.py, add `recovery` subcommand group with two commands: (1) `openclawd recovery status` shows all tasks currently in dispatch_status='recovering' with task_id, error_code, recovery_tier, attempt number, and started_at. (2) `openclawd recovery history` queries failure_memory table and shows top 20 error codes by frequency with count, success_rate, and last_seen. Matches spec Section 9.2 US-108.",
+      "acceptanceCriteria": [
+        "cli.py adds 'recovery' subcommand group",
+        "openclawd recovery status outputs: task_id, error_code, recovery_tier, attempt, started_at for all tasks with dispatch_status='recovering'",
+        "openclawd recovery status returns empty table with message when no active recoveries",
+        "openclawd recovery history outputs: error_code, count, success_rate, last_seen for top 20 error codes in failure_memory",
+        "openclawd recovery history returns empty table with message when no failure_memory entries",
+        "Pretty-formats output for terminal readability",
+        "Queries dispatch_runs for recovery metadata in status command",
+        "Queries failure_memory table for history command",
+        "Typecheck passes"
+      ],
+      "priority": 52,
+      "qa_required": false,
+      "passes": false,
+      "notes": "Corresponds to spec Section 9.2 US-108. Complements US-046 (/status endpoint) and US-047 (logs --recovery) with dedicated CLI subcommands."
+    }
+  ]
+}
