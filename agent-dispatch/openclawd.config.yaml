@@ -231,6 +231,17 @@ recovery:
   failure_memory_retention_days: 90     # Days to keep failure_memory entries
   recovery_events_retention_days: 90    # Days to keep recovery_events entries
 
+# ── Verification / Intention Integrity System ─────────────────
+# Controls deliverable verification, intent ledger, and spot checks.
+# All values are optional -- if omitted, the default value is used.
+verification:
+  enabled: true                        # Enable deliverable verification gate
+  fail_on_unverified: true             # Block completion if write-tool results show failure
+  spot_check_enabled: true             # Enable async spot checks via lightweight model
+  spot_check_rate: 0.2                 # Fraction of verified tasks to spot check (20%)
+  spot_check_model: "claude-haiku-4-5" # Model for spot check substance scoring
+  spot_check_max_per_poll: 3           # Max spot checks per poll cycle
+
 # ── Tool Execution Limits ──────────────────────────────────────
 max_tool_iterations: 50                # Max tool call iterations per agent run
 min_tool_interval_seconds: 1           # Min seconds between consecutive tool calls

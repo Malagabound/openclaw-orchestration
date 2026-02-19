@@ -1171,6 +1171,97 @@ def verify_recovery_events_table(db_path=None):
         conn.close()
 
 
+def migrate_create_intent_ledger(db_path=None):
+    """US-IIS: Create intent_ledger table for deliverable verification tracking.
+
+    Stores per-task verification results including tool call logs, verified
+    actions, confidence scores, and spot check outcomes. Enables the Intention
+    Integrity System to audit agent claims against actual tool results.
+    Uses CREATE TABLE IF NOT EXISTS for idempotency.
+    """
+    conn = _get_connection(db_path)
+    try:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS intent_ledger (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id INTEGER NOT NULL,
+                trace_id TEXT NOT NULL,
+                agent_name TEXT NOT NULL,
+                user_request TEXT,
+                tool_call_log TEXT,
+                verified_actions TEXT,
+                verification_status TEXT NOT NULL DEFAULT 'pending'
+                    CHECK(verification_status IN
+                        ('pending', 'verified', 'partial', 'failed', 'skipped', 'spot_checked')),
+                confidence_score REAL,
+                spot_check_score REAL,
+                spot_check_reason TEXT,
+                verified_at DATETIME,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_intent_ledger_task_id
+            ON intent_ledger(task_id)
+            """
+        )
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_intent_ledger_trace_id
+            ON intent_ledger(trace_id)
+            """
+        )
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_intent_ledger_status_created
+            ON intent_ledger(verification_status, created_at)
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def verify_intent_ledger_table(db_path=None):
+    """Verify intent_ledger table and its indexes exist."""
+    conn = _get_connection(db_path)
+    try:
+        # Check table exists
+        cursor = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='intent_ledger'"
+        )
+        if cursor.fetchone() is None:
+            return False
+        # Check indexes exist
+        for idx_name in [
+            "idx_intent_ledger_task_id",
+            "idx_intent_ledger_trace_id",
+            "idx_intent_ledger_status_created",
+        ]:
+            cursor = conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='index' AND name=?",
+                (idx_name,),
+            )
+            if cursor.fetchone() is None:
+                return False
+        # Verify key columns exist
+        cursor = conn.execute("PRAGMA table_info(intent_ledger)")
+        columns = {row[1] for row in cursor.fetchall()}
+        required = {
+            "id", "task_id", "trace_id", "agent_name", "user_request",
+            "tool_call_log", "verified_actions", "verification_status",
+            "confidence_score", "spot_check_score", "spot_check_reason",
+            "verified_at", "created_at",
+        }
+        return required.issubset(columns)
+    finally:
+        conn.close()
+
+
 if __name__ == "__main__":
     migrate_add_dispatch_status()
     if verify_dispatch_status_column():
@@ -1283,3 +1374,10 @@ if __name__ == "__main__":
         print("OK: recovery_events table and indexes verified")
     else:
         print("FAIL: recovery_events table or indexes not found")
+
+    # Create intent_ledger table (intention integrity system)
+    migrate_create_intent_ledger()
+    if verify_intent_ledger_table():
+        print("OK: intent_ledger table and indexes verified")
+    else:
+        print("FAIL: intent_ledger table or indexes not found")

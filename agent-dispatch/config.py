@@ -316,6 +316,41 @@ def get_recovery_config(config: Dict[str, Any]) -> Dict[str, Any]:
     return merged
 
 
+# ── Verification Configuration Defaults ──────────────────────────
+# Controls the Intention Integrity System (deliverable verification,
+# intent ledger, spot checks).
+
+VERIFICATION_DEFAULTS: Dict[str, Any] = {
+    "enabled": True,
+    "fail_on_unverified": True,
+    "spot_check_enabled": True,
+    "spot_check_rate": 0.2,
+    "spot_check_model": "claude-haiku-4-5",
+    "spot_check_max_per_poll": 3,
+}
+
+
+def get_verification_config(config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Extract the verification section from config with fallback to defaults.
+
+    Reads config["verification"] and merges with VERIFICATION_DEFAULTS so that
+    any missing key falls back to its default value.
+
+    Args:
+        config: Full config dict from load_config().
+
+    Returns:
+        Verification config dict with all keys guaranteed present.
+    """
+    user_verification = config.get("verification", {})
+    if not isinstance(user_verification, dict):
+        user_verification = {}
+    merged = dict(VERIFICATION_DEFAULTS)
+    merged.update(user_verification)
+    return merged
+
+
 # ── SDK Module Mapping ──────────────────────────────────────────
 # Maps provider names to their SDK import module names.
 _SDK_MODULES: Dict[str, str] = {

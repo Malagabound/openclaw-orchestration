@@ -59,6 +59,7 @@ class AgentResult:
     follow_up_tasks: Optional[List[Dict[str, Any]]] = None
     confidence_score: float = 0.0
     raw_response: str = ""
+    tool_call_log: Optional[List[Dict[str, Any]]] = None
 
 
 class AgentRunnerError(Exception):
@@ -833,17 +834,28 @@ def run_agent(
     try:
         result_dict = _parse_agent_result(final_content)
     except AgentRunnerError as parse_err:
-        # If no structured result, create a minimal one from raw content
+        # No structured result -- raise error instead of fabricating success.
+        # This feeds into the recovery pipeline via _handle_agent_failure().
         logger.warning(
-            "No <agent-result> block found for agent %s (trace=%s), using raw response",
+            "No <agent-result> block found for agent %s (trace=%s), raising error",
             agent_name, trace_id,
             extra=_log_extra,
         )
-        result_dict = {
-            "status": "completed",
-            "deliverable_summary": final_content[:500],
-            "deliverable_content": final_content,
+        stop_reason = "no_structured_result"
+        error_ctx = {
+            "exception_type": type(parse_err).__name__,
+            "message": str(parse_err),
+            "traceback": traceback.format_exc(),
         }
+        _write_error_context_to_dispatch_runs(
+            trace_id, combined_raw_output, tool_call_log, stop_reason, error_ctx, config, db_path
+        )
+        raise AgentRunnerError(
+            f"No <agent-result> block found in agent response for {agent_name}",
+            raw_output=combined_raw_output,
+            tool_call_log=tool_call_log,
+            stop_reason=stop_reason,
+        ) from parse_err
 
     # 6. Validate result
     try:
@@ -867,6 +879,7 @@ def run_agent(
         ) from val_err
 
     agent_result.raw_response = final_content
+    agent_result.tool_call_log = tool_call_log
 
     # 7. Upsert working memory entries (with 5000 char limit enforcement)
     if task_id and agent_result.working_memory_entries:

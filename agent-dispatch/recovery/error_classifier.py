@@ -51,6 +51,8 @@ ERROR_TAXONOMY: dict[str, ErrorCategory] = MappingProxyType({
     "CONFIDENCE_TOO_LOW":       ErrorCategory("execution", 2, True, False, 0, 1, 0),
     "TOOL_RESULT_MALFORMED":    ErrorCategory("execution", 2, True, False, 0, 1, 0),
     "AGENT_SELF_REPORTED_FAILURE": ErrorCategory("execution", 2, True, False, 0, 1, 0),
+    "VERIFICATION_FAILED":      ErrorCategory("execution", 2, True, False, 0, 1, 0),
+    "NO_STRUCTURED_RESULT":     ErrorCategory("execution", 3, True, False, 0, 1, 0),
 
     # --- Logic errors (agent completed, output is semantically wrong) ---
     "VALIDATION_REJECTED":      ErrorCategory("logic", 2, True, False, 0, 1, 0),
@@ -139,6 +141,12 @@ def detect_error_code(
 
         # AgentRunnerError with specific messages
         if exc_type == "AgentRunnerError":
+            if "verification failed" in exc_msg or "actions unverified" in exc_msg:
+                return "VERIFICATION_FAILED"
+            if "confidence score" in exc_msg and "below threshold" in exc_msg:
+                return "CONFIDENCE_TOO_LOW"
+            if "no <agent-result> block found" in exc_msg:
+                return "NO_STRUCTURED_RESULT"
             if "no <agent-result> block" in exc_msg:
                 return "RESULT_PARSE_FAILED"
             if "invalid json in <agent-result>" in exc_msg:

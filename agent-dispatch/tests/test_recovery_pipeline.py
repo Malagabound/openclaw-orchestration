@@ -466,5 +466,107 @@ class TestRecoveryPipelineSchemaError(unittest.TestCase):
         self.assertTrue(learn_kwargs["success"])
 
 
+class TestRecoveryPipelineNoStructuredResult(unittest.TestCase):
+    """Test: NO_STRUCTURED_RESULT error code classification and recovery routing."""
+
+    def setUp(self):
+        """Set up mocks for external dependencies."""
+        self.config = {
+            "recovery": {
+                "enabled": True,
+                "max_recovery_attempts": 5,
+                "max_recovery_time_seconds": 1800,
+                "max_concurrent_recoveries": 3,
+                "recovery_timeout_per_attempt": 600,
+                "diagnostic_model": "claude-haiku-4-5",
+                "diagnostic_max_input_tokens": 4000,
+                "diagnostic_prompt_file": "prompts/diagnostic_sop.md",
+                "recovery_budget_ratio": 0.04,
+                "recovery_budget_cap_usd": 2.00,
+                "raw_output_max_chars": 10000,
+                "min_confidence_score": 0.3,
+                "failure_memory_retention_days": 90,
+                "recovery_events_retention_days": 90,
+                "systemic_failure_threshold_count": 3,
+                "systemic_failure_window_minutes": 10,
+                "max_escalations_per_hour": 5,
+                "escalation_cooldown_seconds": 300,
+            },
+            "daily_budget_usd": 50.0,
+            "provider": {"name": "anthropic", "model": "claude-sonnet-4-5-20250929"},
+        }
+
+        self.task_row = {
+            "id": 99,
+            "title": "Generate report",
+            "description": "Create a summary report",
+            "domain": "research",
+            "assigned_agent": "research",
+            "dispatch_status": "failed",
+        }
+
+        self.dispatch_run_row = {
+            "id": 200,
+            "task_id": 99,
+            "agent_name": "research",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929",
+            "status": "failed",
+            "attempt": 1,
+            "started_at": "2026-02-15T10:00:00+00:00",
+            "completed_at": "2026-02-15T10:05:00+00:00",
+            "tokens_used": 3000,
+            "cost_estimate": 0.01,
+            "trace_id": "no-result-trace",
+            "raw_output": "Here is my analysis but I forgot the agent-result block...",
+            "tool_call_log": "[]",
+            "stop_reason": "no_structured_result",
+            "error_context": '{"exception_type": "AgentRunnerError", "message": "No <agent-result> block found in agent response for research"}',
+        }
+
+        self.runner_error = AgentRunnerError(
+            "No <agent-result> block found in agent response for research",
+            raw_output="Here is my analysis but I forgot the agent-result block...",
+            tool_call_log=[],
+            stop_reason="no_structured_result",
+        )
+
+    def test_no_structured_result_error_code(self):
+        """Verify NO_STRUCTURED_RESULT error code is correctly detected."""
+        from agent_dispatch.recovery.error_classifier import detect_error_code
+
+        code = detect_error_code(exception=self.runner_error)
+        self.assertEqual(code, "NO_STRUCTURED_RESULT")
+
+    def test_no_structured_result_taxonomy(self):
+        """Verify NO_STRUCTURED_RESULT has correct recovery parameters."""
+        from agent_dispatch.recovery.error_classifier import classify_error
+
+        category = classify_error("NO_STRUCTURED_RESULT")
+        self.assertEqual(category.category, "execution")
+        self.assertEqual(category.max_retries, 3)
+        self.assertTrue(category.requires_diagnosis)
+
+    def test_verification_failed_error_code(self):
+        """Verify VERIFICATION_FAILED error code is correctly detected."""
+        from agent_dispatch.recovery.error_classifier import detect_error_code
+
+        err = AgentRunnerError(
+            "Deliverable verification failed: 2/3 actions unverified",
+            stop_reason="verification_failed",
+        )
+        code = detect_error_code(exception=err)
+        self.assertEqual(code, "VERIFICATION_FAILED")
+
+    def test_verification_failed_taxonomy(self):
+        """Verify VERIFICATION_FAILED has correct recovery parameters."""
+        from agent_dispatch.recovery.error_classifier import classify_error
+
+        category = classify_error("VERIFICATION_FAILED")
+        self.assertEqual(category.category, "execution")
+        self.assertEqual(category.max_retries, 2)
+        self.assertTrue(category.requires_diagnosis)
+
+
 if __name__ == "__main__":
     unittest.main()

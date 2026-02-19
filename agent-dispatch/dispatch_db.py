@@ -1151,6 +1151,9 @@ def run_migrations(db_path=None):
     # Create recovery_events table (self-healing system)
     migrations.migrate_create_recovery_events(path)
 
+    # Create intent_ledger table (intention integrity system)
+    migrations.migrate_create_intent_ledger(path)
+
     logger.info("All dispatch schema migrations completed successfully.")
 
 

@@ -415,6 +415,12 @@ class AgentSupervisor:
         except Exception:
             logger.exception("Recovery sweep failed")
 
+        # Run spot checks on recently verified tasks
+        try:
+            self._run_spot_checks()
+        except Exception:
+            logger.exception("Spot check sweep failed")
+
         # Reap completed futures before checking capacity
         self._reap_completed()
 
@@ -528,11 +534,14 @@ class AgentSupervisor:
     ) -> None:
         """Run an agent task (called in thread pool).
 
-        Handles completion and failure recording.
+        Handles confidence enforcement, deliverable verification,
+        intent ledger recording, and completion.
         """
         from .agent_runner import AgentResult, AgentRunnerError, run_agent
+        from .config import get_recovery_config, get_verification_config
         from .provider_registry import ProviderRegistryError, get_provider
         from .tool_registry import ToolRegistry
+        from .verification import record_intent_ledger, verify_deliverables
 
         try:
             # Get provider
@@ -554,6 +563,47 @@ class AgentSupervisor:
                 db_path=self.db_path,
                 trace_id=trace_id,
             )
+
+            # ── Confidence Score Enforcement ──
+            recovery_cfg = get_recovery_config(self.config)
+            min_confidence = recovery_cfg.get("min_confidence_score", 0.3)
+            if result.confidence_score < min_confidence:
+                raise AgentRunnerError(
+                    f"Confidence score {result.confidence_score} below threshold {min_confidence}",
+                    raw_output=result.raw_response,
+                    tool_call_log=result.tool_call_log or [],
+                    stop_reason="confidence_too_low",
+                )
+
+            # ── Deliverable Verification + Intent Ledger ──
+            verification_cfg = get_verification_config(self.config)
+            if verification_cfg.get("enabled", True):
+                v_result = verify_deliverables(
+                    tool_call_log=result.tool_call_log or [],
+                    agent_result_status=result.status,
+                    config=self.config,
+                )
+
+                # Always record in intent ledger (pass or fail)
+                record_intent_ledger(
+                    task_id=task_id,
+                    trace_id=trace_id,
+                    agent_name=agent_name,
+                    user_request=task_dict.get("description", ""),
+                    tool_call_log=result.tool_call_log or [],
+                    verification_result=v_result,
+                    confidence_score=result.confidence_score,
+                    db_path=self.db_path,
+                )
+
+                if not v_result.passed and verification_cfg.get("fail_on_unverified", True):
+                    raise AgentRunnerError(
+                        f"Deliverable verification failed: {v_result.unverified_count}/"
+                        f"{v_result.total_actions} actions unverified",
+                        raw_output=result.raw_response,
+                        tool_call_log=result.tool_call_log or [],
+                        stop_reason="verification_failed",
+                    )
 
             # Handle completion
             handle_task_completion(
@@ -737,6 +787,174 @@ class AgentSupervisor:
                 "Failed to fetch dispatch_run for trace %s", trace_id
             )
         return {}
+
+    # ── Spot Check System (Intention Integrity) ────────────────────
+
+    def _run_spot_checks(self) -> None:
+        """Run spot checks on recently verified tasks.
+
+        Queries intent_ledger for tasks verified in the last hour that have
+        not been spot-checked yet. Samples at the configured rate (default 20%)
+        and sends deliverable content to a lightweight model for substance scoring.
+        """
+        import random
+
+        from .config import get_verification_config
+
+        verification_cfg = get_verification_config(self.config)
+        if not verification_cfg.get("spot_check_enabled", True):
+            return
+
+        spot_check_rate = verification_cfg.get("spot_check_rate", 0.2)
+        max_per_poll = verification_cfg.get("spot_check_max_per_poll", 3)
+        spot_check_model = verification_cfg.get("spot_check_model", "claude-haiku-4-5")
+
+        try:
+            conn = get_reader_connection(self.db_path)
+            rows = conn.execute(
+                "SELECT il.id, il.task_id, il.trace_id, il.agent_name "
+                "FROM intent_ledger il "
+                "WHERE il.verification_status = 'verified' "
+                "AND il.created_at >= datetime('now', '-1 hour') "
+                "ORDER BY il.created_at DESC "
+                "LIMIT 50"
+            ).fetchall()
+        except sqlite3.Error:
+            logger.exception("Failed to query intent_ledger for spot checks")
+            return
+
+        if not rows:
+            return
+
+        # Sample at configured rate
+        candidates = [dict(row) if isinstance(row, sqlite3.Row) else {
+            "id": row[0], "task_id": row[1], "trace_id": row[2], "agent_name": row[3]
+        } for row in rows]
+
+        sample_size = min(max_per_poll, max(1, int(len(candidates) * spot_check_rate)))
+        sampled = random.sample(candidates, min(sample_size, len(candidates)))
+
+        for entry in sampled:
+            try:
+                self._spot_check_task(
+                    ledger_id=entry["id"],
+                    task_id=entry["task_id"],
+                    trace_id=entry["trace_id"],
+                    agent_name=entry["agent_name"],
+                    model=spot_check_model,
+                )
+            except Exception:
+                logger.exception(
+                    "Spot check failed for ledger entry %s", entry["id"]
+                )
+
+    def _spot_check_task(
+        self,
+        ledger_id: int,
+        task_id: int,
+        trace_id: str,
+        agent_name: str,
+        model: str,
+    ) -> None:
+        """Spot check a single task's deliverable using a lightweight model.
+
+        Reads the output file from dispatch_runs, sends to Haiku for substance
+        scoring (1-10), and updates the intent_ledger with results.
+        """
+        import json
+
+        # Read deliverable content from dispatch_runs.output_file
+        deliverable_content = ""
+        try:
+            conn = get_reader_connection(self.db_path)
+            row = conn.execute(
+                "SELECT output_file FROM dispatch_runs "
+                "WHERE trace_id = ? AND status = 'completed' "
+                "ORDER BY id DESC LIMIT 1",
+                (trace_id,),
+            ).fetchone()
+            if row:
+                output_file = row["output_file"] if isinstance(row, sqlite3.Row) else row[0]
+                if output_file:
+                    # Read the actual file
+                    base_dir = os.path.dirname(os.path.abspath(__file__))
+                    filepath = os.path.join(base_dir, output_file)
+                    if os.path.exists(filepath):
+                        with open(filepath, "r", encoding="utf-8") as f:
+                            deliverable_content = f.read()
+        except (sqlite3.Error, OSError):
+            logger.exception("Failed to read deliverable for spot check (trace=%s)", trace_id)
+
+        if not deliverable_content:
+            logger.debug("No deliverable content for spot check (trace=%s)", trace_id)
+            return
+
+        # Truncate for the spot check prompt
+        content_excerpt = deliverable_content[:3000]
+
+        # Call lightweight model for substance scoring
+        try:
+            from .provider_registry import get_provider
+
+            spot_config = dict(self.config)
+            spot_provider_section = dict(spot_config.get("provider", {}))
+            spot_provider_section["model"] = model
+            spot_config["provider"] = spot_provider_section
+
+            provider = get_provider(spot_config)
+
+            from .llm_provider import Message
+            messages = [
+                Message(
+                    role="user",
+                    content=(
+                        "Rate this agent deliverable 1-10 on substance and completeness. "
+                        "Score 1 = empty/nonsense, 10 = comprehensive and actionable. "
+                        "Respond with JSON only: {\"score\": N, \"reason\": \"brief explanation\"}\n\n"
+                        f"Deliverable:\n{content_excerpt}"
+                    ),
+                )
+            ]
+            response = provider.complete(messages)
+            response_text = response.content or ""
+
+            # Parse JSON response
+            score = 5  # default
+            reason = "could not parse spot check response"
+            try:
+                parsed = json.loads(response_text.strip())
+                score = int(parsed.get("score", 5))
+                reason = str(parsed.get("reason", ""))
+            except (json.JSONDecodeError, TypeError, ValueError):
+                # Try to extract score from text
+                import re
+                match = re.search(r'"score"\s*:\s*(\d+)', response_text)
+                if match:
+                    score = int(match.group(1))
+                    reason = response_text[:200]
+
+        except Exception as e:
+            logger.warning("Spot check LLM call failed for trace %s: %s", trace_id, e)
+            return
+
+        # Update intent_ledger with spot check results
+        try:
+            w_conn = get_writer_connection(self.db_path)
+            w_conn.execute(
+                "UPDATE intent_ledger SET "
+                "spot_check_score = ?, spot_check_reason = ?, "
+                "verification_status = 'spot_checked' "
+                "WHERE id = ?",
+                (float(score), reason[:500], ledger_id),
+            )
+            w_conn.commit()
+            w_conn.close()
+            logger.info(
+                "Spot check complete: task=%s trace=%s score=%d reason=%s",
+                task_id, trace_id, score, reason[:100],
+            )
+        except sqlite3.Error:
+            logger.exception("Failed to update intent_ledger with spot check results")
 
     # ── Stuck Task Detection (US-040) ──────────────────────────────
 
