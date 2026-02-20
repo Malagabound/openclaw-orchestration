@@ -16,13 +16,6 @@
 - ✅ **No more exposed credentials** in public GitHub repo
 
 ### **2. Credentials Redacted**
-**Before:**
-```
-CLIENT_ID: 11211605681-btfrvkm7j70eielntd9fate19bsfbfs2.apps.googleusercontent.com
-CLIENT_SECRET: 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
-```
-
-**After:**
 ```
 CLIENT_ID: [REDACTED - OAuth credentials rotated for security]
 CLIENT_SECRET: [REDACTED - OAuth credentials rotated for security]
@@ -35,20 +28,14 @@ CLIENT_SECRET: [REDACTED - OAuth credentials rotated for security]
 
 ---
 
-## 🔧 NANGO OAUTH REGENERATION (Available)
+## 🔧 NANGO — DECOMMISSIONED (2026-02-19)
 
-### **Nango Access Confirmed:**
-- ✅ **Nango running** at `http://localhost:3003`
-- ✅ **Have credentials** (`~/.openclaw/credentials/nango`)
-- ✅ **Dashboard accessible** (logged in as george@originutah.com)
+Nango self-hosted instance has been decommissioned. All Gmail OAuth is now handled by the **Maton gateway** (`gateway.maton.ai`), which manages OAuth token refresh automatically.
 
-### **OAuth Regeneration Process:**
-1. **Access Nango dashboard:** http://localhost:3003
-2. **Navigate to Integrations**
-3. **Create new Google OAuth integration**
-4. **Configure redirect URI:** `http://localhost:3003/oauth/callback`
-5. **Generate new CLIENT_ID and CLIENT_SECRET**
-6. **Update local credentials** in `~/.openclaw/credentials/google-oauth`
+- Email agent (`skills/email-agent/`) migrated to Maton on 2026-02-19
+- Nango Docker containers on Mac Mini should be stopped and removed
+- Credential files (`~/.openclaw/credentials/nango`, `~/.openclaw/credentials/nango-connections`) can be deleted
+- The Google Cloud OAuth app "George OAuth" (testing mode, 7-day token expiry) is no longer needed
 
 ---
 

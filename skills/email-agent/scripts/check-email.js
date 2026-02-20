@@ -5,18 +5,27 @@
  */
 
 const https = require('https');
-const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
 // ── Config ──────────────────────────────────────────────────────────────────
-const NANGO_URL = 'http://localhost:3003';
-const NANGO_SECRET = '06ca2d0a-ca9c-4056-a57c-2bdfccf89e6b';
+const MATON_GATEWAY = 'https://gateway.maton.ai/google-mail';
+
+// Read Maton API key from credential file (never hardcode)
+const matonCredPath = path.join(process.env.HOME, '.openclaw', 'credentials', 'maton');
+let MATON_KEY;
+try {
+  const raw = fs.readFileSync(matonCredPath, 'utf8').trim();
+  MATON_KEY = raw.includes('=') ? raw.split('=').slice(1).join('=').trim() : raw;
+} catch (e) {
+  console.error(`Fatal: Cannot read Maton credential at ${matonCredPath}: ${e.message}`);
+  process.exit(1);
+}
 
 const ACCOUNTS = [
-  { email: 'george@originutah.com', connId: 'e98c0c58-19d5-405c-8b7e-da378c55d49d' },
-  { email: 'alan@originutah.com',   connId: '3361470f-2fc4-4291-8ab8-d929ae60e4b6' },
-  { email: 'alan@roccoriley.com',   connId: '1ecf42ca-9d74-40e2-9d2e-4515da3a9797' },
+  { email: 'george@originutah.com', connId: '26429363-7040-4bdc-b7b2-26a040d06a96' },
+  { email: 'alan@originutah.com',   connId: '84a9a500-ccea-4a27-9bd8-38cb811904ad' },
+  { email: 'alan@roccoriley.com',   connId: '5fbd0b9d-1f06-4b12-a791-657279ae14b2' },
 ];
 
 const WINHAW_LABEL = 'Label_106';
@@ -31,9 +40,7 @@ const maxEmails = args.includes('--max') ? parseInt(args[args.indexOf('--max') +
 // ── HTTP helpers ────────────────────────────────────────────────────────────
 function request(url, opts = {}) {
   return new Promise((resolve, reject) => {
-    const parsed = new URL(url);
-    const mod = parsed.protocol === 'https:' ? https : http;
-    const req = mod.request(url, {
+    const req = https.request(url, {
       method: opts.method || 'GET',
       headers: opts.headers || {},
     }, (res) => {
@@ -41,7 +48,11 @@ function request(url, opts = {}) {
       res.on('data', c => data += c);
       res.on('end', () => {
         if (res.statusCode >= 400) {
-          reject(new Error(`HTTP ${res.statusCode}: ${data.slice(0, 300)}`));
+          let hint = '';
+          if (res.statusCode === 400) hint = ' (check Maton connection status at ctrl.maton.ai)';
+          if (res.statusCode === 401) hint = ' (invalid Maton API key)';
+          if (res.statusCode === 429) hint = ' (rate limited — 10 req/sec)';
+          reject(new Error(`HTTP ${res.statusCode}${hint}: ${data.slice(0, 300)}`));
         } else {
           try { resolve(JSON.parse(data)); } catch { resolve(data); }
         }
@@ -53,39 +64,37 @@ function request(url, opts = {}) {
   });
 }
 
-// ── Nango token fetch ───────────────────────────────────────────────────────
-async function getToken(connId) {
-  const resp = await request(
-    `${NANGO_URL}/connections/${connId}?provider_config_key=google-gmail`,
-    { headers: { Authorization: `Bearer ${NANGO_SECRET}` } }
-  );
-  return resp.credentials?.access_token;
-}
+// ── Gmail API helpers (via Maton gateway) ───────────────────────────────────
+const GMAIL = `${MATON_GATEWAY}/gmail/v1/users/me`;
 
-// ── Gmail API helpers ───────────────────────────────────────────────────────
-const GMAIL = 'https://gmail.googleapis.com/gmail/v1/users/me';
-
-async function gmailGet(path, token) {
-  return request(`${GMAIL}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
+async function gmailGet(apiPath, connId) {
+  return request(`${GMAIL}${apiPath}`, {
+    headers: {
+      Authorization: `Bearer ${MATON_KEY}`,
+      'Maton-Connection': connId,
+    },
   });
 }
 
-async function gmailPost(path, token, body) {
-  return request(`${GMAIL}${path}`, {
+async function gmailPost(apiPath, connId, body) {
+  return request(`${GMAIL}${apiPath}`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    headers: {
+      Authorization: `Bearer ${MATON_KEY}`,
+      'Maton-Connection': connId,
+      'Content-Type': 'application/json',
+    },
     body,
   });
 }
 
-async function listUnread(token, max) {
-  const resp = await gmailGet(`/messages?q=in:inbox+is:unread&maxResults=${max}`, token);
+async function listUnread(connId, max) {
+  const resp = await gmailGet(`/messages?q=in:inbox+is:unread&maxResults=${max}`, connId);
   return resp.messages || [];
 }
 
-async function getMessage(token, msgId) {
-  return gmailGet(`/messages/${msgId}?format=full`, token);
+async function getMessage(connId, msgId) {
+  return gmailGet(`/messages/${msgId}?format=full`, connId);
 }
 
 function getHeader(msg, name) {
@@ -156,7 +165,7 @@ function classify(msg, accountEmail) {
     return { action: 'archive', label: 'Mercury Charge' };
   }
 
-  // 5-pre5. Optimize OS — all notifications — auto-archive per TOOLS.md  
+  // 5-pre5. Optimize OS — all notifications — auto-archive per TOOLS.md
   if (from.includes('optimizeos.ai') || from.includes('noreply@optimizeos.ai')) {
     return { action: 'archive', label: 'Optimize OS Notification' };
   }
@@ -274,14 +283,14 @@ function classify(msg, accountEmail) {
 }
 
 // ── Actions ─────────────────────────────────────────────────────────────────
-async function archiveMessage(token, msgId) {
+async function archiveMessage(connId, msgId) {
   if (DRY_RUN) return;
-  await gmailPost(`/messages/${msgId}/modify`, token, { removeLabelIds: ['INBOX'] });
+  await gmailPost(`/messages/${msgId}/modify`, connId, { removeLabelIds: ['INBOX'] });
 }
 
-async function addLabelAndArchive(token, msgId, labelId) {
+async function addLabelAndArchive(connId, msgId, labelId) {
   if (DRY_RUN) return;
-  await gmailPost(`/messages/${msgId}/modify`, token, {
+  await gmailPost(`/messages/${msgId}/modify`, connId, {
     addLabelIds: [labelId],
     removeLabelIds: ['INBOX'],
   });
@@ -294,18 +303,9 @@ async function processAccount(account) {
   console.log(`📧 Processing: ${email}`);
   console.log('═'.repeat(60));
 
-  let token;
-  try {
-    token = await getToken(connId);
-    if (!token) throw new Error('No access_token returned');
-  } catch (e) {
-    console.error(`  ❌ Failed to get token: ${e.message}`);
-    return { email, error: e.message, results: [] };
-  }
-
   let messages;
   try {
-    messages = await listUnread(token, maxEmails);
+    messages = await listUnread(connId, maxEmails);
   } catch (e) {
     console.error(`  ❌ Failed to list messages: ${e.message}`);
     return { email, error: e.message, results: [] };
@@ -317,7 +317,7 @@ async function processAccount(account) {
   for (const { id } of messages) {
     let msg;
     try {
-      msg = await getMessage(token, id);
+      msg = await getMessage(connId, id);
     } catch (e) {
       console.error(`  ❌ Failed to get message ${id}: ${e.message}`);
       continue;
@@ -346,19 +346,19 @@ async function processAccount(account) {
       switch (classification.action) {
         case 'utility':
           console.log(`     → Would update spreadsheet ${SPREADSHEET_ID} + add label ${WINHAW_LABEL} + archive`);
-          await addLabelAndArchive(token, id, WINHAW_LABEL);
+          await addLabelAndArchive(connId, id, WINHAW_LABEL);
           break;
         case 'pm-rent':
           console.log(`     → Would update cash flow sheet + archive`);
-          await archiveMessage(token, id);
+          await archiveMessage(connId, id);
           break;
         case 'archive':
           console.log(`     → Archive`);
-          await archiveMessage(token, id);
+          await archiveMessage(connId, id);
           break;
         case 'newsletter':
           console.log(`     → Would extract AI-relevant items + save digest + archive`);
-          await archiveMessage(token, id);
+          await archiveMessage(connId, id);
           break;
         case 'needs-reply':
           console.log(`     → Would draft reply + hold for approval`);

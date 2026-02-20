@@ -1,13 +1,13 @@
 # Email Agent
 
-Automated email triage for Alan's 3 Gmail accounts via Nango OAuth.
+Automated email triage for Alan's 3 Gmail accounts via Maton gateway.
 
 ## Accounts
-| Email | Nango Connection ID |
+| Email | Maton Connection ID |
 |-------|-------------------|
-| george@originutah.com | e98c0c58-19d5-405c-8b7e-da378c55d49d |
-| alan@originutah.com | 3361470f-2fc4-4291-8ab8-d929ae60e4b6 |
-| alan@roccoriley.com | 1ecf42ca-9d74-40e2-9d2e-4515da3a9797 |
+| george@originutah.com | 26429363-7040-4bdc-b7b2-26a040d06a96 |
+| alan@originutah.com | 84a9a500-ccea-4a27-9bd8-38cb811904ad |
+| alan@roccoriley.com | 5fbd0b9d-1f06-4b12-a791-657279ae14b2 |
 
 ## Usage
 
@@ -33,4 +33,4 @@ node skills/email-agent/scripts/check-email.js
 ## Key Rules
 - **NEVER delete emails** — always archive (remove INBOX label)
 - **NEVER send replies** — only draft, hold for approval
-- Nango at localhost:3003 provides fresh OAuth tokens
+- Maton gateway at gateway.maton.ai handles OAuth automatically
